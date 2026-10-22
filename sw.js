@@ -4,14 +4,14 @@
    (3) carregar o NÍVEL DE ACESSO num lugar que atravessa o isolamento do iOS.
    ESTRATÉGIA: rede primeiro, cache como reserva. Assim a compradora sempre
    recebe a versão nova quando tem internet, e continua funcionando sem ela. */
-const CACHE = 'appganancia-v1';
+const CACHE = 'appganancia-v2';  /* v2 (22/10/2026): entrou o catálogo e a pasta m7081wh */
 const ARQS = [
-  'hub.html', 'index.html', 'divulga.html',
+  'hub.html', 'index.html', 'divulga.html', 'catalogo.html',
   'manifest.webmanifest', 'icone-192.png', 'icone-512.png',
   'favicon-32.png', 'favicon-96.png', 'favicon-180.png', 'logo-branca.png',
   /* Cada pasta serve o menu E os apps: é isso que mantém a chave no caminho de
      toda página, pro ícone nascer liberado no Compartilhar do Safari. */
-  'sx01fzn/', '83aby3u/'
+  'sx01fzn/', '83aby3u/', 'm7081wh/'
 ];
 
 /* ===== O NÍVEL VIAJA PELO CACHE STORAGE (31/08/2026) =====
@@ -31,7 +31,7 @@ const ARQS = [
    É a única via disponível: a Apple não oferece nenhuma suportada pra passar dado
    do Safari pro app instalado. */
 const CHAVE_NIVEL = '/__nivel__';
-const VALIDOS = ['controle', 'divulga'];
+const VALIDOS = ['controle', 'divulga', 'preco'];
 
 async function gravarNivel(itens) {
   try {

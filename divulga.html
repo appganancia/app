@@ -1038,7 +1038,7 @@ Instalar.init();
     /* chaves LONGAS primeiro: alternancia em JS casa da esquerda pra direita,
        entao (c|cd) casaria "c" dentro de "cd" e a compradora do bump voltaria
        pro menu do front, sem o Divulga. O $ ancora o fim, pra nao casar prefixo. */
-    var m = (location.hash || '').match(/de=(sx01fzn|83aby3u)$/);
+    var m = (location.hash || '').match(/de=(sx01fzn|83aby3u|m7081wh)$/);
     if(!m) return;
 
     /* GRAVA o nivel tambem daqui (31/08/2026). A compradora instala de DENTRO do
@@ -1046,7 +1046,7 @@ Instalar.init();
        /app/). Sem esta gravacao, quem instalou pelo app e nunca voltou ao menu
        nao teria nada lembrado, e o hub travaria tudo. Uniao, nunca substituicao. */
     try{
-      var MAPA_MEM = {'sx01fzn':['controle'],'83aby3u':['controle','divulga']};
+      var MAPA_MEM = {'sx01fzn':['controle'],'83aby3u':['controle','divulga'],'m7081wh':['controle','divulga','preco']};
       var itens = MAPA_MEM[m[1]] || [];
       if(itens.length){
         var K = 'appganancia_liberado';
@@ -1102,7 +1102,7 @@ Instalar.init();
    antigo, e por fim do nivel que o service worker guarda (Cache Storage, que
    atravessa o isolamento entre Safari e app instalado). */
 (function(){
-  var MAPA_K = {'sx01fzn':1,'83aby3u':1};
+  var MAPA_K = {'sx01fzn':1,'83aby3u':1,'m7081wh':1};
 
   function aplicar(chave){
     if(!chave || !MAPA_K[chave]) return;
@@ -1116,11 +1116,11 @@ Instalar.init();
 
   try{
     /* 1. caminho */
-    var m = location.pathname.match(/\/(sx01fzn|83aby3u)(?:\/|$)/);
+    var m = location.pathname.match(/\/(sx01fzn|83aby3u|m7081wh)(?:\/|$)/);
     if(m){ aplicar(m[1]); return; }   /* ja esta na pasta: o manifest local ja serve */
 
     /* 2. #de= que o menu manda ao abrir o app */
-    var h = (location.hash||'').match(/de=(sx01fzn|83aby3u)$/);
+    var h = (location.hash||'').match(/de=(sx01fzn|83aby3u|m7081wh)$/);
     if(h){ aplicar(h[1]); return; }
 
     /* 3. ?libera= dos links antigos */
@@ -1134,8 +1134,8 @@ Instalar.init();
         navigator.serviceWorker.addEventListener('message', function(ev){
           var d = ev.data || {};
           if(d.tipo !== 'nivel' || !Array.isArray(d.itens) || !d.itens.length) return;
-          var i = d.itens, c = i.indexOf('controle')>=0, dv = i.indexOf('divulga')>=0;
-          aplicar((c&&dv) ? '83aby3u' : c ? 'sx01fzn' : null);
+          var i = d.itens, c = i.indexOf('controle')>=0, dv = i.indexOf('divulga')>=0, pr = i.indexOf('preco')>=0;
+          aplicar(pr ? 'm7081wh' : (c&&dv) ? '83aby3u' : c ? 'sx01fzn' : null);
         });
         reg.active.postMessage({tipo:'ler-nivel'});
       }).catch(function(){});

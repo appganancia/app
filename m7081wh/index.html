@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#8e2757">
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="../favicon-96.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../favicon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>Mis apps · AppGanancia</title>
+<style>
+:root{
+  --vinho:#8e2757; --vinho-escuro:#6d1d43; --rose:#f6e7ee; --rose-2:#fdf4f8;
+  --tinta:#2b2230; --cinza:#7a6f80; --linha:#eadfe6; --branco:#fff;
+  --verde:#1e7d4f; --verde-bg:#e6f4ec; --ambar:#a05e03; --ambar-bg:#fdf2df;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,'Segoe UI',Roboto,sans-serif;background:var(--rose-2);color:var(--tinta);font-size:16px;min-height:100vh}
+header{background:var(--vinho);color:#fff;padding:26px 16px 20px;text-align:center}
+header h1{font-size:24px;font-weight:800}
+header p{font-size:13.5px;opacity:.85;margin-top:3px}
+main{padding:16px;max-width:560px;margin:0 auto}
+.app-card{background:var(--branco);border:1px solid var(--linha);border-radius:16px;padding:16px;margin-bottom:14px;display:block;text-decoration:none;color:inherit}
+.app-card .topo{display:flex;align-items:center;gap:12px}
+.app-card .icone{width:46px;height:46px;border-radius:13px;background:var(--rose);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.app-card .icone svg{width:24px;height:24px;fill:none;stroke:var(--vinho);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.app-card h2{font-size:17px;font-weight:800}
+.app-card .desc{font-size:13.5px;color:var(--cinza);margin-top:2px;line-height:1.4}
+.app-card .abrir{margin-top:12px;background:var(--vinho);color:#fff;text-align:center;border-radius:12px;padding:13px;font-weight:700}
+.app-card.travado{border-style:dashed}
+.app-card.travado .icone{background:var(--ambar-bg)}
+.app-card.travado .icone svg{stroke:var(--ambar)}
+.pitch{background:var(--rose-2);border-radius:12px;padding:11px 12px;font-size:13.5px;color:var(--tinta);margin-top:10px;line-height:1.5}
+.preco-linha{display:flex;align-items:center;justify-content:space-between;margin-top:12px}
+.preco-linha .p{font-size:20px;font-weight:800;color:var(--vinho)}
+.preco-linha .p small{font-size:12px;color:var(--cinza);font-weight:600;display:block}
+.preco-linha a{background:var(--ambar-bg);color:var(--ambar);padding:12px 18px;border-radius:12px;font-weight:800;text-decoration:none;font-size:14.5px}
+.mini-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:11px}
+.mini-tags span{font-size:12px;font-weight:600;color:var(--vinho);background:var(--rose);border-radius:99px;padding:4px 10px}
+.beneficios{margin-top:10px}
+.beneficios div{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;line-height:1.45;padding:5px 0}
+.beneficios svg{width:16px;height:16px;flex-shrink:0;margin-top:2px;fill:none;stroke:var(--verde);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.rodape{text-align:center;font-size:12.5px;color:var(--cinza);padding:10px 20px 30px;line-height:1.5}
+
+.cfg-fundo{position:fixed;inset:0;background:rgba(43,34,48,.5);z-index:50;display:none;align-items:flex-end;justify-content:center}
+.cfg-fundo.aberto{display:flex}
+.cfg-box{background:#fff;border-radius:18px 18px 0 0;width:100%;max-width:560px;max-height:88vh;overflow-y:auto;padding:18px 16px 26px}
+.cfg-box h3{font-size:17px;margin-bottom:2px}
+.cfg-box .cfg-sub{font-size:13px;color:var(--cinza);margin-bottom:14px}
+.cfg-box h4{font-size:12.5px;color:var(--cinza);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin:16px 0 8px}
+.cfg-cores{display:flex;gap:12px}
+.cfg-cores button{width:42px;height:42px;border-radius:50%;border:3px solid transparent;outline:2px solid var(--linha);cursor:pointer}
+.cfg-cores button.on{border-color:var(--tinta)}
+.cfg-btn{background:var(--vinho);color:#fff;width:100%;padding:14px;font-weight:700;border:0;border-radius:12px;font-size:15.5px;cursor:pointer;margin-top:8px;font-family:inherit}
+.cfg-btn.sec{background:var(--rose);color:var(--vinho)}
+.btn-cfg{background:none;border:0;color:#fff;display:flex;align-items:center;cursor:pointer;padding:4px}
+.btn-cfg svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+/* faixa de instalacao: o caminho VISIVEL pra virar app na tela inicial */
+.faixa-inst{display:flex;align-items:center;gap:11px;background:#fff;border:1px solid var(--linha);
+  border-left:4px solid var(--vinho);border-radius:14px;padding:12px 12px 12px 13px;margin:0 auto 14px;max-width:560px}
+.faixa-inst .fi-ico{width:40px;height:40px;border-radius:11px;background:var(--rose);display:flex;
+  align-items:center;justify-content:center;flex-shrink:0}
+.faixa-inst .fi-ico svg{width:21px;height:21px;fill:none;stroke:var(--vinho);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.faixa-inst .fi-txt{flex:1;min-width:0}
+.faixa-inst .fi-txt b{display:block;font-size:14.5px;line-height:1.25}
+.faixa-inst .fi-txt span{display:block;font-size:12.5px;color:var(--cinza);line-height:1.35;margin-top:2px}
+.faixa-inst .fi-btn{background:var(--vinho);color:#fff;border:0;border-radius:11px;padding:11px 15px;
+  font-weight:800;font-size:14px;cursor:pointer;font-family:inherit;flex-shrink:0;white-space:nowrap}
+.faixa-inst .fi-x{background:none;border:0;color:var(--cinza);font-size:20px;line-height:1;padding:2px 4px;
+  cursor:pointer;flex-shrink:0;font-family:inherit}
+@media(max-width:400px){
+  .faixa-inst{flex-wrap:wrap}
+  .faixa-inst .fi-btn{width:100%;order:9}
+}
+
+/* passo a passo de instalacao (iPhone, e Android que nao ofereceu o prompt) */
+.ps-fundo{position:fixed;inset:0;background:rgba(43,34,48,.55);z-index:60;display:none;align-items:flex-end;justify-content:center}
+.ps-fundo.aberto{display:flex}
+.ps-box{background:#fff;border-radius:18px 18px 0 0;width:100%;max-width:560px;max-height:88vh;overflow-y:auto;padding:20px 18px 26px}
+.ps-box h3{font-size:18px;margin-bottom:3px}
+.ps-box .ps-sub{font-size:13.5px;color:var(--cinza);line-height:1.45;margin-bottom:15px}
+.ps-box ol{list-style:none;counter-reset:ps;margin:0;padding:0}
+.ps-box ol li{counter-increment:ps;position:relative;padding:0 0 15px 40px;font-size:14.5px;line-height:1.5}
+.ps-box ol li::before{content:counter(ps);position:absolute;left:0;top:-1px;width:27px;height:27px;
+  border-radius:50%;background:var(--vinho);color:#fff;font-weight:800;font-size:13.5px;
+  display:flex;align-items:center;justify-content:center}
+.ps-box .ps-ico{width:18px;height:18px;vertical-align:-4px;fill:none;stroke:var(--vinho);
+  stroke-width:2;stroke-linecap:round;stroke-linejoin:round;margin:0 1px}
+.ps-box .ps-btn{background:var(--vinho);color:#fff;width:100%;padding:14px;font-weight:700;border:0;
+  border-radius:12px;font-size:15.5px;cursor:pointer;font-family:inherit;margin-top:4px}
+.ps-box .ps-nota{display:block;font-size:12.5px;line-height:1.4;color:var(--ambar);
+  background:var(--ambar-bg);border-radius:9px;padding:7px 10px;margin-top:6px}
+.ps-aviso{display:flex;gap:9px;background:var(--rose);border-radius:11px;padding:11px 12px;
+  margin-bottom:14px;font-size:13px;line-height:1.45;color:var(--tinta)}
+.ps-aviso svg{width:17px;height:17px;flex-shrink:0;margin-top:1px;fill:none;stroke:var(--vinho);
+  stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.ps-aviso b{font-weight:800}
+/* ====== ANIMACAO: o caminho do iPhone, desenhado ======
+   Fiel ao fluxo real do iOS 26 (conferido em video do aparelho do Vini, 27/08/2026).
+   Desenho e nao video: ~5 KB, funciona offline junto com o app, nao tem nada de
+   pessoal na tela e nao envelhece quando a Apple muda o visual.
+   O que o desenho reproduz, e que eu tinha errado antes:
+     - a folha de compartilhar do iOS e ESCURA (#262528), nao clara
+     - "Ver mais" nao e link no meio da lista: e um BOTAO REDONDO com seta,
+       na fileira de acoes, e vira "Ver menos" depois
+     - "Adicionar a Tela de Inicio" e o ULTIMO item da lista que se abre
+     - existe uma tela final, com o nome do app e o botao Adicionar em azul */
+.demo{background:var(--rose-2);border:1px solid var(--linha);border-radius:14px;
+  padding:13px 12px 11px;margin-bottom:16px}
+.demo-topo{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
+.demo-rot{font-size:11.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--cinza)}
+.demo-passo{font-size:12px;font-weight:700;color:var(--vinho);background:var(--rose);
+  border-radius:99px;padding:3px 10px}
+.fone{position:relative;width:172px;height:268px;margin:0 auto;background:#0e0d10;
+  border-radius:23px;padding:5px;box-shadow:0 10px 26px -14px rgba(20,4,12,.7)}
+.fone-tela{position:relative;width:100%;height:100%;background:#fff;border-radius:19px;
+  overflow:hidden;display:flex;flex-direction:column}
+/* a pagina do proprio app, ao fundo */
+.pag{flex:1;background:#fdf4f8;overflow:hidden}
+.pag-top{background:var(--vinho);padding:9px 8px 8px;text-align:center}
+.pag-top b{display:block;color:#fff;font-size:8.5px;font-weight:800;letter-spacing:.02em}
+.pag-top i{display:block;color:rgba(255,255,255,.75);font-size:5.5px;font-style:normal;margin-top:2px}
+.pag-card{background:#fff;border:1px solid #eadfe6;border-radius:7px;margin:7px 6px;padding:6px}
+.pag-card b{display:block;font-size:6.5px;color:#2b2230}
+.pag-card i{display:block;font-size:5px;color:#7a6f80;font-style:normal;margin-top:1px}
+.pag-btn{background:var(--vinho);border-radius:5px;height:13px;margin-top:5px}
+/* barra do safari */
+.barra{height:30px;background:#f7f7f8;border-top:1px solid #e2e2e6;display:flex;
+  align-items:center;justify-content:space-between;padding:0 9px;flex-shrink:0}
+.barra i{display:block;width:11px;height:11px;border-radius:2px;background:#b8b8bd}
+.b-url{flex:1;height:14px;border-radius:7px;background:#ececf0;margin:0 7px}
+.b-pontos{position:relative;width:15px;height:19px;flex-shrink:0}
+.b-pontos span{position:absolute;left:50%;width:2.6px;height:2.6px;border-radius:50%;
+  background:#3c3c43;transform:translateX(-50%)}
+.b-pontos span:nth-child(1){top:3px}.b-pontos span:nth-child(2){top:8px}.b-pontos span:nth-child(3){top:13px}
+/* menu dos tres pontinhos */
+.menu{position:absolute;left:7px;right:7px;bottom:36px;background:#fbfbfd;border-radius:11px;
+  box-shadow:0 8px 26px -8px rgba(0,0,0,.5);padding:3px;opacity:0;transform:translateY(10px);
+  transition:opacity .28s,transform .28s;overflow:hidden}
+.menu div{display:flex;align-items:center;gap:6px;padding:6px 7px;border-radius:7px;
+  font-size:8px;color:#111;border-bottom:1px solid #ececf0}
+.menu div:last-child{border-bottom:0}
+.menu div.on{background:var(--rose);font-weight:800;color:var(--vinho)}
+.menu .mi{width:10px;height:10px;flex-shrink:0;fill:none;stroke:currentColor;stroke-width:2.2;
+  stroke-linecap:round;stroke-linejoin:round}
+/* a folha de compartilhar: ESCURA, como no iOS de verdade */
+.folha{position:absolute;left:0;right:0;bottom:0;max-height:94%;background:#262528;
+  border-radius:13px 13px 0 0;box-shadow:0 -8px 26px -8px rgba(0,0,0,.6);
+  opacity:0;transform:translateY(100%);transition:opacity .3s,transform .3s;
+  padding:8px 7px;display:flex;flex-direction:column;gap:5px;overflow:hidden}
+.f-cab{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.f-cab .f-ico{width:22px;height:22px;border-radius:5px;background:var(--vinho);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;color:#fff;font-size:8px;font-weight:800}
+.f-cab b{font-size:7px;color:#fff;display:block;line-height:1.2}
+.f-cab i{font-size:5.5px;color:#8e8e93;font-style:normal;display:block;margin-top:1px}
+/* fileira de acoes redondas: e AQUI que fica o "Ver mais" */
+.f-acoes{display:flex;justify-content:space-between;gap:4px;flex-shrink:0;padding:0 2px}
+.f-acoes div{flex:1;text-align:center}
+.f-acoes .c{width:26px;height:26px;border-radius:50%;background:#3a393d;margin:0 auto 3px;
+  display:flex;align-items:center;justify-content:center;transition:background .2s}
+.f-acoes .c svg{width:13px;height:13px;fill:none;stroke:#fff;stroke-width:2;
+  stroke-linecap:round;stroke-linejoin:round}
+.f-acoes span{font-size:5px;color:#c7c7cc;line-height:1.15;display:block}
+.f-acoes div.on .c{background:var(--vinho)}
+.f-acoes div.on span{color:#fff;font-weight:800}
+/* a lista que o "Ver mais" abre */
+.f-lista{background:#19181b;border-radius:9px;overflow:hidden;
+  max-height:0;opacity:0;transition:max-height .4s ease,opacity .3s}
+.f-lista.aberta{max-height:130px;opacity:1}
+.f-lista div{display:flex;align-items:center;gap:6px;padding:5px 7px;font-size:6.5px;color:#fff;
+  border-bottom:1px solid #2c2b2f;white-space:nowrap;overflow:hidden}
+.f-lista div:last-child{border-bottom:0}
+.f-lista .li{width:10px;height:10px;flex-shrink:0;fill:none;stroke:#fff;stroke-width:2;
+  stroke-linecap:round;stroke-linejoin:round}
+.f-lista div.on{background:var(--vinho);font-weight:800}
+/* tela final: nome do app e botao Adicionar */
+.final{position:absolute;inset:0;background:#1c1b1f;opacity:0;pointer-events:none;
+  transition:opacity .3s;padding:20px 8px 9px;display:flex;flex-direction:column;gap:9px}
+.final.on{opacity:1}
+.final-cab{display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.final-cab b{font-size:8px;color:#fff}
+.final-cab .x{width:16px;height:16px;border-radius:50%;background:#3a393d;color:#c7c7cc;
+  font-size:9px;display:flex;align-items:center;justify-content:center}
+.final-cab .add{background:#0a84ff;color:#fff;font-size:7.5px;font-weight:800;
+  border-radius:99px;padding:3px 9px;transition:transform .2s}
+.final-cab .add.pisca{transform:scale(1.12)}
+.final-nome{display:flex;align-items:center;gap:7px;background:#262528;border-radius:8px;padding:7px}
+.final-nome .fi{width:22px;height:22px;border-radius:5px;background:var(--vinho);flex-shrink:0}
+.final-nome b{font-size:7.5px;color:#fff;display:block}
+.final-nome i{font-size:5.5px;color:#8e8e93;font-style:normal;display:block;margin-top:1px}
+/* o dedo */
+.dedo{position:absolute;width:20px;height:20px;border-radius:50%;
+  background:rgba(255,255,255,.3);border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.25);
+  opacity:0;pointer-events:none;z-index:5;transform:translate(-50%,-50%);
+  transition:opacity .22s, left .4s cubic-bezier(.4,0,.2,1), top .4s cubic-bezier(.4,0,.2,1)}
+.dedo.bate{animation:bate .42s ease}
+@keyframes bate{0%,100%{transform:translate(-50%,-50%) scale(1)}45%{transform:translate(-50%,-50%) scale(.7)}}
+.demo-leg{text-align:center;font-size:12.5px;line-height:1.4;color:var(--tinta);
+  margin-top:9px;min-height:34px;font-weight:600}
+.demo-leg b{color:var(--vinho)}
+.demo-ctrl{display:flex;justify-content:center;margin-top:6px}
+.demo-ctrl button{background:none;border:1px solid var(--linha);border-radius:99px;
+  padding:5px 13px;font-size:11.5px;color:var(--cinza);cursor:pointer;font-family:inherit;font-weight:600}
+@media (prefers-reduced-motion: reduce){.dedo,.menu,.folha,.f-lista,.final{transition:none}}
+/* ===== FAIXA DA NOVIDADE (21/09/2026) =====
+   Regra do Vini: aparece pra quem usa o link do front (sx01fzn) e do bump (83aby3u),
+   uma vez, e volta a cada 8h ate a pessoa comprar.
+
+   POR QUE FAIXA E NAO MODAL: a lojista abre o app pra registrar uma venda, muitas
+   vezes com a freguesa na frente. Modal que cobre a tela nessa hora irrita e
+   ensina a fechar sem ler. A faixa fica acima do menu, chama a atencao pela cor
+   e pelo selo, e nao bloqueia nada. */
+.faixa-nov{position:relative;background:linear-gradient(140deg,var(--vinho),#5c1838);
+  color:#fff;border-radius:16px;padding:15px 16px 16px;margin:0 auto 14px;max-width:560px;
+  box-shadow:0 14px 30px -18px rgba(61,15,36,.9)}
+.faixa-nov .fn-selo{display:inline-block;background:#fff;color:var(--vinho);
+  font-size:12.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+  padding:7px 14px;border-radius:999px;margin-bottom:11px;
+  box-shadow:0 3px 10px rgba(0,0,0,.18)}
+.faixa-nov .fn-tit{display:block;font-size:17px;font-weight:800;line-height:1.22;
+  letter-spacing:-.3px;margin-bottom:5px;padding-right:22px}
+.faixa-nov .fn-txt{display:block;font-size:13px;line-height:1.45;opacity:.92;margin-bottom:12px}
+.faixa-nov .fn-btn{display:block;background:#fff;color:var(--vinho);text-align:center;
+  text-decoration:none;font-weight:800;font-size:15px;padding:13px;border-radius:12px}
+.faixa-nov .fn-btn:active{opacity:.85}
+.faixa-nov .fn-x{position:absolute;top:9px;right:10px;background:none;border:0;color:#fff;
+  font-size:22px;line-height:1;padding:3px 7px;cursor:pointer;opacity:.75;font-family:inherit;z-index:2}
+
+/* ===== RODIZIO DA FAIXA (06/10/2026) =====
+   Pedido do Vini: quem abre o app todo dia via a MESMA mensagem e parava de ler.
+   Sao 7 faixas; a classe fx-N muda o fundo, o texto mora em Novidade.FAIXAS.
+   REGRA (Vini, 06/10): frase GRANDE que provoca e ja diz o que e, UMA linha curta,
+   e o botao dizendo o que ela leva. Nada de historinha nem bloco de prova: faixa
+   alta e cheia virou anuncio e foi reprovada. Cores so do app. */
+.fn-grande{display:block;font-size:24px;font-weight:900;line-height:1.1;letter-spacing:-.6px;
+  margin:2px 0 9px;padding-right:22px}
+.fn-grande em{font-style:normal;color:#ffd0e4}
+.fn-riscado{text-decoration:line-through;text-decoration-thickness:3px;opacity:.6}
+/* fundo claro (fx-1 branca, fx-6 rosa): letra vinho, botao vinho */
+.faixa-nov.fx-1,.faixa-nov.fx-6{color:var(--tinta);border:2px solid var(--vinho);box-shadow:0 14px 30px -20px rgba(61,15,36,.6)}
+.faixa-nov.fx-1{background:#fff}
+.faixa-nov.fx-6{background:var(--rose)}
+.fx-1 .fn-x,.fx-6 .fn-x{color:var(--vinho)}
+.fx-1 .fn-grande em,.fx-6 .fn-grande em{color:var(--vinho)}
+.fx-1 .fn-riscado{text-decoration-color:var(--vinho)}
+.fx-1 .fn-btn,.fx-6 .fn-btn{background:var(--vinho);color:#fff}
+/* fx-4 escura, "loja grande" */
+.faixa-nov.fx-4{background:linear-gradient(160deg,#2a0f1d,#14070e);border:1px solid #4a1f33}
+.fx-4 .fn-grande em{color:#f3a9c8}
+.fx-4 .fn-btn{background:var(--vinho);color:#fff}
+/* fx-7 vinho escuro liso, pra nao repetir o degrade das outras */
+.faixa-nov.fx-7{background:var(--vinho-escuro)}
+/* fx-2: miniatura do catalogo real ao lado da linha de apoio */
+.fn-prova{display:grid;grid-template-columns:56px 1fr;gap:11px;align-items:center;margin:0 0 12px}
+.fn-prova img{width:56px;border-radius:6px;transform:rotate(-4deg);box-shadow:0 8px 16px -8px rgba(0,0,0,.55);display:block}
+.fn-prova .fn-txt{margin:0}
+/* fx-3: as perguntas que ela responde o dia todo, numa linha */
+.fn-bolhas{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+.fn-bolhas span{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.2);font-size:12.5px;
+  padding:5px 10px;border-radius:12px 12px 12px 3px}
+
+/* botao chamativo (Vini, 06/10): pulsa com um anel e um brilho atravessa de tempos
+   em tempos. Botao branco ganha brilho vinho; botao vinho ganha brilho branco. */
+.faixa-nov{--fn-brilho:rgba(142,39,87,.22);--fn-anel:rgba(255,255,255,.55)}
+.faixa-nov.fx-1,.faixa-nov.fx-6{--fn-brilho:rgba(255,255,255,.45);--fn-anel:rgba(142,39,87,.38)}
+.faixa-nov.fx-4{--fn-brilho:rgba(255,255,255,.4);--fn-anel:rgba(243,169,200,.45)}
+.faixa-nov .fn-btn{position:relative;overflow:hidden;animation:fnPulsa 1.8s ease-in-out infinite}
+.faixa-nov .fn-btn::after{content:'';position:absolute;top:0;bottom:0;left:-60%;width:40%;
+  background:linear-gradient(100deg,transparent,var(--fn-brilho),transparent);transform:skewX(-18deg);
+  animation:fnBrilho 3s ease-in-out infinite;pointer-events:none}
+.faixa-nov .fn-btn:active{animation:none;transform:scale(.98)}
+@keyframes fnPulsa{0%,100%{transform:scale(1);box-shadow:0 0 0 0 var(--fn-anel)}
+  50%{transform:scale(1.035);box-shadow:0 0 0 7px rgba(255,255,255,0)}}
+@keyframes fnBrilho{0%{left:-60%}55%,100%{left:120%}}
+@media (prefers-reduced-motion:reduce){.faixa-nov .fn-btn,.faixa-nov .fn-btn::after{animation:none}}
+</style>
+</head>
+<body>
+
+<header style="position:relative">
+  <div style="position:absolute;right:14px;top:16px"><button class="btn-cfg" onclick="Config.abrir()" aria-label="ajustes"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 00.34 1.87l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.7 1.7 0 00-1.87-.34 1.7 1.7 0 00-1.03 1.56V21a2 2 0 11-4 0v-.09A1.7 1.7 0 008.94 19.3a1.7 1.7 0 00-1.87.34l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.7 1.7 0 00.34-1.87 1.7 1.7 0 00-1.56-1.03H3a2 2 0 110-4h.09A1.7 1.7 0 004.7 8.94a1.7 1.7 0 00-.34-1.87l-.06-.06a2 2 0 112.83-2.83l.06.06a1.7 1.7 0 001.87.34H9a1.7 1.7 0 001.03-1.56V3a2 2 0 114 0v.09a1.7 1.7 0 001.03 1.56 1.7 1.7 0 001.87-.34l.06-.06a2 2 0 112.83 2.83l-.06.06a1.7 1.7 0 00-.34 1.87V9a1.7 1.7 0 001.56 1.03H21a2 2 0 110 4h-.09a1.7 1.7 0 00-1.51 1.03z"/></svg></button></div>
+  <!-- logo-branca.png ainda nao existe (arte pendente): sem ela, o nome aparece em texto -->
+  <img src="../logo-branca.png" alt="AppGanancia" style="height:64px;width:auto;max-width:78%;margin:0 auto 2px;display:block"
+    onerror="this.outerHTML='<h1>AppGanancia</h1>'">
+  <p id="hdrSub">tus apps: pagas una vez y son tuyas para siempre</p>
+</header>
+
+<div style="padding:14px 16px 0">
+<div class="faixa-inst" id="faixaInstalar" style="display:none">
+  <div class="fi-ico"><svg viewBox="0 0 24 24"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M11 19h2"/><path d="M12 7v6M9.5 10.5L12 13l2.5-2.5"/></svg></div>
+  <div class="fi-txt"><b>Pon la app en tu celular</b><span>ícono en tu pantalla de inicio, abre sin navegador y funciona sin internet</span></div>
+  <button class="fi-btn" onclick="Instalar.instalar()">Instalar</button>
+  <button class="fi-x" onclick="Instalar.dispensarFaixa()" aria-label="cerrar">&times;</button>
+</div>
+
+</div>
+
+
+<!-- ===== AVISO DA NOVIDADE (21/09/2026) =====
+     So aparece pra quem NAO tem o Catalogo, ou seja, quem entrou por sx01fzn (front)
+     ou 83aby3u (front + bump). Quem ja comprou nunca ve.
+     Some no X e volta 8h depois, ate ela comprar.
+     O conteudo vem de Novidade.FAIXAS (rodizio de 7, 06/10/2026). -->
+<div class="faixa-nov" id="faixaNovidade" style="display:none">
+  <button class="fn-x" onclick="Novidade.dispensar()" aria-label="cerrar">&times;</button>
+  <div id="fnCorpo"></div>
+</div>
+</div>
+
+
+<main id="lista"></main>
+
+<div class="rodape">Tus apps se quedan guardadas en este celular.<br>Para abrirlas desde el ícono, sin navegador, usa el botón <b>Instalar</b> de arriba.</div>
+
+<script>
+/* ===== desbloqueio por chave no CAMINHO (AppGanancia, 21/10/2026) =====
+   /app/sx01fzn/   -> Mis Ventas (front)
+   /app/83aby3u/   -> Mis Ventas + Mensajes listos (front + bump)
+   /app/m7081wh/   -> los 3 apps (quien compra el catálogo, el upsell, lleva todo)
+   Chaves novas e nao obvias, geradas ao acaso em 21/10/2026. A fonte unica da tabela
+   e o NIVEIS do montar-pastas.py; as copias abaixo tem de bater com ela. */
+const TEMAS={
+  vinho:   {a:'#8e2757',b:'#6d1d43',c:'#f6e7ee',d:'#fdf4f8',nome:'Vino'},
+  violeta: {a:'#6b3fa0',b:'#532e80',c:'#efe8f7',d:'#f9f5fd',nome:'Violeta'},
+  esmeralda:{a:'#1c7a5c',b:'#145c45',c:'#e4f2ec',d:'#f3faf7',nome:'Esmeralda'},
+  petroleo:{a:'#22677a',b:'#194f5e',c:'#e3eff3',d:'#f2f8fa',nome:'Petróleo'},
+  grafite: {a:'#3f3a45',b:'#2b2730',c:'#ece9ef',d:'#f7f5f9',nome:'Grafito'}
+};
+function aplicarTema(n){ const t=TEMAS[n]||TEMAS.vinho; const r=document.documentElement.style;
+  r.setProperty('--vinho',t.a); r.setProperty('--vinho-escuro',t.b);
+  r.setProperty('--rose',t.c); r.setProperty('--rose-2',t.d);
+  const m=document.querySelector('meta[name="theme-color"]'); if(m) m.setAttribute('content',t.a);
+  localStorage.setItem('appganancia_tema',n); }
+aplicarTema(localStorage.getItem('appganancia_tema')||'vinho');
+/* ===== LIBERACAO: SO O LINK LIBERA, E A CHAVE FICA NA URL =====
+   Decisao do Vini, 29/08/2026: *"ele nao tem que ver nada de liberacao pelo storage,
+   isso vai dar problema. Cada link tem a sua quantidade liberada e pronto."*
+
+   Como funciona: o `?libera=` da URL e a UNICA fonte. Nao ha estado salvo, entao nao
+   ha estado pra corromper, ficar velho ou divergir entre paginas. A mesma URL sempre
+   mostra a mesma coisa, em qualquer aparelho.
+
+   Por que a query NAO e mais apagada da barra de endereco: o icone da tela inicial
+   guarda a URL de onde foi instalado. Apagando a query (o que o codigo antigo fazia
+   com history.replaceState), o icone nasceria apontando pro hub pelado e abriria
+   travado. Mantendo a query, o icone abre liberado pra sempre, sem storage nenhum.
+
+   O manifest tem `start_url: hub.html`, mas navegador nenhum ignora a URL corrente
+   na hora de instalar: ele instala o que esta na tela, com query e tudo. */
+const MAPA = {
+  'sx01fzn':  ['controle'],
+  '83aby3u':  ['controle','divulga'],
+  'm7081wh':  ['controle','divulga','preco']   /* quem compra o catálogo (upsell) leva os 3 apps: decisão do Vini, 22/10/2026 */
+};
+const CHAVE_MEM = 'appganancia_liberado';
+
+/* ===== O APARELHO LEMBRA O QUE JA FOI LIBERADO =====
+   Revisao da regra de 29/08/2026 ("so o link libera, nada de storage"), feita em
+   31/08/2026 depois de uma compradora ficar travada de verdade:
+
+     *"quando ela abre o link pelo navegador normal, os menus estao liberados
+     normalmente, quando ela salva o icone na tela de inicio do celular e abre,
+     eles aparecem travados."*
+
+   ESTA pagina e o fundo do poco do problema. A compradora instala de dentro do app
+   que esta usando (/app/index.html), e essa pagina vincula /app/manifest.webmanifest,
+   cuja start_url e `hub.html`. O icone nasce apontando pra ca, SEM chave nenhuma no
+   caminho, e antes disso nao havia estado salvo: `LIBERADOS` ficava vazio e o menu
+   travava tudo, inclusive pra quem pagou.
+
+   O link continua sendo a unica coisa que CONCEDE acesso. O storage e so memoria do
+   que um link ja concedeu, e apenas SOMA. Nada aqui remove acesso, entao o pior caso
+   e liberar o que ela ja comprou, nunca travar. */
+function lembrar(itens){
+  try{
+    var antes = JSON.parse(localStorage.getItem(CHAVE_MEM) || '[]');
+    if(!Array.isArray(antes)) antes = [];
+    var uniao = antes.slice();
+    itens.forEach(function(i){ if(uniao.indexOf(i) < 0) uniao.push(i); });
+    if(uniao.length !== antes.length) localStorage.setItem(CHAVE_MEM, JSON.stringify(uniao));
+    return uniao;
+  }catch(e){ return itens; }   /* Safari privado nega storage: segue pelo link */
+}
+
+function lembrado(){
+  try{
+    var v = JSON.parse(localStorage.getItem(CHAVE_MEM) || '[]');
+    if(!Array.isArray(v)) return [];
+    var validos = ['controle','divulga','preco'];
+    return v.filter(function(x){ return validos.indexOf(x) >= 0; });
+  }catch(e){ return []; }
+}
+
+const LIBERADOS = (function(){
+  /* (?:\/|$) aceita /app/tudo e /app/tudo/index.html igualmente. */
+  var m = location.pathname.match(/\/(sx01fzn|83aby3u|m7081wh)(?:\/|$)/);
+  var k = m ? m[1] : (new URLSearchParams(location.search).get('libera') || '').replace(/^so-/, '');
+  var doLink = MAPA[k] || [];
+  if(doLink.length) return lembrar(doLink);
+
+  /* ===== REDE DE SEGURANCA FINAL (31/08/2026) =====
+     Chegar aqui significa: hub pelado, sem chave na URL. E o que o icone abre
+     quando a compradora instalou de dentro do app.
+
+     Se este aparelho lembra o nivel, MANDA pra pasta dela em vez de renderizar
+     travado. A pasta libera pelo CAMINHO, que e a unica coisa que sempre
+     funciona: nao depende de storage cruzar contexto (no iOS o app instalado tem
+     storage separado do Safari), nem de o iOS respeitar manifest via blob.
+
+     replace() em vez de href=: nao deixa o hub travado no historico, entao o
+     botao voltar do aparelho nao volta pra tela travada. */
+  var mem = lembrado();
+  if(mem.length){
+    var c = mem.indexOf('controle')>=0, d = mem.indexOf('divulga')>=0, p = mem.indexOf('preco')>=0;
+    var chave = p ? 'm7081wh' : (c&&d) ? '83aby3u' : c ? 'sx01fzn' : null;
+    if(chave){
+      var base = location.pathname.replace(/[^\/]*$/, '');
+      try{ location.replace(base + chave + '/'); }catch(e){}
+      /* devolve o nivel pra pagina nao piscar travada antes de trocar de URL */
+      return mem;
+    }
+  }
+  return mem;
+})();
+const tem = x => LIBERADOS.includes(x);
+
+/* Dentro de /app/<chave>/, os apps moram um nivel acima. Fora dela (hub aberto
+   direto), o caminho e o mesmo de sempre.
+
+   O `#de=<chave>` diz ao app de qual menu ele veio, pro botao de voltar levar de
+   volta ao menu CERTO e nao ao hub pelado (que mostra tudo travado). Vai como
+   HASH, nao query: o hash nao vai pro servidor, nao entra no cache do service
+   worker e sobrevive a qualquer normalizacao de URL. */
+const comChave = (url) => {
+  /* Dentro de /app/<chave>/ os apps moram NA PROPRIA PASTA: e isso que mantem a
+     chave no CAMINHO de toda pagina, e por isso o icone nasce liberado tanto pela
+     rota do manifest (start_url da pasta) quanto pela rota legada do
+     apple-mobile-web-app-capable (que usa a URL da aba). Fonte: WebKit Safari 15.4
+     e web.dev/learn/pwa.
+
+     O app "Controle" se chama index.html na raiz, mas dentro da pasta esse nome e
+     do MENU, entao lá ele e controle.html. Bug real de 31/08/2026: sem esse
+     desvio, o app sobrescrevia o menu e /app/cd/ abria o Controle direto, sem
+     cadeado no que a compradora nao tinha comprado. */
+  const m = location.pathname.match(/\/(sx01fzn|83aby3u|m7081wh)(?:\/|$)/);
+  if(!m) return url;
+  const naPasta = (url === 'index.html') ? 'controle.html' : url;
+  return naPasta + '#de=' + m[1];
+};
+
+/* checkout dos degraus: HOTMART (22/10/2026; funil/checkouts.json, a Hotmart e a fonte da verdade, nao
+   este arquivo). Preco como o checkout do Mexico mostra, IVA de 16% incluido. O catalogo (upsell) passa
+   antes pela pagina de oferta (OFERTA.preco), igual a 004; os outros dois vao direto ao checkout. */
+const CHECKOUT = {
+  controle:'https://pay.hotmart.com/D108140431V',   /* Mis Ventas (front), $299 */
+  divulga: 'https://pay.hotmart.com/Q108140459Y',   /* Mensajes listos (bump), $149 */
+  preco:   'https://pay.hotmart.com/Y108141969P'    /* Mi Catálogo (upsell), $399; libera los 3 apps */
+};
+/* o catalogo passa antes pela pagina de oferta (a mesma do upsell, sem a faixa de pago aprobado), igual a 004 */
+const OFERTA = { preco: 'https://appganancia.com/oferta-catalogo.html' };
+const PRECO = {
+  controle:'$299',
+  divulga: '$149',
+  preco:   '$399'
+};
+
+/* ===== ORIGEM DA COMPRA (06/10/2026) =====
+   Toda compra que sai daqui leva utm_source=app e o degrau em utm_medium. Antes o
+   pedido chegava na Cakto sem UTM nenhuma: de 06/09 a 06/10, 43 das 62 vendas "sem
+   origem" eram cliente antigo comprando aqui dentro. O ANUNCIO de origem quem
+   resolve e o painel, pelo e-mail da cliente; isto so marca o canal.
+   NAO usar utm_content nem utm_campaign: o coletor do painel le os dois como
+   anuncio e campanha, e um valor aqui viraria criativo fantasma. */
+function comOrigem(url, degrau){
+  return url + (url.indexOf('?') >= 0 ? '&' : '?') + 'utm_source=app&utm_medium=' + degrau;
+}
+
+const ICO = {
+  controle:'<svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>',
+  divulga:'<svg viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 01-9.3 8.4 8.6 8.6 0 01-3.9-1L3 20l1.2-4.6a8.4 8.4 0 1116.8-3.9z"/></svg>',
+  preco:'<svg viewBox="0 0 24 24"><rect x="3" y="3" width="7.5" height="7.5" rx="1.6"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.6"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.6"/><path d="M20.6 17.1l-3.5-3.5-3.6.1-.1 3.6 3.5 3.5a1.3 1.3 0 001.8 0l1.9-1.9a1.3 1.3 0 000-1.8z"/><path d="M16.2 16.2h.01"/></svg>',
+  cadeado:'<svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>'
+};
+
+function card(app){
+  if(app.liberado){
+    const tags = app.tags ? `<div class="mini-tags">${app.tags.map(t=>`<span>${t}</span>`).join('')}</div>` : '';
+    return `<a class="app-card" href="${comChave(app.url)}">
+      <div class="topo"><div class="icone">${app.icone}</div>
+        <div><h2>${app.nome}</h2><div class="desc">${app.desc}</div></div></div>
+      ${tags}
+      <div class="abrir">Abrir</div></a>`;
+  }
+  const bens = app.beneficios ? `<div class="beneficios">${app.beneficios.map(b=>
+    `<div><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg><span>${b}</span></div>`).join('')}</div>` : '';
+  return `<div class="app-card travado">
+    <div class="topo"><div class="icone">${ICO.cadeado}</div>
+      <div><h2>${app.nome}</h2><div class="desc">${app.desc}</div></div></div>
+    <div class="pitch">${app.pitch}</div>
+    ${bens}
+    ${(app.oferta || app.checkout) ? `<div class="preco-linha"><div class="p">${app.preco}<small>pago único</small></div>
+      <a href="${comOrigem(app.oferta || app.checkout, app.id)}" target="_blank" rel="noopener">${app.oferta ? 'Ver cómo funciona' : 'Desbloquear'}</a></div>` : ''}</div>`;
+}
+
+const APPS=[
+  { id:'controle', nome:'Mis Ventas', icone:ICO.controle, url:'index.html',
+    desc:'tus ventas, quién te debe y cuánto te quedó',
+    tags:['anota una venta en 3 toques','ves tu ganancia al momento','inventario que se descuenta solo','quién te debe y cuánto','resumen del mes'],
+    liberado:tem('controle'), preco:PRECO.controle, checkout:CHECKOUT.controle,
+    pitch:'Ventas, inventario que se descuenta solo, lo que te deben, tus gastos y el resumen del mes. Sin cuaderno y sin mensualidad.' },
+  { id:'divulga', nome:'Mensajes listos', icone:ICO.divulga, url:'divulga.html',
+    desc:'para cobrar y vender por WhatsApp',
+    tags:['el mensaje ya viene escrito','cobras sin quedar mal','y también para vender'],
+    liberado:tem('divulga'), preco:PRECO.divulga, checkout:CHECKOUT.divulga,
+    pitch:'Mis Ventas te dice quién te debe. Lo difícil es mandarle el mensaje sin quedar mal, y por eso muchas lo dejan pasar.',
+    beneficios:['el cobro ya viene escrito en 3 tonos: el recordatorio suave, el directo (con educación) y el de confirmar cuando te paga',
+      'eliges el tono, pone su nombre y la cantidad, y nada más lo mandas por WhatsApp',
+      'y trae 9 mensajes para vender: novedades, ofertas, últimas piezas y para volver a escribirle a la clienta que ya no te compra'] },
+  { id:'preco', nome:'Mi Catálogo', icone:ICO.preco, url:'catalogo.html',
+  desc:'vende más mandando tu catálogo por WhatsApp',
+  tags:['listo en 1 toque','con tu logo','directo de tu inventario'],
+  liberado:tem('preco'), preco:PRECO.preco, checkout:CHECKOUT.preco, oferta:OFERTA.preco,
+  pitch:'Mandar fotos sueltas y contestar "¿en cuánto?" todo el día cansa, y hace que la clienta se aburra a medio camino.',
+  beneficios:['tu catálogo sale listo con los productos que YA tienes en tu inventario: no agregas nada dos veces',
+    'con tu logo, el nombre de tu negocio y el precio de cada producto, como lo mandan las tiendas grandes',
+    'un toque y se va por WhatsApp: al grupo, al estado o a la clienta que te preguntó',
+    'y la calculadora de precios sigue aquí adentro, para cuando quieras ver cuánto te queda'] }
+];
+
+document.getElementById('lista').innerHTML = APPS.map(card).join('');
+if(!tem('controle') && !tem('divulga') && !tem('preco'))
+  document.getElementById('lista').innerHTML =
+    `<div class="app-card"><div class="pitch">Este es el espacio de quien compró AppGanancia.
+     Si ya compraste, usa el link de acceso que te llegó a tu correo. Cualquier duda, escríbenos a soporte.</div></div>`
+    + document.getElementById('lista').innerHTML;
+
+
+
+
+/* ============ AJUSTES (engrenagem): cor + instalar ============ */
+/* ===== AVISO DA NOVIDADE (21/09/2026) =====
+
+   Regra do Vini: quem usa o link do front (/c/) e do bump (/cd/) ve um aviso do
+   Catalogo. Aparece uma vez, some no X, e volta 8h depois. Quem ja comprou
+   nunca ve, e o aviso para de aparecer sozinho quando ela compra (porque ai o
+   'preco' passa a estar liberado).
+
+   POR QUE VOLTAR E NAO "uma vez so": quem abre o app todo dia e o publico mais
+   quente que existe pra este upsell, mas no primeiro aviso ela pode estar no meio
+   de uma venda. Voltar depois da outra chance sem virar insistencia.
+
+   POR QUE 10h E NAO 24h (26/09/2026, Vini): as 24h contam da hora em que ela
+   fechou. Quem abre o app no mesmo horario todo dia chegava sempre um pouco antes
+   e so via o aviso dia sim, dia nao. Com 10h, a abertura do dia seguinte ja pega.
+   Baixado para 8h em 06/10/2026 (Vini), junto com o rodizio de 7 faixas.
+
+   O RELOGIO e o do aparelho dela. Trocar a data pra tras faz o aviso voltar antes,
+   e isso e aceitavel: o custo de errar pra mais e uma faixa a mais, nao uma
+   cobranca indevida. */
+const Novidade = {
+  chave: 'appganancia_novidade_fechada',
+  espera: 8 * 60 * 60 * 1000,         // 8h em milissegundos
+  destino: 'https://appganancia.com/oferta-catalogo.html',
+
+  /* ===== RODIZIO (06/10/2026) =====
+     Regra do Vini: UMA faixa por vez, em ordem e sem repetir. Comeca na 1; quando
+     ela fecha no X, a faixa some pela mesma espera de sempre e volta JA na proxima.
+     Depois da 7 volta pra 1, ate ela comprar. Quem nao fecha continua vendo a mesma.
+     Cada uma marca o link com utm_medium=preco-faixaN: a Cakto grava, e da pra
+     ler qual faixa trouxe a venda. O card travado continua com utm_medium=preco.
+     Tudo que elas prometem foi conferido no Catalogo: sai do estoque, leva logo,
+     nome e preco, vai pro grupo/status/cliente, e o botao "so o que tem em
+     estoque" tira o que acabou (NAO e automatico, e a copy diz isso).
+     Previa: ?faixa=N forca a faixa N e ignora o X (so pra conferir o visual). */
+  chaveVez: 'appganancia_faixa_vez',
+  FAIXAS: [
+    { n:1, html:`<b class="fn-grande"><span class="fn-riscado">Foto suelta</span> no vende.<br><em>Catálogo vende.</em></b>
+      <span class="fn-txt">En una sola imagen, con foto y precio, la clienta escoge al momento.</span>
+      <a class="fn-btn" id="fnBtn" target="_blank" rel="noopener">Quiero mi catálogo</a>` },
+    { n:2, html:`<b class="fn-grande">¿En serio todavía mandas <em>fotos sueltas</em> por WhatsApp?</b>
+      <div class="fn-prova"><img src="../catalogo-faixa.jpg" alt="Catálogo listo con logo, foto y precio de cada producto" width="56" height="70">
+      <span class="fn-txt">Manda tu catálogo: todos tus productos en una imagen, con tu logo y el precio.</span></div>
+      <a class="fn-btn" id="fnBtn" target="_blank" rel="noopener">Yo también quiero mandar catálogo</a>` },
+    { n:3, html:`<b class="fn-grande">Ya no contestes "¿en cuánto?". <em>Manda el catálogo con precio.</em></b>
+      <div class="fn-bolhas"><span>¿en cuánto?</span><span>¿y este?</span><span>¿hay en otro color?</span></div>
+      <a class="fn-btn" id="fnBtn" target="_blank" rel="noopener">Quiero mi catálogo con precio</a>` },
+    { n:4, html:`<b class="fn-grande">Las tiendas grandes mandan catálogo. <em>¿Tú todavía mandas fotos sueltas?</em></b>
+      <span class="fn-txt">Con tu logo y el precio de cada producto. Como tienda de verdad.</span>
+      <a class="fn-btn" id="fnBtn" target="_blank" rel="noopener">Quiero el mío con mi logo</a>` },
+    { n:5, html:`<b class="fn-grande">¿Todavía ofreces lo que ya se te acabó? <em>Tu catálogo sale de tu inventario.</em></b>
+      <span class="fn-txt">Un toque y solo entra al catálogo lo que todavía tienes.</span>
+      <a class="fn-btn" id="fnBtn" target="_blank" rel="noopener">Quiero mi catálogo con lo que tengo</a>` },
+    { n:6, html:`<b class="fn-grande">Producto nuevo guardado no se vende. <em>Manda tu catálogo hoy.</em></b>
+      <span class="fn-txt">Un toque y se va al grupo, al estado o a la clienta.</span>
+      <a class="fn-btn" id="fnBtn" target="_blank" rel="noopener">Quiero mandar el mío hoy</a>` },
+    { n:7, html:`<b class="fn-grande">Tu clienta escoge sin preguntar el precio. <em>Nada más mándale el catálogo.</em></b>
+      <span class="fn-txt">Todos tus productos en una sola imagen, con foto y precio, directo de tu inventario.</span>
+      <a class="fn-btn" id="fnBtn" target="_blank" rel="noopener">Quiero mi catálogo</a>` }
+  ],
+
+  /* qual faixa mostrar agora: ?faixa=N na previa, senao a da vez no rodizio */
+  vez(){
+    const total = this.FAIXAS.length;
+    const forcada = parseInt(new URLSearchParams(location.search).get('faixa') || '', 10);
+    if(forcada >= 1 && forcada <= total) return { i: forcada - 1, previa: true };
+    let i = 0;
+    try { i = parseInt(localStorage.getItem(this.chaveVez) || '0', 10) || 0; } catch(e){}
+    return { i: ((i % total) + total) % total, previa: false };
+  },
+
+  pintar(){
+    const f = document.getElementById('faixaNovidade');
+    if(!f) return;
+    /* so quem entrou pelo link do FRONT (/c/) ou do BUMP (/cd/): tem o Controle e
+       ainda nao tem o Catalogo (regra do Vini, 06/10/2026). Quem so tem o Cobrar
+       (/d/) nao ve. `tem` e a mesma funcao que decide os cards, entao comprar o
+       Catalogo faz a faixa sumir sozinha, sem codigo extra. */
+    if(!tem('controle') || tem('preco')) { f.style.display = 'none'; return; }
+
+    const v = this.vez();
+    let fechadaEm = 0;
+    try { fechadaEm = parseInt(localStorage.getItem(this.chave) || '0', 10) || 0; } catch(e){}
+    const passou = v.previa || (Date.now() - fechadaEm) >= this.espera;
+    f.style.display = passou ? '' : 'none';
+    if(!passou) return;
+
+    const faixa = this.FAIXAS[v.i];
+    f.className = 'faixa-nov fx-' + faixa.n;
+    document.getElementById('fnCorpo').innerHTML = faixa.html;
+    const b = document.getElementById('fnBtn');
+    if(b) b.href = comOrigem(this.destino, 'preco-faixa' + faixa.n);
+  },
+
+  /* fechou no X: comeca a espera e ja deixa a PROXIMA faixa engatilhada */
+  dispensar(){
+    try {
+      localStorage.setItem(this.chave, String(Date.now()));
+      const i = parseInt(localStorage.getItem(this.chaveVez) || '0', 10) || 0;
+      localStorage.setItem(this.chaveVez, String((i + 1) % this.FAIXAS.length));
+    } catch(e){}
+    this.pintar();
+  }
+};
+/* pintado aqui, e nao junto da montagem do menu: o objeto so existe a partir
+   desta linha, e a faixa depende de `tem()`, que ja esta resolvido. */
+Novidade.pintar();
+
+
+const Config = {
+  abrir(){ this.pintar(); document.getElementById('cfgFundo').classList.add('aberto'); },
+  fechar(){ document.getElementById('cfgFundo').classList.remove('aberto'); },
+  pintar(){
+    const atual = localStorage.getItem('appganancia_tema')||'vinho';
+    document.getElementById('cfgCores').innerHTML = Object.keys(TEMAS).map(k=>
+      `<button class="${k===atual?'on':''}" style="background:${TEMAS[k].a}" aria-label="${TEMAS[k].nome}"
+        onclick="aplicarTema('${k}');Config.pintar();if(typeof Tela!=='undefined'&&Tela.render)Tela.render();"></button>`).join('');
+    const inst = Instalar.instalado();
+    document.getElementById('cfgInstalarBloco').style.display = inst ? 'none' : '';
+  },
+  instalar(){ Instalar.instalar(); }
+};
+
+
+/* ====== ANIMACAO DO CAMINHO NO IPHONE ======
+   Roteiro fiel ao fluxo real do iOS 26, conferido em video do aparelho (27/08/2026).
+   Cada toque sao DUAS cenas ("dedo no alvo" e depois "tela ja aberta"), pra transicao
+   CSS terminar antes do dedo andar: senao a legenda manda tocar num item que ainda
+   esta subindo. Um so relogio percorre a lista, entao ciclo antigo nao atropela o novo. */
+const Anim = {
+  ciclo:null, passo:0, ligada:false,
+  el(id){ return document.getElementById(id); },
+
+  CENAS: [
+    /* 1. tres pontinhos na barra */
+    { ms:900,  n:2, leg:'Toca <b>Menú de página</b>',                dedo:'dPontos'  },
+    { ms:700,  n:2, leg:'Toca <b>Menú de página</b>',                dedo:'dPontos', bate:1 },
+    /* 2. menu aberto: Compartilhar */
+    { ms:900,  n:3, leg:'Toca <b>Compartir</b>',                     dedo:'dPontos',    menu:1 },
+    { ms:800,  n:3, leg:'Toca <b>Compartir</b>',                     dedo:'dMenuShare', menu:1, on:'dMenuShare' },
+    { ms:650,  n:3, leg:'Toca <b>Compartir</b>',                     dedo:'dMenuShare', menu:1, on:'dMenuShare', bate:1 },
+    /* 3. folha aberta: o "Ver mais" e o botao redondo da direita */
+    { ms:1100, n:4, leg:'Toca <b>Ver más</b>',                       folha:1 },
+    { ms:800,  n:4, leg:'Toca <b>Ver más</b>',                       folha:1, dedo:'dVerMais' },
+    { ms:650,  n:4, leg:'Toca <b>Ver más</b>',                       folha:1, dedo:'dVerMais', on:'dVerMais', bate:1 },
+    /* 4. a lista abre, e o item aparece no fim dela */
+    { ms:1000, n:5, leg:'Toca <b>Agregar a Inicio</b>',              folha:1, lista:1, menos:1, dedo:'dVerMais' },
+    { ms:850,  n:5, leg:'Toca <b>Agregar a Inicio</b>',              folha:1, lista:1, menos:1, dedo:'dAdd', on:'dAdd' },
+    { ms:650,  n:5, leg:'Toca <b>Agregar a Inicio</b>',              folha:1, lista:1, menos:1, dedo:'dAdd', on:'dAdd', bate:1 },
+    /* 5. a tela final, com o botao Adicionar em azul */
+    { ms:1000, n:6, leg:'Toca <b>Agregar</b>',                       final:1 },
+    { ms:800,  n:6, leg:'Toca <b>Agregar</b>',                       final:1, dedo:'dAddBtn', pisca:1 },
+    { ms:650,  n:6, leg:'Toca <b>Agregar</b>',                       final:1, dedo:'dAddBtn', pisca:1, bate:1 },
+    /* 6. pronto */
+    { ms:2400, n:6, leg:'¡Listo! El ícono queda en tu pantalla',     final:1 }
+  ],
+
+  pintar(c){
+    const menu = this.el('dMenu'), folha = this.el('dFolha');
+    menu.style.opacity    = c.menu ? '1' : '0';
+    menu.style.transform  = c.menu ? 'translateY(0)' : 'translateY(10px)';
+    folha.style.opacity   = c.folha ? '1' : '0';
+    folha.style.transform = c.folha ? 'translateY(0)' : 'translateY(100%)';
+    this.el('dLista').classList.toggle('aberta', !!c.lista);
+    this.el('dFinal').classList.toggle('on', !!c.final);
+    this.el('dMenuShare').classList.toggle('on', c.on === 'dMenuShare');
+    this.el('dVerMais').classList.toggle('on',   c.on === 'dVerMais');
+    this.el('dAdd').classList.toggle('on',       c.on === 'dAdd');
+    this.el('dAddBtn').classList.toggle('pisca', !!c.pisca);
+    /* depois de abrir, "Ver mais" vira "Ver menos" e a seta inverte, como no iOS */
+    this.el('dVerMaisTxt').textContent = c.menos ? 'Ver menos' : 'Ver más';
+    this.el('dSeta').innerHTML = c.menos ? '<path d="M6 9l6 6 6-6"/>' : '<path d="M6 15l6-6 6 6"/>';
+    this.el('dPasso').textContent = 'paso ' + c.n;
+    this.el('dLeg').innerHTML = c.leg;
+
+    const dedo = this.el('dDedo');
+    if(!c.dedo){ dedo.style.opacity = '0'; return; }
+    const alvo = this.el(c.dedo), base = dedo.parentElement.getBoundingClientRect();
+    const r = alvo.getBoundingClientRect();
+    dedo.style.left = (r.left - base.left + r.width/2) + 'px';
+    dedo.style.top  = (r.top  - base.top  + r.height/2) + 'px';
+    dedo.style.opacity = '1';
+    if(c.bate){ dedo.classList.remove('bate'); void dedo.offsetWidth; dedo.classList.add('bate'); }
+  },
+
+  proxima(){
+    if(!this.ligada) return;
+    const c = this.CENAS[this.passo];
+    this.pintar(c);
+    this.passo = (this.passo + 1) % this.CENAS.length;
+    this.ciclo = setTimeout(() => this.proxima(), c.ms);
+  },
+  ligar(){ if(this.ligada || !this.el('dDedo')) return; this.ligada = true; this.passo = 0; this.proxima(); },
+  desligar(){ this.ligada = false; clearTimeout(this.ciclo); }
+};
+
+/* ============ INSTALACAO (PWA) ============
+   O prompt nativo do Chrome ("Instalar aplicativo", 1 toque) SO e disparado se houver
+   service worker ativo COM handler de fetch. Ate 27/08/2026 este arquivo desregistrava o
+   SW quando a pagina abria no navegador comum, que e exatamente onde a compradora esta
+   ANTES de instalar: o `beforeinstallprompt` nunca chegava e o botao caia sempre no passo
+   a passo. Agora o SW e registrado sempre (ele ja e rede-primeiro, entao nao serve versao
+   velha) e o prompt de 1 toque volta a funcionar no Android. */
+const Instalar = {
+  prompt:null,
+  init(){
+    if('serviceWorker' in navigator) navigator.serviceWorker.register(
+      /* O sw.js mora SEMPRE em /app/, nunca dentro da pasta de acesso. Com
+         'sw.js' relativo, uma pagina em /app/tudo/ buscava /app/tudo/sw.js e
+         tomava 503: o service worker nao ativava e o app nao abria offline.
+         Achado no console em 31/08/2026, ja com a estrutura de pastas no ar. */
+      location.pathname.replace(/\/app\/.*$/, '/app/') + 'sw.js',
+      {scope: location.pathname.replace(/\/app\/.*$/, '/app/')}).catch(()=>{});
+    window.addEventListener('beforeinstallprompt', e=>{ e.preventDefault(); this.prompt=e; this.pintarFaixa(); });
+    window.addEventListener('appinstalled', ()=>{ this.prompt=null; this.pintarFaixa();
+      if(typeof Config!=='undefined') Config.pintar(); });
+    this.pintarFaixa();
+  },
+  instalado(){ return window.matchMedia('(display-mode: standalone)').matches || navigator.standalone===true; },
+  iOS(){ return /iphone|ipad|ipod/i.test(navigator.userAgent); },
+  /* a faixa some quando ja esta instalado, ou quando a pessoa dispensou */
+  pintarFaixa(){
+    const f = document.getElementById('faixaInstalar');
+    if(!f) return;
+    const esconder = this.instalado() || localStorage.getItem('appganancia_instalar_dispensado')==='1';
+    f.style.display = esconder ? 'none' : '';
+  },
+  dispensarFaixa(){ localStorage.setItem('appganancia_instalar_dispensado','1'); this.pintarFaixa(); },
+  async instalar(){
+    /* caminho bom: prompt nativo, 1 toque, sem passo a passo nenhum */
+    if(this.prompt){
+      this.prompt.prompt();
+      const r = await this.prompt.userChoice;
+      if(r.outcome==='accepted'){ this.prompt=null; this.pintarFaixa();
+        if(typeof Config!=='undefined') Config.pintar(); }
+      return;
+    }
+    /* iPhone nao tem API de instalacao: o passo a passo ilustrado e o teto */
+    this.abrirPassos();
+  },
+  abrirPassos(){
+    const seta = '<svg viewBox="0 0 24 24" class="ps-ico"><path d="M12 16V3M12 3L8 7M12 3l4 4"/><path d="M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/></svg>';
+    const pontos = '<svg viewBox="0 0 24 24" class="ps-ico"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg>';
+    /* iPhone: caminho conferido no aparelho do Vini em 27/08/2026. No Safari novo o
+       Compartilhar NAO fica solto na barra de baixo, fica dentro do menu de tres
+       pontinhos, e o "Adicionar a Tela de Inicio" so aparece depois de tocar em
+       "Ver mais". Sao 5 passos, e e o passo do "Ver mais" que trava a compradora:
+       ela chega na folha de compartilhar, nao acha o item e desiste. */
+    /* es-MX, conferido em 21/10/2026:
+       iPhone: support.apple.com/es-mx/guide/iphone/iph42ab2f3a7/ios ("Menú de página" >
+       Compartir > deslizar a lista > "Agregar a Inicio" > "Agregar"). O "Ver más" (botao
+       redondo da fileira de acoes) NAO esta na doc da Apple; o rotulo em espanhol vem do
+       ingles "View More" e precisa ser conferido num iPhone em espanhol.
+       Android: support.google.com/chrome/answer/9658361?hl=es-419 ("A la derecha de la
+       barra de direcciones, presiona Más" > "Instalar y crear acceso directo" > "Instalar").
+       O rotulo "Crear acceso directo" do submenu nao esta na pagina es-419: conferir. */
+    const passos = this.iOS()
+      ? ['Abre este link <b>en Safari</b>',
+         `Toca el botón ${pontos} <b>Menú de página</b>, junto a la dirección (tiene tres puntitos o tres rayitas, según tu iPhone)`,
+         `Toca ${seta} <b>Compartir</b>`,
+         'Toca <b>Ver más</b> (el botón redondo con flechita) o desliza la lista hacia abajo',
+         'Toca <b>Agregar a Inicio</b>',
+         'Toca <b>Agregar</b>, arriba']
+      : [`Toca el botón ${pontos} <b>Más</b>, a la derecha de la barra de direcciones`,
+         'Toca <b>Instalar y crear acceso directo</b>',
+         'Elige <b>Instalar</b><span class="ps-nota">No elijas "Crear acceso directo": así el ícono sale con el logo de Chrome y la app se abre con la barra del navegador.</span>'];
+    document.getElementById('psSub').innerHTML =
+      'Después la app se abre desde su ícono, igual que tus otras apps, y funciona hasta sin internet.';
+    document.getElementById('psLista').innerHTML = passos.map(p=>`<li>${p}</li>`).join('');
+    /* o desenho do caminho so faz sentido no iPhone: no Android o prompt nativo
+       instala em 1 toque e nao ha passo a passo pra ensinar */
+    const demo = document.querySelector('.demo');
+    if(demo) demo.style.display = this.iOS() ? '' : 'none';
+    document.getElementById('psFundo').classList.add('aberto');
+    if(this.iOS() && typeof Anim !== 'undefined') Anim.ligar();
+  },
+  fecharPassos(){
+    document.getElementById('psFundo').classList.remove('aberto');
+    if(typeof Anim !== 'undefined') Anim.desligar();   /* nao roda escondido */
+  }
+};
+Instalar.init();
+(function(){ const b = document.getElementById('dBtn');
+  if(b) b.onclick = () => { Anim.desligar(); Anim.ligar(); }; })();
+
+</script>
+
+<div class="cfg-fundo" id="cfgFundo" onclick="if(event.target===this)Config.fechar()">
+  <div class="cfg-box">
+    <h3>Ajustes</h3>
+    <div class="cfg-sub">Ponle tu estilo a la app.</div>
+    <h4>color de la app</h4>
+    <div class="cfg-cores" id="cfgCores"></div>
+    <div id="cfgInstalarBloco">
+      <h4>la app en tu celular</h4>
+      <p style="font-size:14px;line-height:1.5;color:var(--cinza)">Con su propio ícono en tu pantalla, abre sin navegador y funciona sin internet.</p>
+      <button class="cfg-btn" onclick="Config.instalar()">Agregar a la pantalla de inicio</button>
+    </div>
+    <button class="cfg-btn sec" onclick="Config.fechar()">Cerrar</button>
+  </div>
+</div>
+
+
+<div class="ps-fundo" id="psFundo" onclick="if(event.target===this)Instalar.fecharPassos()">
+  <div class="ps-box">
+    <h3>Pon la app en tu pantalla de inicio</h3>
+    <div class="ps-sub" id="psSub"></div>
+    <div class="demo">
+      <div class="demo-topo">
+        <span class="demo-rot">cómo se hace</span>
+        <span class="demo-passo" id="dPasso">paso 2</span>
+      </div>
+      <div class="fone">
+        <div class="fone-tela">
+          <div class="pag">
+            <div class="pag-top"><b>AppGanancia</b><i>pagas una vez, es tuya para siempre</i></div>
+            <div class="pag-card"><b>Mis Ventas</b><i>tus ventas, quién te debe y cuánto te quedó</i><div class="pag-btn"></div></div>
+            <div class="pag-card"><b>Mensajes listos</b><i>para cobrar y vender por WhatsApp</i></div>
+          </div>
+
+          <div class="menu" id="dMenu">
+            <div id="dMenuShare"><svg class="mi" viewBox="0 0 24 24"><path d="M12 16V3M12 3L8 7M12 3l4 4"/><path d="M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/></svg>Compartir</div>
+            <div><svg class="mi" viewBox="0 0 24 24"><path d="M6 4h12v16l-6-4-6 4z"/></svg>Agregar a Favoritos</div>
+            <div><svg class="mi" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Nueva pestaña</div>
+          </div>
+
+          <div class="folha" id="dFolha">
+            <div class="f-cab">
+              <div class="f-ico">A</div>
+              <div><b>Mis apps · AppGanancia</b><i>appganancia.com</i></div>
+            </div>
+            <div class="f-acoes">
+              <div><div class="c"><svg viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 00-2-2H6a2 2 0 00-2 2v8a2 2 0 002 2h2"/></svg></div><span>Copiar</span></div>
+              <div><div class="c"><svg viewBox="0 0 24 24"><path d="M6 4h12v16l-6-4-6 4z"/></svg></div><span>Favoritos</span></div>
+              <div><div class="c"><svg viewBox="0 0 24 24"><circle cx="8" cy="12" r="3"/><circle cx="16" cy="12" r="3"/></svg></div><span>Leer después</span></div>
+              <div id="dVerMais"><div class="c"><svg id="dSeta" viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></svg></div><span id="dVerMaisTxt">Ver más</span></div>
+            </div>
+            <div class="f-lista" id="dLista">
+              <div><svg class="li" viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/></svg>Agregar favorito a...</div>
+              <div><svg class="li" viewBox="0 0 24 24"><path d="M12 3l2.6 5.6 6 .8-4.4 4.2 1.1 6-5.3-2.9-5.3 2.9 1.1-6L3.4 9.4l6-.8z"/></svg>Agregar a Favoritos</div>
+              <div><svg class="li" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>Agregar a Nota rápida</div>
+              <div><svg class="li" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>Buscar en la página</div>
+              <div id="dAdd"><svg class="li" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Agregar a Inicio</div>
+            </div>
+          </div>
+
+          <div class="final" id="dFinal">
+            <div class="final-cab">
+              <span class="x">&times;</span>
+              <b>Agregar a Inicio</b>
+              <span class="add" id="dAddBtn">Agregar</span>
+            </div>
+            <div class="final-nome">
+              <div class="fi"></div>
+              <div><b>AppGanancia</b><i>appganancia.com/app/...</i></div>
+            </div>
+          </div>
+
+          <div class="barra">
+            <i></i><div class="b-url"></div>
+            <span class="b-pontos" id="dPontos"><span></span><span></span><span></span></span>
+          </div>
+
+          <div class="dedo" id="dDedo"></div>
+        </div>
+      </div>
+      <div class="demo-leg" id="dLeg"></div>
+      <div class="demo-ctrl"><button type="button" id="dBtn">repetir</button></div>
+    </div>
+    <ol id="psLista"></ol>
+    <button class="ps-btn" onclick="Instalar.fecharPassos()">Entendido</button>
+  </div>
+</div>
+
+
+
+<script>
+/* ===== O NIVEL TAMBEM VEM DO SERVICE WORKER (31/08/2026) =====
+
+   O diagnostico do aparelho da compradora voltou com TUDO certo e ela ainda
+   travava. O que sobrava: o atalho dela abrir /app/hub.html, onde nao ha chave no
+   caminho, e o localStorage estar VAZIO nesse contexto, porque no iOS o app
+   instalado tem storage separado do Safari, e cada instalacao tem o seu.
+
+   O Cache Storage do service worker, ao contrario, e por ORIGEM: atravessa. Este
+   bloco pergunta o nivel ao SW e, se ele souber, libera a tela (ou manda pra pasta
+   certa). E o que grava tambem, sempre que a pagina souber o nivel pelo caminho.
+
+   Roda DEPOIS da renderizacao: se o caminho ja tinha a chave, nada disso e
+   necessario e a tela nem pisca. */
+(function(){
+  if(!('serviceWorker' in navigator)) return;
+  var MAPA_CH = {'sx01fzn':['controle'],'83aby3u':['controle','divulga'],'m7081wh':['controle','divulga','preco']};
+
+  function chaveDe(itens){
+    var c = itens.indexOf('controle')>=0, d = itens.indexOf('divulga')>=0, p = itens.indexOf('preco')>=0;
+    return p ? 'm7081wh' : (c&&d) ? '83aby3u' : c ? 'sx01fzn' : null;
+  }
+
+  var m = location.pathname.match(/\/(sx01fzn|83aby3u|m7081wh)(?:\/|$)/);
+  var doCaminho = m ? (MAPA_CH[m[1]] || []) : [];
+
+  navigator.serviceWorker.ready.then(function(reg){
+    var sw = reg.active;
+    if(!sw) return;
+
+    /* a pagina sabe o nivel: grava no SW, pra atravessar pro app instalado */
+    if(doCaminho.length){ sw.postMessage({tipo:'gravar-nivel', itens:doCaminho}); return; }
+
+    /* a pagina NAO sabe: pergunta ao SW */
+    navigator.serviceWorker.addEventListener('message', function(ev){
+      var d = ev.data || {};
+      if(d.tipo !== 'nivel' || !Array.isArray(d.itens) || !d.itens.length) return;
+      var ch = chaveDe(d.itens);
+      if(!ch) return;
+      /* leva pra pasta dela, que libera pelo CAMINHO: nao depende de mais nada */
+      var base = location.pathname.replace(/[^\/]*$/, '');
+      if(base.indexOf('/' + ch + '/') < 0){
+        try{ location.replace(base + ch + '/'); }catch(e){}
+      }
+    });
+    sw.postMessage({tipo:'ler-nivel'});
+  }).catch(function(){});
+})();
+</script>
+
+<script>
+/* ===== A PAGINA DA RAIZ APONTA PRO MANIFEST DA PASTA (31/08/2026) =====
+
+   PROVADO NO APARELHO, nao suposto. O Vini abriu /app/tudo/diagnostico.html,
+   adicionou a tela de inicio, e o icone salvou a pasta /app/tudo/, ou seja o iOS
+   ignorou a URL da aba e usou a `start_url` do manifest. A start_url VENCE.
+
+   Consequencia pro caso da compradora: as paginas da RAIZ linkam
+   /app/manifest.webmanifest, cuja start_url e `/app/hub.html`, SEM chave. Salvando
+   de qualquer pagina da raiz (link antigo, historico do Safari, ou o icone velho
+   que ela reabriu), o icone nasce travado. Reescrever a URL da aba NAO resolve,
+   porque o iOS nao olha a URL: olha o manifest.
+
+   Conserto: se esta pagina sabe a chave, ela troca o <link rel=manifest> pelo
+   manifest DA PASTA, que e um arquivo http(s) real, nao blob (blob nao e
+   confiavel no iOS, e o manifest precisa ser same-origin da start_url).
+
+   A chave vem, em ordem: do caminho, do #de= que o menu manda, do ?libera=
+   antigo, e por fim do nivel que o service worker guarda (Cache Storage, que
+   atravessa o isolamento entre Safari e app instalado). */
+(function(){
+  var MAPA_K = {'sx01fzn':1,'83aby3u':1,'m7081wh':1};
+
+  function aplicar(chave){
+    if(!chave || !MAPA_K[chave]) return;
+    var base = location.pathname.replace(/\/app\/.*$/, '/app/');
+    if(base.indexOf('/app/') < 0) base = '/app/';
+    var href = base + chave + '/manifest.webmanifest';
+    var el = document.querySelector('link[rel="manifest"]');
+    if(!el){ el = document.createElement('link'); el.rel = 'manifest'; document.head.appendChild(el); }
+    if(el.getAttribute('href') !== href) el.setAttribute('href', href);
+  }
+
+  try{
+    /* 1. caminho */
+    var m = location.pathname.match(/\/(sx01fzn|83aby3u|m7081wh)(?:\/|$)/);
+    if(m){ aplicar(m[1]); return; }   /* ja esta na pasta: o manifest local ja serve */
+
+    /* 2. #de= que o menu manda ao abrir o app */
+    var h = (location.hash||'').match(/de=(sx01fzn|83aby3u|m7081wh)$/);
+    if(h){ aplicar(h[1]); return; }
+
+    /* 3. ?libera= dos links antigos */
+    var q = (new URLSearchParams(location.search).get('libera')||'').replace(/^so-/,'');
+    if(MAPA_K[q]){ aplicar(q); return; }
+
+    /* 4. o nivel que o service worker guarda: atravessa Safari -> app instalado */
+    if('serviceWorker' in navigator){
+      navigator.serviceWorker.ready.then(function(reg){
+        if(!reg.active) return;
+        navigator.serviceWorker.addEventListener('message', function(ev){
+          var d = ev.data || {};
+          if(d.tipo !== 'nivel' || !Array.isArray(d.itens) || !d.itens.length) return;
+          var i = d.itens, c = i.indexOf('controle')>=0, dv = i.indexOf('divulga')>=0, pr = i.indexOf('preco')>=0;
+          aplicar(pr ? 'm7081wh' : (c&&dv) ? '83aby3u' : c ? 'sx01fzn' : null);
+        });
+        reg.active.postMessage({tipo:'ler-nivel'});
+      }).catch(function(){});
+    }
+  }catch(e){}
+})();
+</script>
+</body>
+</html>

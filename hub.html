@@ -208,6 +208,77 @@ main{padding:16px;max-width:560px;margin:0 auto}
 .demo-ctrl button{background:none;border:1px solid var(--linha);border-radius:99px;
   padding:5px 13px;font-size:11.5px;color:var(--cinza);cursor:pointer;font-family:inherit;font-weight:600}
 @media (prefers-reduced-motion: reduce){.dedo,.menu,.folha,.f-lista,.final{transition:none}}
+/* ===== FAIXA DA NOVIDADE (21/09/2026) =====
+   Regra do Vini: aparece pra quem usa o link do front (sx01fzn) e do bump (83aby3u),
+   uma vez, e volta a cada 8h ate a pessoa comprar.
+
+   POR QUE FAIXA E NAO MODAL: a lojista abre o app pra registrar uma venda, muitas
+   vezes com a freguesa na frente. Modal que cobre a tela nessa hora irrita e
+   ensina a fechar sem ler. A faixa fica acima do menu, chama a atencao pela cor
+   e pelo selo, e nao bloqueia nada. */
+.faixa-nov{position:relative;background:linear-gradient(140deg,var(--vinho),#5c1838);
+  color:#fff;border-radius:16px;padding:15px 16px 16px;margin:0 auto 14px;max-width:560px;
+  box-shadow:0 14px 30px -18px rgba(61,15,36,.9)}
+.faixa-nov .fn-selo{display:inline-block;background:#fff;color:var(--vinho);
+  font-size:12.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+  padding:7px 14px;border-radius:999px;margin-bottom:11px;
+  box-shadow:0 3px 10px rgba(0,0,0,.18)}
+.faixa-nov .fn-tit{display:block;font-size:17px;font-weight:800;line-height:1.22;
+  letter-spacing:-.3px;margin-bottom:5px;padding-right:22px}
+.faixa-nov .fn-txt{display:block;font-size:13px;line-height:1.45;opacity:.92;margin-bottom:12px}
+.faixa-nov .fn-btn{display:block;background:#fff;color:var(--vinho);text-align:center;
+  text-decoration:none;font-weight:800;font-size:15px;padding:13px;border-radius:12px}
+.faixa-nov .fn-btn:active{opacity:.85}
+.faixa-nov .fn-x{position:absolute;top:9px;right:10px;background:none;border:0;color:#fff;
+  font-size:22px;line-height:1;padding:3px 7px;cursor:pointer;opacity:.75;font-family:inherit;z-index:2}
+
+/* ===== RODIZIO DA FAIXA (06/10/2026) =====
+   Pedido do Vini: quem abre o app todo dia via a MESMA mensagem e parava de ler.
+   Sao 7 faixas; a classe fx-N muda o fundo, o texto mora em Novidade.FAIXAS.
+   REGRA (Vini, 06/10): frase GRANDE que provoca e ja diz o que e, UMA linha curta,
+   e o botao dizendo o que ela leva. Nada de historinha nem bloco de prova: faixa
+   alta e cheia virou anuncio e foi reprovada. Cores so do app. */
+.fn-grande{display:block;font-size:24px;font-weight:900;line-height:1.1;letter-spacing:-.6px;
+  margin:2px 0 9px;padding-right:22px}
+.fn-grande em{font-style:normal;color:#ffd0e4}
+.fn-riscado{text-decoration:line-through;text-decoration-thickness:3px;opacity:.6}
+/* fundo claro (fx-1 branca, fx-6 rosa): letra vinho, botao vinho */
+.faixa-nov.fx-1,.faixa-nov.fx-6{color:var(--tinta);border:2px solid var(--vinho);box-shadow:0 14px 30px -20px rgba(61,15,36,.6)}
+.faixa-nov.fx-1{background:#fff}
+.faixa-nov.fx-6{background:var(--rose)}
+.fx-1 .fn-x,.fx-6 .fn-x{color:var(--vinho)}
+.fx-1 .fn-grande em,.fx-6 .fn-grande em{color:var(--vinho)}
+.fx-1 .fn-riscado{text-decoration-color:var(--vinho)}
+.fx-1 .fn-btn,.fx-6 .fn-btn{background:var(--vinho);color:#fff}
+/* fx-4 escura, "loja grande" */
+.faixa-nov.fx-4{background:linear-gradient(160deg,#2a0f1d,#14070e);border:1px solid #4a1f33}
+.fx-4 .fn-grande em{color:#f3a9c8}
+.fx-4 .fn-btn{background:var(--vinho);color:#fff}
+/* fx-7 vinho escuro liso, pra nao repetir o degrade das outras */
+.faixa-nov.fx-7{background:var(--vinho-escuro)}
+/* fx-2: miniatura do catalogo real ao lado da linha de apoio */
+.fn-prova{display:grid;grid-template-columns:56px 1fr;gap:11px;align-items:center;margin:0 0 12px}
+.fn-prova img{width:56px;border-radius:6px;transform:rotate(-4deg);box-shadow:0 8px 16px -8px rgba(0,0,0,.55);display:block}
+.fn-prova .fn-txt{margin:0}
+/* fx-3: as perguntas que ela responde o dia todo, numa linha */
+.fn-bolhas{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+.fn-bolhas span{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.2);font-size:12.5px;
+  padding:5px 10px;border-radius:12px 12px 12px 3px}
+
+/* botao chamativo (Vini, 06/10): pulsa com um anel e um brilho atravessa de tempos
+   em tempos. Botao branco ganha brilho vinho; botao vinho ganha brilho branco. */
+.faixa-nov{--fn-brilho:rgba(142,39,87,.22);--fn-anel:rgba(255,255,255,.55)}
+.faixa-nov.fx-1,.faixa-nov.fx-6{--fn-brilho:rgba(255,255,255,.45);--fn-anel:rgba(142,39,87,.38)}
+.faixa-nov.fx-4{--fn-brilho:rgba(255,255,255,.4);--fn-anel:rgba(243,169,200,.45)}
+.faixa-nov .fn-btn{position:relative;overflow:hidden;animation:fnPulsa 1.8s ease-in-out infinite}
+.faixa-nov .fn-btn::after{content:'';position:absolute;top:0;bottom:0;left:-60%;width:40%;
+  background:linear-gradient(100deg,transparent,var(--fn-brilho),transparent);transform:skewX(-18deg);
+  animation:fnBrilho 3s ease-in-out infinite;pointer-events:none}
+.faixa-nov .fn-btn:active{animation:none;transform:scale(.98)}
+@keyframes fnPulsa{0%,100%{transform:scale(1);box-shadow:0 0 0 0 var(--fn-anel)}
+  50%{transform:scale(1.035);box-shadow:0 0 0 7px rgba(255,255,255,0)}}
+@keyframes fnBrilho{0%{left:-60%}55%,100%{left:120%}}
+@media (prefers-reduced-motion:reduce){.faixa-nov .fn-btn,.faixa-nov .fn-btn::after{animation:none}}
 </style>
 </head>
 <body>
@@ -231,6 +302,18 @@ main{padding:16px;max-width:560px;margin:0 auto}
 </div>
 
 
+<!-- ===== AVISO DA NOVIDADE (21/09/2026) =====
+     So aparece pra quem NAO tem o Catalogo, ou seja, quem entrou por sx01fzn (front)
+     ou 83aby3u (front + bump). Quem ja comprou nunca ve.
+     Some no X e volta 8h depois, ate ela comprar.
+     O conteudo vem de Novidade.FAIXAS (rodizio de 7, 06/10/2026). -->
+<div class="faixa-nov" id="faixaNovidade" style="display:none">
+  <button class="fn-x" onclick="Novidade.dispensar()" aria-label="cerrar">&times;</button>
+  <div id="fnCorpo"></div>
+</div>
+</div>
+
+
 <main id="lista"></main>
 
 <div class="rodape">Tus apps se quedan guardadas en este celular.<br>Para abrirlas desde el ícono, sin navegador, usa el botón <b>Instalar</b> de arriba.</div>
@@ -239,6 +322,7 @@ main{padding:16px;max-width:560px;margin:0 auto}
 /* ===== desbloqueio por chave no CAMINHO (AppGanancia, 21/10/2026) =====
    /app/sx01fzn/   -> Mis Ventas (front)
    /app/83aby3u/   -> Mis Ventas + Mensajes listos (front + bump)
+   /app/m7081wh/   -> los 3 apps (quien compra el catálogo, el upsell, lleva todo)
    Chaves novas e nao obvias, geradas ao acaso em 21/10/2026. A fonte unica da tabela
    e o NIVEIS do montar-pastas.py; as copias abaixo tem de bater com ela. */
 const TEMAS={
@@ -271,7 +355,8 @@ aplicarTema(localStorage.getItem('appganancia_tema')||'vinho');
    na hora de instalar: ele instala o que esta na tela, com query e tudo. */
 const MAPA = {
   'sx01fzn':  ['controle'],
-  '83aby3u':  ['controle','divulga']
+  '83aby3u':  ['controle','divulga'],
+  'm7081wh':  ['controle','divulga','preco']   /* quem compra o catálogo (upsell) leva os 3 apps: decisão do Vini, 22/10/2026 */
 };
 const CHAVE_MEM = 'appganancia_liberado';
 
@@ -307,14 +392,14 @@ function lembrado(){
   try{
     var v = JSON.parse(localStorage.getItem(CHAVE_MEM) || '[]');
     if(!Array.isArray(v)) return [];
-    var validos = ['controle','divulga'];
+    var validos = ['controle','divulga','preco'];
     return v.filter(function(x){ return validos.indexOf(x) >= 0; });
   }catch(e){ return []; }
 }
 
 const LIBERADOS = (function(){
   /* (?:\/|$) aceita /app/tudo e /app/tudo/index.html igualmente. */
-  var m = location.pathname.match(/\/(sx01fzn|83aby3u)(?:\/|$)/);
+  var m = location.pathname.match(/\/(sx01fzn|83aby3u|m7081wh)(?:\/|$)/);
   var k = m ? m[1] : (new URLSearchParams(location.search).get('libera') || '').replace(/^so-/, '');
   var doLink = MAPA[k] || [];
   if(doLink.length) return lembrar(doLink);
@@ -332,8 +417,8 @@ const LIBERADOS = (function(){
      botao voltar do aparelho nao volta pra tela travada. */
   var mem = lembrado();
   if(mem.length){
-    var c = mem.indexOf('controle')>=0, d = mem.indexOf('divulga')>=0;
-    var chave = (c&&d) ? '83aby3u' : c ? 'sx01fzn' : null;
+    var c = mem.indexOf('controle')>=0, d = mem.indexOf('divulga')>=0, p = mem.indexOf('preco')>=0;
+    var chave = p ? 'm7081wh' : (c&&d) ? '83aby3u' : c ? 'sx01fzn' : null;
     if(chave){
       var base = location.pathname.replace(/[^\/]*$/, '');
       try{ location.replace(base + chave + '/'); }catch(e){}
@@ -363,23 +448,26 @@ const comChave = (url) => {
      do MENU, entao lá ele e controle.html. Bug real de 31/08/2026: sem esse
      desvio, o app sobrescrevia o menu e /app/cd/ abria o Controle direto, sem
      cadeado no que a compradora nao tinha comprado. */
-  const m = location.pathname.match(/\/(sx01fzn|83aby3u)(?:\/|$)/);
+  const m = location.pathname.match(/\/(sx01fzn|83aby3u|m7081wh)(?:\/|$)/);
   if(!m) return url;
   const naPasta = (url === 'index.html') ? 'controle.html' : url;
   return naPasta + '#de=' + m[1];
 };
 
-/* checkout dos degraus: HOTMART, PENDENTE (21/10/2026). Os produtos ainda nao existem.
-   Enquanto o link estiver vazio, o card travado mostra o pitch sem botao de compra.
-   Quando existir: o link da OFERTA na Hotmart (a plataforma e a fonte da verdade, nao
-   este arquivo) e o preco como ela mostra no checkout do Mexico. */
+/* checkout dos degraus: HOTMART (22/10/2026; funil/checkouts.json, a Hotmart e a fonte da verdade, nao
+   este arquivo). Preco como o checkout do Mexico mostra, IVA de 16% incluido. O catalogo (upsell) passa
+   antes pela pagina de oferta (OFERTA.preco), igual a 004; os outros dois vao direto ao checkout. */
 const CHECKOUT = {
-  controle:'',   /* Mis Ventas (front) */
-  divulga: ''    /* Mensajes listos (bump) */
+  controle:'https://pay.hotmart.com/D108140431V',   /* Mis Ventas (front), $299 */
+  divulga: 'https://pay.hotmart.com/Q108140459Y',   /* Mensajes listos (bump), $149 */
+  preco:   'https://pay.hotmart.com/Y108141969P'    /* Mi Catálogo (upsell), $399; libera los 3 apps */
 };
+/* o catalogo passa antes pela pagina de oferta (a mesma do upsell, sem a faixa de pago aprobado), igual a 004 */
+const OFERTA = { preco: 'https://appganancia.com/oferta-catalogo.html' };
 const PRECO = {
-  controle:'',
-  divulga: ''
+  controle:'$299',
+  divulga: '$149',
+  preco:   '$399'
 };
 
 /* ===== ORIGEM DA COMPRA (06/10/2026) =====
@@ -396,6 +484,7 @@ function comOrigem(url, degrau){
 const ICO = {
   controle:'<svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>',
   divulga:'<svg viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 01-9.3 8.4 8.6 8.6 0 01-3.9-1L3 20l1.2-4.6a8.4 8.4 0 1116.8-3.9z"/></svg>',
+  preco:'<svg viewBox="0 0 24 24"><rect x="3" y="3" width="7.5" height="7.5" rx="1.6"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.6"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.6"/><path d="M20.6 17.1l-3.5-3.5-3.6.1-.1 3.6 3.5 3.5a1.3 1.3 0 001.8 0l1.9-1.9a1.3 1.3 0 000-1.8z"/><path d="M16.2 16.2h.01"/></svg>',
   cadeado:'<svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>'
 };
 
@@ -415,8 +504,8 @@ function card(app){
       <div><h2>${app.nome}</h2><div class="desc">${app.desc}</div></div></div>
     <div class="pitch">${app.pitch}</div>
     ${bens}
-    ${app.checkout ? `<div class="preco-linha"><div class="p">${app.preco}<small>pago único</small></div>
-      <a href="${comOrigem(app.checkout, app.id)}" target="_blank" rel="noopener">Desbloquear</a></div>` : ''}</div>`;
+    ${(app.oferta || app.checkout) ? `<div class="preco-linha"><div class="p">${app.preco}<small>pago único</small></div>
+      <a href="${comOrigem(app.oferta || app.checkout, app.id)}" target="_blank" rel="noopener">${app.oferta ? 'Ver cómo funciona' : 'Desbloquear'}</a></div>` : ''}</div>`;
 }
 
 const APPS=[
@@ -432,11 +521,20 @@ const APPS=[
     pitch:'Mis Ventas te dice quién te debe. Lo difícil es mandarle el mensaje sin quedar mal, y por eso muchas lo dejan pasar.',
     beneficios:['el cobro ya viene escrito en 3 tonos: el recordatorio suave, el directo (con educación) y el de confirmar cuando te paga',
       'eliges el tono, pone su nombre y la cantidad, y nada más lo mandas por WhatsApp',
-      'y trae 9 mensajes para vender: novedades, ofertas, últimas piezas y para volver a escribirle a la clienta que ya no te compra'] }
+      'y trae 9 mensajes para vender: novedades, ofertas, últimas piezas y para volver a escribirle a la clienta que ya no te compra'] },
+  { id:'preco', nome:'Mi Catálogo', icone:ICO.preco, url:'catalogo.html',
+  desc:'vende más mandando tu catálogo por WhatsApp',
+  tags:['listo en 1 toque','con tu logo','directo de tu inventario'],
+  liberado:tem('preco'), preco:PRECO.preco, checkout:CHECKOUT.preco, oferta:OFERTA.preco,
+  pitch:'Mandar fotos sueltas y contestar "¿en cuánto?" todo el día cansa, y hace que la clienta se aburra a medio camino.',
+  beneficios:['tu catálogo sale listo con los productos que YA tienes en tu inventario: no agregas nada dos veces',
+    'con tu logo, el nombre de tu negocio y el precio de cada producto, como lo mandan las tiendas grandes',
+    'un toque y se va por WhatsApp: al grupo, al estado o a la clienta que te preguntó',
+    'y la calculadora de precios sigue aquí adentro, para cuando quieras ver cuánto te queda'] }
 ];
 
 document.getElementById('lista').innerHTML = APPS.map(card).join('');
-if(!tem('controle') && !tem('divulga'))
+if(!tem('controle') && !tem('divulga') && !tem('preco'))
   document.getElementById('lista').innerHTML =
     `<div class="app-card"><div class="pitch">Este es el espacio de quien compró AppGanancia.
      Si ya compraste, usa el link de acceso que te llegó a tu correo. Cualquier duda, escríbenos a soporte.</div></div>`
@@ -446,6 +544,114 @@ if(!tem('controle') && !tem('divulga'))
 
 
 /* ============ AJUSTES (engrenagem): cor + instalar ============ */
+/* ===== AVISO DA NOVIDADE (21/09/2026) =====
+
+   Regra do Vini: quem usa o link do front (/c/) e do bump (/cd/) ve um aviso do
+   Catalogo. Aparece uma vez, some no X, e volta 8h depois. Quem ja comprou
+   nunca ve, e o aviso para de aparecer sozinho quando ela compra (porque ai o
+   'preco' passa a estar liberado).
+
+   POR QUE VOLTAR E NAO "uma vez so": quem abre o app todo dia e o publico mais
+   quente que existe pra este upsell, mas no primeiro aviso ela pode estar no meio
+   de uma venda. Voltar depois da outra chance sem virar insistencia.
+
+   POR QUE 10h E NAO 24h (26/09/2026, Vini): as 24h contam da hora em que ela
+   fechou. Quem abre o app no mesmo horario todo dia chegava sempre um pouco antes
+   e so via o aviso dia sim, dia nao. Com 10h, a abertura do dia seguinte ja pega.
+   Baixado para 8h em 06/10/2026 (Vini), junto com o rodizio de 7 faixas.
+
+   O RELOGIO e o do aparelho dela. Trocar a data pra tras faz o aviso voltar antes,
+   e isso e aceitavel: o custo de errar pra mais e uma faixa a mais, nao uma
+   cobranca indevida. */
+const Novidade = {
+  chave: 'appganancia_novidade_fechada',
+  espera: 8 * 60 * 60 * 1000,         // 8h em milissegundos
+  destino: 'https://appganancia.com/oferta-catalogo.html',
+
+  /* ===== RODIZIO (06/10/2026) =====
+     Regra do Vini: UMA faixa por vez, em ordem e sem repetir. Comeca na 1; quando
+     ela fecha no X, a faixa some pela mesma espera de sempre e volta JA na proxima.
+     Depois da 7 volta pra 1, ate ela comprar. Quem nao fecha continua vendo a mesma.
+     Cada uma marca o link com utm_medium=preco-faixaN: a Cakto grava, e da pra
+     ler qual faixa trouxe a venda. O card travado continua com utm_medium=preco.
+     Tudo que elas prometem foi conferido no Catalogo: sai do estoque, leva logo,
+     nome e preco, vai pro grupo/status/cliente, e o botao "so o que tem em
+     estoque" tira o que acabou (NAO e automatico, e a copy diz isso).
+     Previa: ?faixa=N forca a faixa N e ignora o X (so pra conferir o visual). */
+  chaveVez: 'appganancia_faixa_vez',
+  FAIXAS: [
+    { n:1, html:`<b class="fn-grande"><span class="fn-riscado">Foto suelta</span> no vende.<br><em>Catálogo vende.</em></b>
+      <span class="fn-txt">En una sola imagen, con foto y precio, la clienta escoge al momento.</span>
+      <a class="fn-btn" id="fnBtn" target="_blank" rel="noopener">Quiero mi catálogo</a>` },
+    { n:2, html:`<b class="fn-grande">¿En serio todavía mandas <em>fotos sueltas</em> por WhatsApp?</b>
+      <div class="fn-prova"><img src="catalogo-faixa.jpg" alt="Catálogo listo con logo, foto y precio de cada producto" width="56" height="70">
+      <span class="fn-txt">Manda tu catálogo: todos tus productos en una imagen, con tu logo y el precio.</span></div>
+      <a class="fn-btn" id="fnBtn" target="_blank" rel="noopener">Yo también quiero mandar catálogo</a>` },
+    { n:3, html:`<b class="fn-grande">Ya no contestes "¿en cuánto?". <em>Manda el catálogo con precio.</em></b>
+      <div class="fn-bolhas"><span>¿en cuánto?</span><span>¿y este?</span><span>¿hay en otro color?</span></div>
+      <a class="fn-btn" id="fnBtn" target="_blank" rel="noopener">Quiero mi catálogo con precio</a>` },
+    { n:4, html:`<b class="fn-grande">Las tiendas grandes mandan catálogo. <em>¿Tú todavía mandas fotos sueltas?</em></b>
+      <span class="fn-txt">Con tu logo y el precio de cada producto. Como tienda de verdad.</span>
+      <a class="fn-btn" id="fnBtn" target="_blank" rel="noopener">Quiero el mío con mi logo</a>` },
+    { n:5, html:`<b class="fn-grande">¿Todavía ofreces lo que ya se te acabó? <em>Tu catálogo sale de tu inventario.</em></b>
+      <span class="fn-txt">Un toque y solo entra al catálogo lo que todavía tienes.</span>
+      <a class="fn-btn" id="fnBtn" target="_blank" rel="noopener">Quiero mi catálogo con lo que tengo</a>` },
+    { n:6, html:`<b class="fn-grande">Producto nuevo guardado no se vende. <em>Manda tu catálogo hoy.</em></b>
+      <span class="fn-txt">Un toque y se va al grupo, al estado o a la clienta.</span>
+      <a class="fn-btn" id="fnBtn" target="_blank" rel="noopener">Quiero mandar el mío hoy</a>` },
+    { n:7, html:`<b class="fn-grande">Tu clienta escoge sin preguntar el precio. <em>Nada más mándale el catálogo.</em></b>
+      <span class="fn-txt">Todos tus productos en una sola imagen, con foto y precio, directo de tu inventario.</span>
+      <a class="fn-btn" id="fnBtn" target="_blank" rel="noopener">Quiero mi catálogo</a>` }
+  ],
+
+  /* qual faixa mostrar agora: ?faixa=N na previa, senao a da vez no rodizio */
+  vez(){
+    const total = this.FAIXAS.length;
+    const forcada = parseInt(new URLSearchParams(location.search).get('faixa') || '', 10);
+    if(forcada >= 1 && forcada <= total) return { i: forcada - 1, previa: true };
+    let i = 0;
+    try { i = parseInt(localStorage.getItem(this.chaveVez) || '0', 10) || 0; } catch(e){}
+    return { i: ((i % total) + total) % total, previa: false };
+  },
+
+  pintar(){
+    const f = document.getElementById('faixaNovidade');
+    if(!f) return;
+    /* so quem entrou pelo link do FRONT (/c/) ou do BUMP (/cd/): tem o Controle e
+       ainda nao tem o Catalogo (regra do Vini, 06/10/2026). Quem so tem o Cobrar
+       (/d/) nao ve. `tem` e a mesma funcao que decide os cards, entao comprar o
+       Catalogo faz a faixa sumir sozinha, sem codigo extra. */
+    if(!tem('controle') || tem('preco')) { f.style.display = 'none'; return; }
+
+    const v = this.vez();
+    let fechadaEm = 0;
+    try { fechadaEm = parseInt(localStorage.getItem(this.chave) || '0', 10) || 0; } catch(e){}
+    const passou = v.previa || (Date.now() - fechadaEm) >= this.espera;
+    f.style.display = passou ? '' : 'none';
+    if(!passou) return;
+
+    const faixa = this.FAIXAS[v.i];
+    f.className = 'faixa-nov fx-' + faixa.n;
+    document.getElementById('fnCorpo').innerHTML = faixa.html;
+    const b = document.getElementById('fnBtn');
+    if(b) b.href = comOrigem(this.destino, 'preco-faixa' + faixa.n);
+  },
+
+  /* fechou no X: comeca a espera e ja deixa a PROXIMA faixa engatilhada */
+  dispensar(){
+    try {
+      localStorage.setItem(this.chave, String(Date.now()));
+      const i = parseInt(localStorage.getItem(this.chaveVez) || '0', 10) || 0;
+      localStorage.setItem(this.chaveVez, String((i + 1) % this.FAIXAS.length));
+    } catch(e){}
+    this.pintar();
+  }
+};
+/* pintado aqui, e nao junto da montagem do menu: o objeto so existe a partir
+   desta linha, e a faixa depende de `tem()`, que ja esta resolvido. */
+Novidade.pintar();
+
+
 const Config = {
   abrir(){ this.pintar(); document.getElementById('cfgFundo').classList.add('aberto'); },
   fechar(){ document.getElementById('cfgFundo').classList.remove('aberto'); },
@@ -729,14 +935,14 @@ Instalar.init();
    necessario e a tela nem pisca. */
 (function(){
   if(!('serviceWorker' in navigator)) return;
-  var MAPA_CH = {'sx01fzn':['controle'],'83aby3u':['controle','divulga']};
+  var MAPA_CH = {'sx01fzn':['controle'],'83aby3u':['controle','divulga'],'m7081wh':['controle','divulga','preco']};
 
   function chaveDe(itens){
-    var c = itens.indexOf('controle')>=0, d = itens.indexOf('divulga')>=0;
-    return (c&&d) ? '83aby3u' : c ? 'sx01fzn' : null;
+    var c = itens.indexOf('controle')>=0, d = itens.indexOf('divulga')>=0, p = itens.indexOf('preco')>=0;
+    return p ? 'm7081wh' : (c&&d) ? '83aby3u' : c ? 'sx01fzn' : null;
   }
 
-  var m = location.pathname.match(/\/(sx01fzn|83aby3u)(?:\/|$)/);
+  var m = location.pathname.match(/\/(sx01fzn|83aby3u|m7081wh)(?:\/|$)/);
   var doCaminho = m ? (MAPA_CH[m[1]] || []) : [];
 
   navigator.serviceWorker.ready.then(function(reg){
@@ -784,7 +990,7 @@ Instalar.init();
    antigo, e por fim do nivel que o service worker guarda (Cache Storage, que
    atravessa o isolamento entre Safari e app instalado). */
 (function(){
-  var MAPA_K = {'sx01fzn':1,'83aby3u':1};
+  var MAPA_K = {'sx01fzn':1,'83aby3u':1,'m7081wh':1};
 
   function aplicar(chave){
     if(!chave || !MAPA_K[chave]) return;
@@ -798,11 +1004,11 @@ Instalar.init();
 
   try{
     /* 1. caminho */
-    var m = location.pathname.match(/\/(sx01fzn|83aby3u)(?:\/|$)/);
+    var m = location.pathname.match(/\/(sx01fzn|83aby3u|m7081wh)(?:\/|$)/);
     if(m){ aplicar(m[1]); return; }   /* ja esta na pasta: o manifest local ja serve */
 
     /* 2. #de= que o menu manda ao abrir o app */
-    var h = (location.hash||'').match(/de=(sx01fzn|83aby3u)$/);
+    var h = (location.hash||'').match(/de=(sx01fzn|83aby3u|m7081wh)$/);
     if(h){ aplicar(h[1]); return; }
 
     /* 3. ?libera= dos links antigos */
@@ -816,8 +1022,8 @@ Instalar.init();
         navigator.serviceWorker.addEventListener('message', function(ev){
           var d = ev.data || {};
           if(d.tipo !== 'nivel' || !Array.isArray(d.itens) || !d.itens.length) return;
-          var i = d.itens, c = i.indexOf('controle')>=0, dv = i.indexOf('divulga')>=0;
-          aplicar((c&&dv) ? '83aby3u' : c ? 'sx01fzn' : null);
+          var i = d.itens, c = i.indexOf('controle')>=0, dv = i.indexOf('divulga')>=0, pr = i.indexOf('preco')>=0;
+          aplicar(pr ? 'm7081wh' : (c&&dv) ? '83aby3u' : c ? 'sx01fzn' : null);
         });
         reg.active.postMessage({tipo:'ler-nivel'});
       }).catch(function(){});
