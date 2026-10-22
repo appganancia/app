@@ -1,0 +1,2375 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#8e2757">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="favicon-96.png">
+<link rel="apple-touch-icon" sizes="180x180" href="favicon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>Mis Ventas · AppGanancia</title>
+<style>
+:root{
+  --vinho:#8e2757; --vinho-escuro:#6d1d43; --rose:#f6e7ee; --rose-2:#fdf4f8;
+  --tinta:#2b2230; --cinza:#7a6f80; --linha:#eadfe6; --branco:#fff;
+  --verde:#1e7d4f; --verde-bg:#e6f4ec; --ambar:#a05e03; --ambar-bg:#fdf2df;
+  --verm:#b3261e; --verm-bg:#fbeae9; --radius:14px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,'Segoe UI',Roboto,sans-serif;background:var(--rose-2);color:var(--tinta);
+  font-size:16px;padding-bottom:76px;min-height:100vh}
+header{background:var(--vinho);color:#fff;padding:12px 14px;position:sticky;top:0;z-index:20;
+  display:flex;justify-content:space-between;align-items:center;gap:10px}
+header h1{font-size:16.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+header .loja{font-size:12px;opacity:.85;font-weight:400}
+main{padding:14px;max-width:560px;margin:0 auto}
+.card{background:var(--branco);border:1px solid var(--linha);border-radius:var(--radius);
+  padding:14px;margin-bottom:12px}
+.card h2{font-size:14px;color:var(--cinza);font-weight:600;margin-bottom:8px;text-transform:uppercase;letter-spacing:.4px}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.kpi{background:var(--rose);border-radius:12px;padding:12px}
+.kpi .v{font-size:22px;font-weight:800;color:var(--vinho);white-space:nowrap;letter-spacing:-.3px}
+.kpi .v.grande{font-size:18px}
+.kpi .v.pos{color:var(--verde)} .kpi .v.neg{color:var(--verm)}
+.kpi .l{font-size:12px;color:var(--cinza);margin-top:2px}
+button{font-family:inherit;border:0;cursor:pointer;border-radius:12px;font-size:16px}
+.btn{background:var(--vinho);color:#fff;width:100%;padding:15px;font-weight:700;margin-top:8px}
+.btn:active{background:var(--vinho-escuro)}
+.btn.sec{background:var(--rose);color:var(--vinho)}
+.btn.mini{width:auto;padding:8px 14px;font-size:14px;margin:0}
+.btn.perigo{background:var(--verm-bg);color:var(--verm)}
+input,select{width:100%;padding:13px;border:1.5px solid var(--linha);border-radius:12px;
+  font-size:16px;font-family:inherit;background:#fff;margin-top:4px}
+input:focus,select:focus{outline:none;border-color:var(--vinho)}
+label{font-size:13px;color:var(--cinza);font-weight:600;display:block;margin-top:12px}
+.linha2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--linha);
+  display:flex;z-index:30;padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;background:none;padding:9px 2px 7px;font-size:11px;color:var(--cinza);
+  display:flex;flex-direction:column;align-items:center;gap:3px;border-radius:0}
+nav button.on{color:var(--vinho);font-weight:700}
+nav svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.lista-item{display:flex;justify-content:space-between;align-items:center;padding:12px 2px;
+  border-bottom:1px solid var(--linha);gap:8px}
+.lista-item:last-child{border-bottom:0}
+.lista-item .info{flex:1;min-width:0}
+.lista-item .t{font-weight:600;font-size:15px}
+.lista-item .s{font-size:12.5px;color:var(--cinza);margin-top:1px}
+.badge{font-size:11px;font-weight:700;padding:3px 8px;border-radius:99px;white-space:nowrap}
+.badge.ok{background:var(--verde-bg);color:var(--verde)}
+.badge.baixo{background:var(--ambar-bg);color:var(--ambar)}
+.badge.zero{background:var(--verm-bg);color:var(--verm)}
+.badge.fiado{background:var(--ambar-bg);color:var(--ambar)}
+/* O fundo do modal segue a AREA VISIVEL (visualViewport), nao a tela inteira: top e height vem do
+   script "MODAL ACIMA DO TECLADO". Bug real, 19/10/2026: o teclado do celular cobre o fundo da tela
+   sem encolher a pagina; a busca do "Registrar venda" filtrava a lista, o modal (preso no fundo)
+   encolhia e ia inteiro para tras do teclado. */
+.modal-fundo{position:fixed;left:0;right:0;top:0;height:100%;background:rgba(43,34,48,.5);z-index:40;display:none;
+  align-items:flex-end;justify-content:center}
+.modal-fundo.aberto{display:flex}
+.modal{background:#fff;border-radius:18px 18px 0 0;width:100%;max-width:560px;
+  max-height:88%;overflow-y:auto;padding:18px 16px 24px}
+/* teclado aberto: o modal ocupa a area visivel inteira, entao o campo fica parado no topo
+   enquanto a lista encolhe embaixo dele */
+.modal-fundo.teclado .modal{height:100%;max-height:none;border-radius:0}
+.modal h3{font-size:17px;margin-bottom:4px}
+.modal .sub{font-size:13px;color:var(--cinza);margin-bottom:10px}
+.aviso{border-radius:12px;padding:11px 12px;font-size:13.5px;margin-bottom:12px;display:flex;gap:8px;align-items:flex-start}
+.aviso.backup{background:var(--ambar-bg);color:var(--ambar)}
+.aviso.verde{background:var(--verde-bg);color:var(--verde)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:88px;background:var(--tinta);
+  color:#fff;padding:12px 18px;border-radius:12px;font-size:14.5px;z-index:60;opacity:0;
+  transition:opacity .25s;max-width:92vw;text-align:center;pointer-events:none}
+.toast.mostra{opacity:1}
+.toast.lucro{background:var(--verde);font-weight:700}
+.vazio{text-align:center;color:var(--cinza);font-size:14px;padding:26px 10px;line-height:1.5}
+.passo{font-size:12px;color:var(--cinza);text-align:center;margin-bottom:10px;font-weight:600}
+.escolha-prod{display:flex;justify-content:space-between;align-items:center;width:100%;
+  background:var(--rose);text-align:left;padding:13px;margin-bottom:8px;border-radius:12px}
+.escolha-prod .n{font-weight:700} .escolha-prod .p{color:var(--vinho);font-weight:700}
+.qtd-row{display:flex;align-items:center;gap:14px;justify-content:center;margin:10px 0}
+.qtd-row button{width:52px;height:52px;font-size:26px;background:var(--rose);color:var(--vinho);font-weight:800}
+.qtd-row .n{font-size:30px;font-weight:800;min-width:52px;text-align:center}
+/* carrinho de venda (varios produtos numa venda) */
+.cart-item{display:flex;justify-content:space-between;align-items:center;gap:8px;
+  background:var(--rose-2);border:1px solid var(--rose);padding:11px 12px;margin-bottom:8px;border-radius:12px}
+.cart-item .n{font-weight:700;font-size:15px;line-height:1.3}
+.cart-item .s{font-size:12.5px;color:var(--cinza);margin-top:2px}
+.cart-item .v{font-weight:800;white-space:nowrap}
+.cart-item .x{width:34px;height:34px;flex-shrink:0;padding:0;font-size:19px;font-weight:800;
+  background:#fff;color:var(--cinza);border:1px solid var(--linha)}
+.cart-tot{display:flex;justify-content:space-between;align-items:baseline;
+  border-top:2px solid var(--vinho);margin-top:4px;padding-top:10px}
+.cart-tot .l{font-weight:700;font-size:15px} .cart-tot .v{font-weight:800;font-size:22px;color:var(--vinho)}
+.cart-lucro{text-align:right;font-size:13px;color:var(--verde);font-weight:700;margin-top:2px}
+/* recebimento de fiado (total ou parcial) */
+.fi-linhas{background:var(--rose-2);border-radius:12px;padding:12px;margin:4px 0 14px}
+.fi-linha{display:flex;justify-content:space-between;font-size:14.5px;padding:3px 0}
+.fi-linha.falta{border-top:1px solid var(--rose);margin-top:5px;padding-top:7px;font-weight:800;font-size:16px}
+.fi-linha.falta .v{color:var(--vinho)}
+/* ===== O NUMERO QUE IMPORTA E GRANDE (21/09/2026) =====
+   Regra do Vini: "as clientes tem MUITA dificuldade com app, tem que ser facil e
+   visualmente simples". Antes, "ainda falta" era mais uma linha do mesmo tamanho
+   entre outras duas, e o resultado do que ela digitava vinha como frase corrida.
+   Agora o que ela precisa conferir de relance (quanto deve agora, quanto fica
+   depois) e numero grande, e a frase vira so o rotulo em cima dele. */
+.fi-falta{border-top:1px solid var(--rose);margin-top:8px;padding-top:9px;text-align:center}
+.fi-falta .rot{font-size:12.5px;color:var(--cinza);font-weight:600;text-transform:lowercase}
+.fi-falta .big{font-size:29px;font-weight:800;color:var(--vinho);line-height:1.15;margin-top:2px}
+.fi-previa .rot{font-size:12.5px;color:var(--cinza);font-weight:600;line-height:1.35}
+.fi-previa .big{font-size:25px;font-weight:800;color:var(--vinho);line-height:1.15;margin-top:3px}
+.fi-previa.quita .rot{color:var(--verde)}
+.fi-previa.quita .big{color:var(--verde)}
+.fi-hist{font-size:12.5px;color:var(--cinza);margin-top:8px;line-height:1.6}
+/* parcelas combinadas, dentro do quadro de valores do fiado */
+.fi-parc{border-top:1px solid var(--rose);margin-top:8px;padding-top:8px;
+  font-size:13.5px;color:var(--cinza);text-align:center}
+.fi-parc b{color:var(--vinho)}
+/* atalhos que SO preenchem o campo: visual de link, nunca de botao de acao */
+.fi-atalhos{display:flex;gap:7px;margin-top:9px;flex-wrap:wrap}
+.fi-atalhos button{flex:1;min-width:120px;padding:10px 8px;background:#fff;
+  border:1.5px solid var(--linha);color:var(--vinho);font-size:13.5px;font-weight:700}
+.fi-atalhos button:active{background:var(--rose)}
+/* a previa: diz o que o botao vai fazer, antes de ela tocar */
+.fi-previa{margin-top:12px;background:var(--rose-2);border-radius:11px;padding:11px 12px;
+  font-size:14px;text-align:center;color:var(--tinta);line-height:1.45}
+.fi-previa b{color:var(--vinho)}
+.fi-previa.quita{background:var(--verde-bg);color:var(--verde)}
+.fi-previa.quita b{color:var(--verde)}
+.fi-previa.aviso-erro{background:var(--verm-bg);color:var(--verm)}
+.fi-previa.aviso-erro b{color:var(--verm)}
+.fi-previa.aviso-vazio{background:var(--rose-2);color:var(--cinza)}
+.btn:disabled{opacity:.45}
+/* data da despesa: hoje/ontem resolvem o caso comum sem abrir o calendario */
+.dt-atalhos{display:flex;gap:7px;margin:6px 0 8px}
+.dt-atalhos button{flex:1;padding:12px 8px;background:#fff;border:1.5px solid var(--linha);
+  color:var(--vinho);font-size:14.5px;font-weight:700;border-radius:11px}
+.dt-atalhos button.on{background:var(--vinho);color:#fff;border-color:var(--vinho)}
+.dt-atalhos button:active{opacity:.75}
+.dt-previa{margin-top:9px;background:var(--rose-2);border-radius:11px;padding:10px 12px;
+  font-size:13.5px;text-align:center;color:var(--tinta);line-height:1.45}
+.dt-previa b{color:var(--vinho)}
+.dt-previa.erro{background:var(--verm-bg);color:var(--verm)}
+.dt-previa.erro b{color:var(--verm)}
+/* cancelar embaixo de um botao de acao nao pode ter o mesmo peso dele */
+.btn.discreto{background:none;color:var(--cinza);font-weight:600;padding:12px;font-size:14.5px}
+.btn.discreto:active{background:var(--rose-2)}
+/* historico recolhido: ocupa uma linha ate ela querer ver */
+.fi-det{margin-top:14px;border-top:1px solid var(--linha);padding-top:10px}
+.fi-det summary{font-size:13.5px;color:var(--cinza);font-weight:600;cursor:pointer;
+  list-style:none;padding:8px 2px;display:flex;align-items:center;gap:7px}
+.fi-det summary::-webkit-details-marker{display:none}
+.fi-det summary::before{content:'\203a';font-weight:800;color:var(--vinho);font-size:17px;
+  line-height:1;display:inline-block;width:10px;text-align:center}
+.fi-det[open] summary::before{content:'\2039'}
+.fi-hl{display:flex;justify-content:space-between;align-items:center;gap:8px;
+  padding:7px 0;font-size:13.5px;border-bottom:1px solid var(--linha)}
+.fi-hl:last-child{border-bottom:0}
+.fi-hl button{font-size:11.5px;padding:4px 9px}
+.pgto-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+.pgto-grid button{padding:13px;background:var(--rose);color:var(--tinta);font-weight:600;font-size:15px}
+.pgto-grid button.on{background:var(--vinho);color:#fff}
+/* parcelas: grade de botoes grandes, do mesmo tamanho, faceis de acertar com o dedo */
+/* ===== A VENDA E UM BLOCO DE DUAS FAIXAS (14/09/2026) =====
+   Informacao em cima, botoes embaixo na largura inteira. Antes disso os botoes
+   moravam numa coluna estreita a direita e espremiam o texto ate quebrar letra a
+   letra no celular. */
+.venda-bloco{border-bottom:1px solid var(--linha);padding:13px 2px 12px}
+.venda-bloco:last-child{border-bottom:0}
+.venda-topo{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.venda-topo .info{flex:1;min-width:0}
+.venda-topo .t{font-weight:600;font-size:15px;line-height:1.3}
+.venda-topo .s{font-size:12.5px;color:var(--cinza);margin-top:3px;line-height:1.45}
+.venda-valor{text-align:right;flex-shrink:0}
+.venda-valor .vv{font-weight:800;font-size:16px;white-space:nowrap}
+.venda-valor .badge{display:inline-block;margin-top:4px}
+.venda-acoes{display:flex;gap:5px;margin-top:10px}
+.venda-acoes .va{flex:1 1 0;min-width:0;white-space:nowrap;padding:9px 3px;font-size:12.5px;font-weight:700;
+  background:var(--rose);color:var(--vinho);border-radius:10px}
+.venda-acoes .va.principal{background:var(--vinho);color:#fff}
+.venda-acoes .va.perigo{background:var(--verm-bg);color:var(--verm)}
+.venda-acoes .va:active{opacity:.75}
+/* atalho pro fiado: linha clicavel, nao mais um aviso morto */
+.kpi-link{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;
+  margin-top:10px;background:var(--ambar-bg);color:var(--ambar);border:0;border-radius:12px;
+  padding:12px 14px;font-size:14px;font-family:inherit;text-align:left;font-weight:600}
+.kpi-link b{font-size:16px;font-weight:800}
+.kpi-link .seta{font-size:22px;font-weight:800;line-height:1;opacity:.7}
+.nota-caixa{font-size:12.5px;color:var(--cinza);line-height:1.45;margin-top:10px;text-align:center}
+.parc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:6px}
+.parc-grid button{padding:12px 4px;background:var(--rose);color:var(--tinta);font-weight:700;font-size:14.5px}
+.parc-grid button.on{background:var(--vinho);color:#fff}
+.parc-info{margin-top:9px;background:var(--rose-2);border:1px solid var(--rose);border-radius:11px;
+  padding:10px 12px;font-size:14.5px;color:var(--tinta);text-align:center}
+.parc-info b{color:var(--vinho);font-size:16px}
+/* resumo da venda com desconto (30/09/2026): subtotal, desconto e total, como no caixa */
+.resumo{margin:12px 0 4px;border:1px solid var(--linha);border-radius:14px;padding:4px 14px}
+.resumo .rl{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 0;font-size:14.5px}
+.resumo .rl + .rl{border-top:1px solid var(--linha)}
+.resumo .rl .v{font-weight:700;white-space:nowrap}
+.resumo .rl.menos .v{color:var(--verm)}
+.resumo .rl.tot{font-weight:800;font-size:16px;border-top:1px solid var(--linha)}
+.resumo .rl.tot .v{font-size:20px;color:var(--vinho);font-weight:800}
+.desc-ctrl{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.desc-tipo{display:flex;background:var(--rose);border-radius:9px;padding:3px}
+.desc-tipo button{padding:6px 11px;background:transparent;color:var(--cinza);font-weight:800;font-size:13.5px;border-radius:7px}
+.desc-tipo button.on{background:#fff;color:var(--vinho);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.resumo input#descValor{width:108px;margin:0;padding:9px 10px;text-align:right;font-size:15px;font-weight:700}
+.desc-info{font-size:12.5px;color:var(--cinza);text-align:right;margin:-4px 0 10px;line-height:1.4}
+.desc-info .ruim{color:var(--verm);font-weight:700}
+.edit-aviso{margin:10px 0 4px;background:var(--ambar-bg);color:var(--ambar);border-radius:12px;padding:11px 14px;font-size:14px;line-height:1.55}
+.edit-aviso.oculto{display:none}
+.opcional{font-weight:600;color:var(--cinza);text-transform:none;letter-spacing:0}
+.opcional.obrig{color:var(--vinho)}
+.mes-nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.mes-nav .m{font-weight:800;font-size:16px}
+/* so a primeira letra: "Octubre de 2026", nao "Octubre De 2026" */
+.mes-nav .m::first-letter{text-transform:uppercase}
+.mes-nav button{background:var(--rose);color:var(--vinho);width:38px;height:38px;font-size:18px;font-weight:800}
+.oculto{display:none!important}
+.filtros{display:flex;gap:6px;margin-bottom:10px;overflow-x:auto}
+.filtros button{padding:7px 13px;background:#fff;border:1.5px solid var(--linha);color:var(--cinza);font-size:13.5px;font-weight:600;white-space:nowrap}
+.filtros button.on{background:var(--vinho);color:#fff;border-color:var(--vinho)}
+.wizard-logo{text-align:center;padding:26px 0 10px}
+.wizard-logo .m1{font-size:26px;font-weight:800;color:var(--vinho)}
+.wizard-logo .m2{font-size:14px;color:var(--cinza);margin-top:4px}
+
+.cfg-fundo{position:fixed;inset:0;background:rgba(43,34,48,.5);z-index:50;display:none;align-items:flex-end;justify-content:center}
+.cfg-fundo.aberto{display:flex}
+.cfg-box{background:#fff;border-radius:18px 18px 0 0;width:100%;max-width:560px;max-height:88vh;overflow-y:auto;padding:18px 16px 26px}
+.cfg-box h3{font-size:17px;margin-bottom:2px}
+.cfg-box .cfg-sub{font-size:13px;color:var(--cinza);margin-bottom:14px}
+.cfg-box h4{font-size:12.5px;color:var(--cinza);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin:16px 0 8px}
+.cfg-cores{display:flex;gap:12px}
+.cfg-cores button{width:42px;height:42px;border-radius:50%;border:3px solid transparent;outline:2px solid var(--linha);cursor:pointer}
+.cfg-cores button.on{border-color:var(--tinta)}
+.cfg-btn{background:var(--vinho);color:#fff;width:100%;padding:14px;font-weight:700;border:0;border-radius:12px;font-size:15.5px;cursor:pointer;margin-top:8px;font-family:inherit}
+.cfg-btn.sec{background:var(--rose);color:var(--vinho)}
+.btn-cfg{background:none;border:0;color:#fff;display:flex;align-items:center;cursor:pointer;padding:4px}
+.btn-cfg svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+@media (max-width:360px){
+  header h1{font-size:15px}
+  header .loja{font-size:11px}
+  #btnBkpTopo{padding:7px 9px!important;font-size:12px!important}
+  .kpi .v{font-size:19px}
+  .kpi .v.grande{font-size:16px}
+  nav button{font-size:10px}
+}
+.pag{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:12px;flex-wrap:wrap}
+.pag button{min-width:38px;height:38px;padding:0 10px;background:#fff;border:1.5px solid var(--linha);
+  color:var(--tinta);font-size:14.5px;font-weight:700;border-radius:10px}
+.pag button.on{background:var(--vinho);color:#fff;border-color:var(--vinho)}
+.pag button:disabled{opacity:.35}
+.pag .info{width:100%;text-align:center;font-size:12.5px;color:var(--cinza);margin-top:2px}
+/* faixa de instalacao: o caminho VISIVEL pra virar app na tela inicial */
+.faixa-inst{display:flex;align-items:center;gap:11px;background:#fff;border:1px solid var(--linha);
+  border-left:4px solid var(--vinho);border-radius:14px;padding:12px 12px 12px 13px;margin:0 auto 14px;max-width:560px}
+.faixa-inst .fi-ico{width:40px;height:40px;border-radius:11px;background:var(--rose);display:flex;
+  align-items:center;justify-content:center;flex-shrink:0}
+.faixa-inst .fi-ico svg{width:21px;height:21px;fill:none;stroke:var(--vinho);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.faixa-inst .fi-txt{flex:1;min-width:0}
+.faixa-inst .fi-txt b{display:block;font-size:14.5px;line-height:1.25}
+.faixa-inst .fi-txt span{display:block;font-size:12.5px;color:var(--cinza);line-height:1.35;margin-top:2px}
+.faixa-inst .fi-btn{background:var(--vinho);color:#fff;border:0;border-radius:11px;padding:11px 15px;
+  font-weight:800;font-size:14px;cursor:pointer;font-family:inherit;flex-shrink:0;white-space:nowrap}
+.faixa-inst .fi-x{background:none;border:0;color:var(--cinza);font-size:20px;line-height:1;padding:2px 4px;
+  cursor:pointer;flex-shrink:0;font-family:inherit}
+@media(max-width:400px){
+  .faixa-inst{flex-wrap:wrap}
+  .faixa-inst .fi-btn{width:100%;order:9}
+}
+/* passo a passo de instalacao (iPhone, e Android que nao ofereceu o prompt) */
+.ps-fundo{position:fixed;inset:0;background:rgba(43,34,48,.55);z-index:60;display:none;align-items:flex-end;justify-content:center}
+.ps-fundo.aberto{display:flex}
+.ps-box{background:#fff;border-radius:18px 18px 0 0;width:100%;max-width:560px;max-height:88vh;overflow-y:auto;padding:20px 18px 26px}
+.ps-box h3{font-size:18px;margin-bottom:3px}
+.ps-box .ps-sub{font-size:13.5px;color:var(--cinza);line-height:1.45;margin-bottom:15px}
+.ps-box ol{list-style:none;counter-reset:ps;margin:0;padding:0}
+.ps-box ol li{counter-increment:ps;position:relative;padding:0 0 15px 40px;font-size:14.5px;line-height:1.5}
+.ps-box ol li::before{content:counter(ps);position:absolute;left:0;top:-1px;width:27px;height:27px;
+  border-radius:50%;background:var(--vinho);color:#fff;font-weight:800;font-size:13.5px;
+  display:flex;align-items:center;justify-content:center}
+.ps-box .ps-ico{width:18px;height:18px;vertical-align:-4px;fill:none;stroke:var(--vinho);
+  stroke-width:2;stroke-linecap:round;stroke-linejoin:round;margin:0 1px}
+.ps-box .ps-btn{background:var(--vinho);color:#fff;width:100%;padding:14px;font-weight:700;border:0;
+  border-radius:12px;font-size:15.5px;cursor:pointer;font-family:inherit;margin-top:4px}
+.ps-box .ps-nota{display:block;font-size:12.5px;line-height:1.4;color:var(--ambar);
+  background:var(--ambar-bg);border-radius:9px;padding:7px 10px;margin-top:6px}
+.ps-aviso{display:flex;gap:9px;background:var(--rose);border-radius:11px;padding:11px 12px;
+  margin-bottom:14px;font-size:13px;line-height:1.45;color:var(--tinta)}
+.ps-aviso svg{width:17px;height:17px;flex-shrink:0;margin-top:1px;fill:none;stroke:var(--vinho);
+  stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.ps-aviso b{font-weight:800}
+/* ====== ANIMACAO: o caminho do iPhone, desenhado ======
+   Fiel ao fluxo real do iOS 26 (conferido em video do aparelho do Vini, 27/08/2026).
+   Desenho e nao video: ~5 KB, funciona offline junto com o app, nao tem nada de
+   pessoal na tela e nao envelhece quando a Apple muda o visual.
+   O que o desenho reproduz, e que eu tinha errado antes:
+     - a folha de compartilhar do iOS e ESCURA (#262528), nao clara
+     - "Ver mais" nao e link no meio da lista: e um BOTAO REDONDO com seta,
+       na fileira de acoes, e vira "Ver menos" depois
+     - "Adicionar a Tela de Inicio" e o ULTIMO item da lista que se abre
+     - existe uma tela final, com o nome do app e o botao Adicionar em azul */
+.demo{background:var(--rose-2);border:1px solid var(--linha);border-radius:14px;
+  padding:13px 12px 11px;margin-bottom:16px}
+.demo-topo{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
+.demo-rot{font-size:11.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--cinza)}
+.demo-passo{font-size:12px;font-weight:700;color:var(--vinho);background:var(--rose);
+  border-radius:99px;padding:3px 10px}
+.fone{position:relative;width:172px;height:268px;margin:0 auto;background:#0e0d10;
+  border-radius:23px;padding:5px;box-shadow:0 10px 26px -14px rgba(20,4,12,.7)}
+.fone-tela{position:relative;width:100%;height:100%;background:#fff;border-radius:19px;
+  overflow:hidden;display:flex;flex-direction:column}
+/* a pagina do proprio app, ao fundo */
+.pag{flex:1;background:#fdf4f8;overflow:hidden}
+.pag-top{background:var(--vinho);padding:9px 8px 8px;text-align:center}
+.pag-top b{display:block;color:#fff;font-size:8.5px;font-weight:800;letter-spacing:.02em}
+.pag-top i{display:block;color:rgba(255,255,255,.75);font-size:5.5px;font-style:normal;margin-top:2px}
+.pag-card{background:#fff;border:1px solid #eadfe6;border-radius:7px;margin:7px 6px;padding:6px}
+.pag-card b{display:block;font-size:6.5px;color:#2b2230}
+.pag-card i{display:block;font-size:5px;color:#7a6f80;font-style:normal;margin-top:1px}
+.pag-btn{background:var(--vinho);border-radius:5px;height:13px;margin-top:5px}
+/* barra do safari */
+.barra{height:30px;background:#f7f7f8;border-top:1px solid #e2e2e6;display:flex;
+  align-items:center;justify-content:space-between;padding:0 9px;flex-shrink:0}
+.barra i{display:block;width:11px;height:11px;border-radius:2px;background:#b8b8bd}
+.b-url{flex:1;height:14px;border-radius:7px;background:#ececf0;margin:0 7px}
+.b-pontos{position:relative;width:15px;height:19px;flex-shrink:0}
+.b-pontos span{position:absolute;left:50%;width:2.6px;height:2.6px;border-radius:50%;
+  background:#3c3c43;transform:translateX(-50%)}
+.b-pontos span:nth-child(1){top:3px}.b-pontos span:nth-child(2){top:8px}.b-pontos span:nth-child(3){top:13px}
+/* menu dos tres pontinhos */
+.menu{position:absolute;left:7px;right:7px;bottom:36px;background:#fbfbfd;border-radius:11px;
+  box-shadow:0 8px 26px -8px rgba(0,0,0,.5);padding:3px;opacity:0;transform:translateY(10px);
+  transition:opacity .28s,transform .28s;overflow:hidden}
+.menu div{display:flex;align-items:center;gap:6px;padding:6px 7px;border-radius:7px;
+  font-size:8px;color:#111;border-bottom:1px solid #ececf0}
+.menu div:last-child{border-bottom:0}
+.menu div.on{background:var(--rose);font-weight:800;color:var(--vinho)}
+.menu .mi{width:10px;height:10px;flex-shrink:0;fill:none;stroke:currentColor;stroke-width:2.2;
+  stroke-linecap:round;stroke-linejoin:round}
+/* a folha de compartilhar: ESCURA, como no iOS de verdade */
+.folha{position:absolute;left:0;right:0;bottom:0;max-height:94%;background:#262528;
+  border-radius:13px 13px 0 0;box-shadow:0 -8px 26px -8px rgba(0,0,0,.6);
+  opacity:0;transform:translateY(100%);transition:opacity .3s,transform .3s;
+  padding:8px 7px;display:flex;flex-direction:column;gap:5px;overflow:hidden}
+.f-cab{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.f-cab .f-ico{width:22px;height:22px;border-radius:5px;background:var(--vinho);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;color:#fff;font-size:8px;font-weight:800}
+.f-cab b{font-size:7px;color:#fff;display:block;line-height:1.2}
+.f-cab i{font-size:5.5px;color:#8e8e93;font-style:normal;display:block;margin-top:1px}
+/* fileira de acoes redondas: e AQUI que fica o "Ver mais" */
+.f-acoes{display:flex;justify-content:space-between;gap:4px;flex-shrink:0;padding:0 2px}
+.f-acoes div{flex:1;text-align:center}
+.f-acoes .c{width:26px;height:26px;border-radius:50%;background:#3a393d;margin:0 auto 3px;
+  display:flex;align-items:center;justify-content:center;transition:background .2s}
+.f-acoes .c svg{width:13px;height:13px;fill:none;stroke:#fff;stroke-width:2;
+  stroke-linecap:round;stroke-linejoin:round}
+.f-acoes span{font-size:5px;color:#c7c7cc;line-height:1.15;display:block}
+.f-acoes div.on .c{background:var(--vinho)}
+.f-acoes div.on span{color:#fff;font-weight:800}
+/* a lista que o "Ver mais" abre */
+.f-lista{background:#19181b;border-radius:9px;overflow:hidden;
+  max-height:0;opacity:0;transition:max-height .4s ease,opacity .3s}
+.f-lista.aberta{max-height:130px;opacity:1}
+.f-lista div{display:flex;align-items:center;gap:6px;padding:5px 7px;font-size:6.5px;color:#fff;
+  border-bottom:1px solid #2c2b2f;white-space:nowrap;overflow:hidden}
+.f-lista div:last-child{border-bottom:0}
+.f-lista .li{width:10px;height:10px;flex-shrink:0;fill:none;stroke:#fff;stroke-width:2;
+  stroke-linecap:round;stroke-linejoin:round}
+.f-lista div.on{background:var(--vinho);font-weight:800}
+/* tela final: nome do app e botao Adicionar */
+.final{position:absolute;inset:0;background:#1c1b1f;opacity:0;pointer-events:none;
+  transition:opacity .3s;padding:20px 8px 9px;display:flex;flex-direction:column;gap:9px}
+.final.on{opacity:1}
+.final-cab{display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.final-cab b{font-size:8px;color:#fff}
+.final-cab .x{width:16px;height:16px;border-radius:50%;background:#3a393d;color:#c7c7cc;
+  font-size:9px;display:flex;align-items:center;justify-content:center}
+.final-cab .add{background:#0a84ff;color:#fff;font-size:7.5px;font-weight:800;
+  border-radius:99px;padding:3px 9px;transition:transform .2s}
+.final-cab .add.pisca{transform:scale(1.12)}
+.final-nome{display:flex;align-items:center;gap:7px;background:#262528;border-radius:8px;padding:7px}
+.final-nome .fi{width:22px;height:22px;border-radius:5px;background:var(--vinho);flex-shrink:0}
+.final-nome b{font-size:7.5px;color:#fff;display:block}
+.final-nome i{font-size:5.5px;color:#8e8e93;font-style:normal;display:block;margin-top:1px}
+/* o dedo */
+.dedo{position:absolute;width:20px;height:20px;border-radius:50%;
+  background:rgba(255,255,255,.3);border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.25);
+  opacity:0;pointer-events:none;z-index:5;transform:translate(-50%,-50%);
+  transition:opacity .22s, left .4s cubic-bezier(.4,0,.2,1), top .4s cubic-bezier(.4,0,.2,1)}
+.dedo.bate{animation:bate .42s ease}
+@keyframes bate{0%,100%{transform:translate(-50%,-50%) scale(1)}45%{transform:translate(-50%,-50%) scale(.7)}}
+.demo-leg{text-align:center;font-size:12.5px;line-height:1.4;color:var(--tinta);
+  margin-top:9px;min-height:34px;font-weight:600}
+.demo-leg b{color:var(--vinho)}
+.demo-ctrl{display:flex;justify-content:center;margin-top:6px}
+.demo-ctrl button{background:none;border:1px solid var(--linha);border-radius:99px;
+  padding:5px 13px;font-size:11.5px;color:var(--cinza);cursor:pointer;font-family:inherit;font-weight:600}
+@media (prefers-reduced-motion: reduce){.dedo,.menu,.folha,.f-lista,.final{transition:none}}
+</style>
+</head>
+<body>
+
+<header>
+  <div style="display:flex;align-items:center;gap:11px;min-width:0">
+    <a href="./" id="voltarMenu" aria-label="regresar al menú" style="color:#fff;display:flex;flex-shrink:0">
+      <svg style="width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+    </a>
+    <div style="min-width:0"><h1>Mis Ventas</h1><div class="loja" id="hdrLoja" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div></div>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+    <button class="btn mini sec" onclick="Tela.backupRapido()" id="btnBkpTopo" style="white-space:nowrap;padding:8px 11px;font-size:13px">respaldo</button>
+    <button class="btn-cfg" onclick="Config.abrir()" aria-label="ajustes"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 00.34 1.87l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.7 1.7 0 00-1.87-.34 1.7 1.7 0 00-1.03 1.56V21a2 2 0 11-4 0v-.09A1.7 1.7 0 008.94 19.3a1.7 1.7 0 00-1.87.34l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.7 1.7 0 00.34-1.87 1.7 1.7 0 00-1.56-1.03H3a2 2 0 110-4h.09A1.7 1.7 0 004.7 8.94a1.7 1.7 0 00-.34-1.87l-.06-.06a2 2 0 112.83-2.83l.06.06a1.7 1.7 0 001.87.34H9a1.7 1.7 0 001.03-1.56V3a2 2 0 114 0v.09a1.7 1.7 0 001.03 1.56 1.7 1.7 0 001.87-.34l.06-.06a2 2 0 112.83 2.83l-.06.06a1.7 1.7 0 00-.34 1.87V9a1.7 1.7 0 001.56 1.03H21a2 2 0 110 4h-.09a1.7 1.7 0 00-1.51 1.03z"/></svg></button>
+  </div>
+</header>
+
+<div style="padding:14px 16px 0">
+<div class="faixa-inst" id="faixaInstalar" style="display:none">
+  <div class="fi-ico"><svg viewBox="0 0 24 24"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M11 19h2"/><path d="M12 7v6M9.5 10.5L12 13l2.5-2.5"/></svg></div>
+  <div class="fi-txt"><b>Pon la app en tu celular</b><span>ícono en tu pantalla de inicio, abre sin navegador y funciona sin internet</span></div>
+  <button class="fi-btn" onclick="Instalar.instalar()">Instalar</button>
+  <button class="fi-x" onclick="Instalar.dispensarFaixa()" aria-label="cerrar">&times;</button>
+</div>
+</div>
+
+
+<main id="app"></main>
+
+<nav id="navBar">
+  <button data-tela="vender" class="on"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Vender</button>
+  <button data-tela="vendas"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Ventas</button>
+  <button data-tela="estoque"><svg viewBox="0 0 24 24"><path d="M21 8l-9-5-9 5v8l9 5 9-5V8zM3.3 8.3L12 13l8.7-4.7M12 13v8"/></svg>Inventario</button>
+  <button data-tela="resumo"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Resumen</button>
+  <button data-tela="mais"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="1.6"/><circle cx="5" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>Más</button>
+</nav>
+
+<div class="modal-fundo" id="modalFundo" onclick="if(event.target===this)Modal.fechar()">
+  <div class="modal" id="modalCorpo"></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============ DADOS (localStorage, 1 chave, versao no schema) ============ */
+const CHAVE = 'appganancia_v1';
+const D = {
+  dados: null,
+  novo(){ return {v:1, config:{loja:'', criadoEm:hoje(), ultimoBackup:null, vendasDesdeBackup:0, wizardOk:false},
+           produtos:[], vendas:[], despesas:[], seq:1}; },
+  carregar(){ try{ this.dados = JSON.parse(localStorage.getItem(CHAVE)) || this.novo(); }
+              catch(e){ this.dados = this.novo(); } },
+  salvar(){ localStorage.setItem(CHAVE, JSON.stringify(this.dados)); },
+  id(){ return this.dados.seq++; }
+};
+/* ===== O DIA E O DO CELULAR DELA (16/10/2026) =====
+   Antes era new Date().toISOString(), que da o dia em Londres (UTC). No Mexico (UTC-6 no
+   centro, UTC-5 em Cancun, UTC-7/-8 no noroeste) a venda das 18h em diante nasceria com a
+   data de AMANHA. Aqui e o dia do fuso do aparelho. Nao usar toISOString() pra data local. */
+function hoje(){ const d=new Date(); return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10); }
+function agora(){ return new Date().toISOString(); }
+function dataBR(iso){ return String(iso).split('-').reverse().join('/'); }
+/* n dias antes de um dia ISO, sem o fuso mexer no resultado */
+function diaAntes(iso, n){ const d=new Date(iso+'T12:00:00Z'); d.setUTCDate(d.getUTCDate()-n); return d.toISOString().slice(0,10); }
+/* ===== DINERO EN PESOS MEXICANOS (21/10/2026) =====
+   Formato de Mexico: $1,234.50 (coma de miles, punto decimal), via Intl es-MX/MXN.
+   num() le o que a pessoa digitou ou o que o app mostrou: virgula e MILHAR, ponto e
+   DECIMAL. Excecao: virgula seguida de 1 ou 2 digitos no fim, e depois do ultimo ponto
+   ("12,5", "1.234,56"), e lida como decimal, pra um valor no formato antigo nao virar
+   cem vezes maior. Testes em scratchpad/mx/teste_moeda.js. */
+const MXN = new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN'});
+function rs(n){ return MXN.format((Math.round((Number(n)||0)*100)/100) || 0); }
+function num(v){
+  let s=String(v==null?'':v).replace(/[^\d,.\-]/g,'');
+  if(s.lastIndexOf(',')>s.lastIndexOf('.') && /,\d{1,2}$/.test(s))
+    s=s.replace(/\./g,'').replace(/,(?=\d{1,2}$)/,'.');
+  s=s.replace(/,/g,'');
+  const n=parseFloat(s); return isNaN(n)?0:n; }
+function fmtMoeda(n){ return n||n===0 ? rs(n) : ''; }
+/* forma de pago: o valor gravado e o rotulo que ela le */
+const PGTOS = ['efectivo','transferencia','tarjeta','plazos'];
+function nomePgto(f){ return {efectivo:'efectivo',transferencia:'transferencia',tarjeta:'tarjeta',plazos:'a plazos'}[f]||f; }
+/* ===== PARCELAS (14/09/2026) =====
+   Opcoes que a lojista de fato usa. A parcela e arredondada pra CIMA no centavo,
+   pra n parcelas nunca somarem menos que o total. */
+const PARCELAS_OPC = [1,2,3,4,5,6,10,12];
+function valorParcela(total,n){ return n>1 ? Math.ceil(total/n*100)/100 : total; }
+/* como a venda parcelada se le numa linha: "3x de R$ 40,00".
+   A base e `parcelasBase` quando ela existe (fiado em que a lojista parcelou o
+   saldo devedor, nao o total), e o total nos demais casos. */
+function baseParcela(v){
+  return (v && typeof v.parcelasBase === 'number' && v.parcelasBase > 0) ? v.parcelasBase : (v ? v.total : 0);
+}
+function textoParcelas(v){
+  const n = v && v.parcelas ? v.parcelas : 1;
+  return n>1 ? n+' pagos de '+rs(valorParcela(baseParcela(v),n)) : '';
+}
+/* ===== DESCONTO NA HORA DA VENDA (30/09/2026) =====
+   Pedido de compradoras: nao dava pra dar desconto no ato. A venda guarda o
+   desconto JA EM REAIS em v.desconto, e v.total nasce liquido (itens - desconto).
+   Por isso faturamento, lucro, fiado, parcelas e recibo continuam lendo v.total e
+   batem sem mudar nada. Quem soma os itens de novo (backup, "+ produto" no fiado,
+   ranking de produtos) tem que descontar v.desconto, senao o desconto some.
+   v.descPct existe so pra mostrar "10%" no recibo; a conta nunca le ele. */
+function somaItens(itens){ return Math.round(itens.reduce((s,i)=>s+i.preco*i.qtd,0)*100)/100; }
+function descEmReais(sub, tipo, valor){
+  const d = tipo==='pct' ? sub*Math.min(Math.max(valor,0),100)/100 : Math.max(valor,0);
+  return Math.round(Math.min(d, sub)*100)/100;
+}
+function descontoDe(v){ return v && v.desconto>0 ? v.desconto : 0; }
+function textoDesconto(v){
+  return descontoDe(v) ? rs(v.desconto)+(v.descPct?' ('+String(v.descPct)+'%)':'') : '';
+}
+/* ===== A MASCARA RODA NA CAPTURA, E O MOTIVO E UM BUG REAL (21/09/2026) =====
+   Um listener no `document` em fase de BORBULHA roda DEPOIS do `oninput` do proprio
+   campo. Entao a previa do fiado lia o valor AINDA SEM mascara: a lojista digitava
+   "6000", o campo mostrava "R$ 60,00" e o botao prometia "Receber R$ 6,00", dez
+   vezes menos, com a previa e o botao se contradizendo na mesma tela.
+   Com `capture:true` a mascara formata ANTES de qualquer oninput, entao todo mundo
+   que le o campo le o mesmo numero que ela esta vendo. */
+document.addEventListener('input',function(e){
+  const el=e.target; if(!el||!el.matches) return;
+  if(el.matches('[data-moeda]')){
+    /* digita em centavos: "6000" vira "$60.00" */
+    const d=el.value.replace(/\D/g,'').replace(/^0+(?=\d{3})/,'').slice(0,10);
+    el.value=d?rs(parseInt(d,10)/100):'';
+  }
+  if(el.matches('[data-pct]')){
+    /* porcentaje con punto decimal (10.5); una coma tecleada vira punto */
+    let v=el.value.replace(/,/g,'.').replace(/[^\d.]/g,''); const i=v.indexOf('.');
+    if(i>=0) v=v.slice(0,i+1)+v.slice(i+1).replace(/\./g,'').slice(0,1);
+    el.value=v.slice(0,6);
+  }
+},true);
+/* na borbulha sobra so o que depende do valor JA mascarado */
+document.addEventListener('input',function(e){
+  const el=e.target; if(!el||!el.matches) return;
+  if(typeof POSMASK==='function') POSMASK(el);
+});
+function POSMASK(el){ if(el.id==='pCusto'||el.id==='pPreco'){ try{Produto.previa();}catch(e){} } }
+function mesDe(iso){ return iso.slice(0,7); }
+function nomeMes(ym){ const [a,m]=ym.split('-'); const n=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  return n[parseInt(m)-1]+' de '+a; }
+
+const TEMAS={
+  vinho:   {a:'#8e2757',b:'#6d1d43',c:'#f6e7ee',d:'#fdf4f8',nome:'Vino'},
+  violeta: {a:'#6b3fa0',b:'#532e80',c:'#efe8f7',d:'#f9f5fd',nome:'Violeta'},
+  esmeralda:{a:'#1c7a5c',b:'#145c45',c:'#e4f2ec',d:'#f3faf7',nome:'Esmeralda'},
+  petroleo:{a:'#22677a',b:'#194f5e',c:'#e3eff3',d:'#f2f8fa',nome:'Petróleo'},
+  grafite: {a:'#3f3a45',b:'#2b2730',c:'#ece9ef',d:'#f7f5f9',nome:'Grafito'}
+};
+function aplicarTema(n){ const t=TEMAS[n]||TEMAS.vinho; const r=document.documentElement.style;
+  r.setProperty('--vinho',t.a); r.setProperty('--vinho-escuro',t.b);
+  r.setProperty('--rose',t.c); r.setProperty('--rose-2',t.d);
+  const m=document.querySelector('meta[name="theme-color"]'); if(m) m.setAttribute('content',t.a);
+  localStorage.setItem('appganancia_tema',n); }
+aplicarTema(localStorage.getItem('appganancia_tema')||'vinho');
+
+/* ============ DEFESA 1: armazenamento persistente ============ */
+if (navigator.storage && navigator.storage.persist) navigator.storage.persist();
+
+/* ============ TOAST ============ */
+let toastTimer=null;
+function toast(msg, lucro){ const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast mostra'+(lucro?' lucro':'');
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.className='toast',2600); }
+
+/* ============ MODAL ============ */
+const Modal = {
+  abrir(html){ document.getElementById('modalCorpo').innerHTML=html;
+    document.getElementById('modalFundo').classList.add('aberto'); this.ajustarArea(); },
+  fechar(){ document.getElementById('modalFundo').classList.remove('aberto'); },
+  /* ===== MODAL ACIMA DO TECLADO (19/10/2026) =====
+     O teclado do celular (iPhone e Chrome do Android) encolhe so a area VISIVEL, nao a pagina,
+     entao um position:fixed preso no fundo fica atras dele. Aqui o fundo do modal copia o
+     tamanho e a posicao da area visivel a cada mudanca. */
+  ajustarArea(){ const vv=window.visualViewport, f=document.getElementById('modalFundo'); if(!vv||!f) return;
+    f.style.top=vv.offsetTop+'px'; f.style.height=vv.height+'px';
+    f.classList.toggle('teclado', document.documentElement.clientHeight - vv.height > 120); }
+};
+if(window.visualViewport){
+  visualViewport.addEventListener('resize', ()=>Modal.ajustarArea());
+  visualViewport.addEventListener('scroll', ()=>Modal.ajustarArea());
+}
+
+
+/* ============ PAGINACAO (20 por pagina) ============ */
+const POR_PAGINA = 20;
+function paginar(lista, pagina){
+  const total=lista.length, paginas=Math.max(1,Math.ceil(total/POR_PAGINA));
+  const p=Math.min(Math.max(1,pagina),paginas);
+  return {itens:lista.slice((p-1)*POR_PAGINA, p*POR_PAGINA), pagina:p, paginas, total,
+    de:total?((p-1)*POR_PAGINA+1):0, ate:Math.min(p*POR_PAGINA,total)};
+}
+function barraPag(info, fnIr){
+  if(info.paginas<=1) return info.total>POR_PAGINA?'':'';
+  const b=(rot,pg,dis,on)=>`<button ${dis?'disabled':''} class="${on?'on':''}" onclick="${fnIr}(${pg})">${rot}</button>`;
+  let nums=[];
+  const p=info.pagina, t=info.paginas;
+  let ini=Math.max(1,p-1), fim=Math.min(t,p+1);
+  if(p===1) fim=Math.min(t,3);
+  if(p===t) ini=Math.max(1,t-2);
+  if(ini>1) nums.push(b('1',1,false,false));
+  if(ini>2) nums.push('<button disabled>...</button>');
+  for(let i=ini;i<=fim;i++) nums.push(b(String(i),i,false,i===p));
+  if(fim<t-1) nums.push('<button disabled>...</button>');
+  if(fim<t) nums.push(b(String(t),t,false,false));
+  return `<div class="pag">
+    ${b('&lsaquo;',p-1,p===1,false)}${nums.join('')}${b('&rsaquo;',p+1,p===t,false)}
+    <div class="info">mostrando del ${info.de} al ${info.ate} de ${info.total}</div></div>`;
+}
+
+/* ============ CALCULOS ============ */
+/* ===== O FIADO ENTRA NO LUCRO QUANDO O DINHEIRO ENTRA (14/09/2026) =====
+
+   Regra do Vini: "no fiado, deve somar no lucro/faturamento somente quando o valor
+   for baixado do fiado. Somar antes de receber nao faz sentido."
+
+   O que muda: a venda fiada NAO conta mais integral no mes em que foi feita. Cada
+   recebimento (v.pagamentos=[{data,valor}]) entra no faturamento do mes DAQUELA data,
+   e o custo entra na mesma proporcao do que foi recebido. Venda de agosto paga em
+   setembro aparece em setembro: e o regime de caixa, que e o que a lojista ve no
+   bolso.
+
+   A proporcao do custo importa: sem ela, um fiado com 50% recebido mostraria lucro
+   inflado (receita pela metade, custo zero) ou negativo (receita pela metade, custo
+   inteiro). Com ela, receber metade da venda rende exatamente metade do lucro.
+
+   Efectivo, transferencia e tarjeta seguem como sempre: entram inteiros no mes da venda. */
+const Calc = {
+  vendasDoMes(ym){ return D.dados.vendas.filter(v=>mesDe(v.data)===ym); },
+  /* Quanto de uma venda entrou no caixa dentro do mes ym.
+     Nao-fiado: o total, no mes da venda. Fiado: a soma dos recebimentos do mes. */
+  recebidoNoMes(v, ym){
+    if(v.pgto!=='plazos') return mesDe(v.data)===ym ? v.total : 0;
+    if(Array.isArray(v.pagamentos))
+      return v.pagamentos.reduce((s,x)=>s+(mesDe(String(x.data||''))===ym?(Number(x.valor)||0):0),0);
+    /* venda antiga, anterior ao historico: cai no mes da venda se estava quitada */
+    return (v.pago && mesDe(v.data)===ym) ? v.total : 0;
+  },
+  totais(ym){
+    const vs=this.vendasDoMes(ym);
+    let vendido=0, custo=0, fiadoPend=0, nCaixa=0;
+    /* faturamento e custo varrem TODAS as vendas, nao so as do mes: um fiado de
+       agosto recebido em setembro precisa aparecer em setembro */
+    D.dados.vendas.forEach(v=>{
+      const rec=this.recebidoNoMes(v,ym);
+      if(rec>0){
+        vendido+=rec;
+        /* custo na mesma proporcao do que entrou */
+        custo += v.total>0 ? v.custo*(rec/v.total) : 0;
+        nCaixa++;
+      }
+    });
+    /* o fiado a receber e o saldo de TODA venda fiada aberta, independente do mes:
+       divida velha continua sendo dinheiro na rua */
+    D.dados.vendas.forEach(v=>{ if(v.pgto==='plazos') fiadoPend+=Venda.saldo(v); });
+    const despesas=D.dados.despesas.filter(d=>mesDe(d.data)===ym).reduce((s,d)=>s+d.valor,0);
+    const investido=D.dados.produtos.reduce((s,p)=>s+p.custo*p.qtd,0);
+    /* fiado ainda aberto que foi VENDIDO neste mes: o que a tela precisa explicar */
+    const fiadoDoMes=vs.filter(v=>v.pgto==='plazos').reduce((s,v)=>s+Venda.saldo(v),0);
+    return {vendido, lucro:vendido-custo, despesas, liquido:vendido-custo-despesas,
+            fiadoPend, fiadoDoMes, investido, n:nCaixa, nVendas:vs.length};
+  },
+  /* lucro ja REALIZADO de uma venda: proporcional ao que entrou no caixa */
+  lucroRealizado(v){
+    if(v.pgto!=='plazos') return v.total-v.custo;
+    const pg=Venda.jaPago(v);
+    return v.total>0 ? (v.total-v.custo)*(pg/v.total) : 0;
+  },
+  topProdutos(ym){
+    const cont={};
+    this.vendasDoMes(ym).forEach(v=>{
+      /* o desconto da venda se reparte entre os itens na proporcao do preco */
+      const sub=somaItens(v.itens), f=sub>0 ? (sub-descontoDe(v))/sub : 1;
+      v.itens.forEach(i=>{
+      cont[i.nome]=cont[i.nome]||{nome:i.nome,qtd:0,lucro:0};
+      cont[i.nome].qtd+=i.qtd; cont[i.nome].lucro+=(i.preco*f-i.custo)*i.qtd; }); });
+    return Object.values(cont).sort((a,b)=>b.lucro-a.lucro).slice(0,5);
+  }
+};
+
+/* ============ BACKUP (defesas 2, 3, 4, 5) ============ */
+const Backup = {
+  precisa(){ const c=D.dados.config;
+    if(!c.ultimoBackup) return D.dados.vendas.length>=3;
+    const dias=(Date.now()-new Date(c.ultimoBackup))/864e5;
+    return c.vendasDesdeBackup>=10 || dias>=7; },
+  nomeArquivo(){ return 'Respaldo AppGanancia '+hoje().split('-').reverse().join('-')+'.csv'; },
+  /* RESPALDO (21/10/2026): separador ";" e numero com PONTO decimal, sem milhar.
+     Cabecalho, secoes e colunas em espanhol. Formato proprio do AppGanancia: nao le
+     backup de outra versao (outra moeda). */
+  gerarCSV(){
+    const L=[]; const s=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
+    const n=v=>String(Math.round(v*100)/100);
+    L.push('APPGANANCIA;RESPALDO;v1');
+    L.push('negocio;'+s(D.dados.config.loja));
+    L.push('generado;'+new Date().toLocaleString('es-MX'));
+    L.push('');
+    L.push('#PRODUCTOS');
+    L.push('id;nombre;costo;precio;inventario');
+    D.dados.produtos.forEach(p=>L.push([p.id,s(p.nome),n(p.custo),n(p.preco),p.qtd].join(';')));
+    L.push('');
+    L.push('#VENTAS');
+    L.push('venta;fecha;producto_id;producto;cantidad;precio_unit;costo_unit;forma_pago;clienta;pagada;recibido;pagos;base_pagos;descuento;descuento_pct');
+    D.dados.vendas.forEach(v=>v.itens.forEach(i=>
+      L.push([v.id,v.data,i.produtoId,s(i.nome),i.qtd,n(i.preco),n(i.custo),v.pgto,s(v.cliente||''),v.pago?'si':'no',n(Venda.jaPago(v)),v.parcelas||1,
+        (typeof v.parcelasBase==='number'?n(v.parcelasBase):''),
+        (descontoDe(v)?n(v.desconto):''),(v.descPct?n(v.descPct):'')].join(';'))));
+    L.push('');
+    /* uma linha por pago parcial: sem isto, restaurar perderia as datas dos pagos */
+    L.push('#PAGOS');
+    L.push('venta;fecha;monto');
+    D.dados.vendas.forEach(v=>{ if(Array.isArray(v.pagamentos))
+      v.pagamentos.forEach(x=>L.push([v.id,x.data,n(x.valor)].join(';'))); });
+    L.push('');
+    L.push('#GASTOS');
+    L.push('id;fecha;descripcion;monto');
+    D.dados.despesas.forEach(d2=>L.push([d2.id,d2.data,s(d2.desc),n(d2.valor)].join(';')));
+    L.push('#FIN');
+    return '\ufeff'+L.join('\r\n');
+  },
+  arquivo(){ return new File([new Blob([this.gerarCSV()],{type:'text/csv;charset=utf-8'})],
+    this.nomeArquivo(), {type:'text/csv'}); },
+  async compartilhar(){
+    const f=this.arquivo();
+    if(navigator.canShare && navigator.canShare({files:[f]})){
+      try{ await navigator.share({files:[f], title:'Respaldo AppGanancia'});
+        this.registrou(); return; }catch(e){ if(e.name==='AbortError') return; }
+    }
+    const url=URL.createObjectURL(f); const a=document.createElement('a');
+    a.href=url; a.download=f.name; a.click(); URL.revokeObjectURL(url); this.registrou();
+  },
+  registrou(){ D.dados.config.ultimoBackup=agora(); D.dados.config.vendasDesdeBackup=0;
+    D.salvar(); toast('¡Respaldo listo! Guárdalo en tu WhatsApp'); Tela.render(); },
+  restaurar(arq){
+    const r=new FileReader();
+    r.onload=()=>{ let d=null;
+      try{
+        const txt=r.result;
+        if((arq.name||'').toLowerCase().endsWith('.json')||txt.trim().startsWith('{')) d=this.deJSON(txt);
+        else d=this.deCSV(txt);
+      }catch(e){ d=null; }
+      if(!d){ toast('Ese archivo no es un respaldo de AppGanancia'); return; }
+      Backup._pend=d;
+      Modal.abrir(`<h3>¿Restaurar este respaldo?</h3>
+        <p class="sub">Este archivo tiene <b>${d.produtos.length} producto${d.produtos.length===1?'':'s'}</b> y <b>${d.vendas.length} venta${d.vendas.length===1?'':'s'}</b>
+        (negocio: ${d.config.loja||'sin nombre'}). Va a <b>reemplazar</b> lo que hay en la app ahorita.</p>
+        <button class="btn" onclick='Backup.confirmaRestaurar()'>Sí, restaurar este respaldo</button>
+        <button class="btn sec" onclick="Modal.fechar()">Cancelar</button>`);
+    };
+    r.readAsText(arq);
+  },
+  deJSON(txt){ const d=JSON.parse(txt);
+    if(!d.v || !Array.isArray(d.produtos) || !Array.isArray(d.vendas)) throw 0; return d; },
+  deCSV(txt){
+    const linhas=txt.replace(/^\uFEFF/,'').split(/\r?\n/);
+    if(!linhas[0]||!linhas[0].startsWith('APPGANANCIA')) throw 0;
+    const num2=v=>num(String(v).replace(/"/g,''));
+    const uns=v=>{v=String(v||'');if(v.startsWith('"')&&v.endsWith('"'))v=v.slice(1,-1).replace(/""/g,'"');return v;};
+    const cols=l=>{const out=[];let cur='';let q=false;
+      for(const ch of l){ if(ch==='"'){q=!q;cur+=ch;} else if(ch===';'&&!q){out.push(cur);cur='';} else cur+=ch; }
+      out.push(cur); return out; };
+    const d=D.novo(); d.config.wizardOk=true;
+    let sec=''; const vendasMap={};
+    for(const l of linhas){
+      if(!l.trim()) continue;
+      if(l.startsWith('#')){ sec=l.trim(); continue; }
+      const c2=cols(l);
+      if(sec==='' && l.startsWith('negocio;')) d.config.loja=uns(c2[1]);
+      if(sec==='#PRODUCTOS' && c2[0]!=='id')
+        d.produtos.push({id:parseInt(c2[0])||0,nome:uns(c2[1]),custo:num2(c2[2]),preco:num2(c2[3]),qtd:parseInt(c2[4])||0});
+      if(sec==='#VENTAS' && c2[0]!=='venta'){
+        const id=parseInt(c2[0])||0;
+        if(!vendasMap[id]) vendasMap[id]={id,data:c2[1],criadaEm:c2[1],itens:[],pgto:c2[7],
+          cliente:uns(c2[8])||null,pago:c2[9]!=='no',total:0,custo:0,
+          /* coluna 10 e do backup novo; backup antigo nao tem e fica undefined */
+          _recebido:(c2.length>10&&String(c2[10]).trim()!=='')?num2(c2[10]):null,
+          /* coluna 11 (parcelas) so existe do backup de 14/09/2026 em diante */
+          parcelas:(c2.length>11&&String(c2[11]).trim()!=='')?(parseInt(c2[11])||1):1,
+          /* coluna 12: sobre quanto a parcela foi combinada (fiado em que a lojista
+             parcelou o saldo devedor). Vazio = a parcela e sobre o total. */
+          parcelasBase:(c2.length>12&&String(c2[12]).trim()!=='')?num2(c2[12]):null,
+          /* colunas 13 e 14 (desconto) so existem do backup de 30/09/2026 em diante */
+          desconto:(c2.length>13&&String(c2[13]).trim()!=='')?num2(c2[13]):0,
+          descPct:(c2.length>14&&String(c2[14]).trim()!=='')?num2(c2[14]):0,
+          pagamentos:null};
+        vendasMap[id].itens.push({produtoId:parseInt(c2[2])||0,nome:uns(c2[3]),
+          qtd:parseInt(c2[4])||1,preco:num2(c2[5]),custo:num2(c2[6])});
+      }
+      if(sec==='#PAGOS' && c2[0]!=='venta'){
+        const id=parseInt(c2[0])||0;
+        if(vendasMap[id]){ if(!Array.isArray(vendasMap[id].pagamentos)) vendasMap[id].pagamentos=[];
+          vendasMap[id].pagamentos.push({data:c2[1],valor:num2(c2[2])}); }
+      }
+      if(sec==='#GASTOS' && c2[0]!=='id')
+        d.despesas.push({id:parseInt(c2[0])||0,data:c2[1],desc:uns(c2[2]),valor:num2(c2[3])});
+    }
+    d.vendas=Object.values(vendasMap).map(v=>{
+      v.total=Math.round((somaItens(v.itens)-descontoDe(v))*100)/100;
+      v.custo=v.itens.reduce((s,i)=>s+i.custo*i.qtd,0);
+      if(!v.desconto) delete v.desconto;
+      if(!v.descPct) delete v.descPct;
+      /* Reconstruir o fiado, na ordem de confianca:
+         (1) historico #RECEBIMENTOS, (2) coluna 'recebido' do backup novo,
+         (3) backup antigo, que so tem o binario 'pago'. */
+      if(v.pgto==='plazos'){
+        if(!Array.isArray(v.pagamentos)){
+          const r=v._recebido;
+          if(r!==null && r>0) v.pagamentos=[{data:v.data,valor:Math.min(r,v.total)}];
+          else if(r!==null) v.pagamentos=[];
+          else v.pagamentos = v.pago ? [{data:v.data,valor:v.total}] : [];
+        }
+        const rec=v.pagamentos.reduce((s,x)=>s+(Number(x.valor)||0),0);
+        v.pago = rec >= Math.round(v.total*100)/100;
+      } else { v.pagamentos=null; v.pago=true; }
+      delete v._recebido;
+      if(v.parcelasBase===null) delete v.parcelasBase;
+      return v; })
+      .sort((a,b)=>String(b.data).localeCompare(String(a.data)) || b.id-a.id);
+    const ids=[...d.produtos.map(p=>p.id),...d.vendas.map(v=>v.id),...d.despesas.map(x=>x.id),0];
+    d.seq=Math.max(...ids)+1;
+    if(!d.produtos.length && !d.vendas.length) throw 0;
+    return d;
+  },
+  confirmaRestaurar(){ D.dados=this._pend; D.salvar(); Modal.fechar(); Tela.render();
+    toast('¡Respaldo restaurado! Todo de vuelta en su lugar'); },
+  exportarCSV(ym){
+    /* Excel em es-MX usa "," como separador de lista e "." decimal */
+    const vs=Calc.vendasDoMes(ym);
+    const q=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
+    const n=v=>String(Math.round(v*100)/100);
+    let csv='fecha,productos,cantidad,forma de pago,pagos,clienta,descuento,total,costo,ganancia,estado\n';
+    vs.forEach(v=>{ csv+=[q(v.data), q(v.itens.map(i=>i.nome+' x'+i.qtd).join(' + ')),
+      v.itens.reduce((s,i)=>s+i.qtd,0), q(nomePgto(v.pgto)),
+      q((v.parcelas&&v.parcelas>1)?v.parcelas+' pagos':'contado'), q(v.cliente||''),
+      n(descontoDe(v)), n(v.total), n(v.custo), n(v.total-v.custo),
+      q(v.pgto==='plazos'
+        ? (Venda.saldo(v)<=0 ? 'pagada'
+           : (Venda.jaPago(v)>0 ? 'parcial (debe '+n(Venda.saldo(v))+')' : 'pendiente'))
+        : 'pagada')
+      ].join(',')+'\n'; });
+    const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'});
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+    a.download='ventas-'+ym+'.csv'; a.click(); toast('Ventas del mes exportadas');
+  }
+};
+
+/* ============ VENDA ============ */
+const Venda = {
+  carrinho:null,
+  iniciar(){ if(!D.dados.produtos.length){ Tela.ir('estoque'); toast('Primero agrega un producto'); return; }
+    this._editVenda=null; this._addVenda=null;
+    this.carrinho={itens:[],pgto:null,cliente:''}; this.busca=''; this.pag=1; this._editIdx=null; this.telaProduto(); },
+  busca:'', pag:1, _editIdx:null,
+  /* quantas pecas ja entraram no carrinho */
+  nItens(){ return this.carrinho ? this.carrinho.itens.reduce((s,i)=>s+i.qtd,0) : 0; },
+  /* Estoque disponivel DESCONTANDO o que ja esta no carrinho. Sem isso, colocar 2 e
+     depois +3 do mesmo produto nao avisaria que passou do estoque. */
+  dispon(prodId, ignorarIdx){
+    const p=D.dados.produtos.find(x=>x.id===prodId); if(!p) return 0;
+    const noCarrinho=this.carrinho ? this.carrinho.itens.reduce((s,i,idx)=>
+      (i.produtoId===prodId && idx!==ignorarIdx) ? s+i.qtd : s, 0) : 0;
+    const jaDaVenda=(this._editVenda && this._editOrig) ? (this._editOrig[prodId]||0) : 0;
+    return p.qtd + jaDaVenda - noCarrinho;
+  },
+  telaProduto(){
+    const total=D.dados.produtos.length;
+    /* A busca repinta SO a lista (pintarLista), nunca o campo (19/10/2026). Antes cada letra
+       redesenhava o modal inteiro e criava um campo novo, refocado num setTimeout. */
+    const busca = total>8
+      ? `<input id="buscaProd" placeholder="buscar producto..." value="${this.busca}" autocomplete="off"
+          oninput="Venda.busca=this.value;Venda.pag=1;Venda.pintarLista()">`
+      : '';
+    const n=this.nItens();
+    const naConta=!!this._addVenda;
+    if(this._editVenda){
+      Modal.abrir(`<div class="passo">agregar producto a la venta</div>${busca}
+      <div id="vendaLista">${this.listaHTML()}</div>
+      <button class="btn sec" style="margin-top:10px" onclick="Venda.telaEditar()">Regresar a la venta</button>`);
+      return; }
+    const voltar = n>0
+      ? `<button class="btn sec" style="margin-top:10px" onclick="Venda.telaCarrinho()">${naConta?`ver la cuenta (${n} ${n===1?'pieza':'piezas'})`:`regresar al carrito (${n} ${n===1?'pieza':'piezas'})`}</button>`
+      : (naConta?`<button class="btn sec" style="margin-top:10px" onclick="Venda.cancelarAddConta()">Cancelar</button>`:'');
+    const passo = naConta
+      ? (n>0?'toca otro producto que se llevó':'¿qué más se está llevando?')
+      : (n>0?'agregar otro producto · tócalo':'paso 1 de 4 · toca el producto');
+    Modal.abrir(`<div class="passo">${passo}</div>${busca}
+      <div id="vendaLista">${this.listaHTML()}</div>${voltar}`);
+  },
+  /* a lista de produtos (filtrada pela busca) e a paginacao */
+  listaHTML(){
+    let ps=[...D.dados.produtos].sort((a,b)=>a.nome.localeCompare(b.nome));
+    if(this.busca) ps=ps.filter(p=>p.nome.toLowerCase().includes(this.busca.toLowerCase()));
+    const pg=paginar(ps, this.pag);
+    const lista = pg.itens.map(p=>{
+      const d=this.dispon(p.id);
+      const noCar=p.qtd-d;
+      let obs='';
+      if(d<=0) obs=` <span style="font-weight:600;font-size:12.5px">(${noCar>0?'todo en el carrito':'agotado'})</span>`;
+      else if(noCar>0) obs=` <span style="font-weight:600;font-size:12.5px;color:var(--vinho)">(${noCar} en el carrito)</span>`;
+      return `<button class="escolha-prod" onclick="Venda.escolheu(${p.id})" ${d<=0?'style="opacity:.5"':''}>
+        <span class="n">${p.nome}${obs}</span>
+        <span class="p">${rs(p.preco)}</span></button>`;
+    }).join('');
+    return `<div style="margin-top:10px">${lista || '<div class="vazio">No encontré ese producto.</div>'}</div>
+      ${barraPag(pg,'Venda.irPag')}`;
+  },
+  pintarLista(){ const el=document.getElementById('vendaLista');
+    if(el) el.innerHTML=this.listaHTML(); else this.telaProduto(); },
+  irPag(p){ this.pag=p; this.pintarLista();
+    document.querySelector('.modal')?.scrollTo({top:0,behavior:'smooth'}); },
+  escolheu(id){ this._prod=D.dados.produtos.find(p=>p.id===id); this._qtd=1; this._editIdx=null; this.telaQtd(); },
+  /* mudar a quantidade de um item que JA esta no carrinho */
+  editarItem(idx){ const it=this.carrinho.itens[idx]; if(!it) return;
+    this._prod=D.dados.produtos.find(p=>p.id===it.produtoId)
+      || {id:it.produtoId,nome:it.nome,preco:it.preco,custo:it.custo,qtd:0};
+    this._qtd=it.qtd; this._editIdx=idx; this.telaQtd(); },
+  telaQtd(){ const p=this._prod; const ed=this._editIdx!==null;
+    Modal.abrir(`<div class="passo">${ed?'cambiar la cantidad':'paso 2 de 4 · cantidad'}</div>
+      <h3>${p.nome}</h3><p class="sub">${rs(p.preco)} c/u · te quedan ${p.qtd}</p>
+      <div class="qtd-row">
+        <button onclick="Venda.mudaQtd(-1)">&minus;</button>
+        <span class="n" id="qtdN">${this._qtd}</span>
+        <button onclick="Venda.mudaQtd(1)">+</button>
+      </div>
+      <div class="aviso backup oculto" id="avisoEstoque"></div>
+      <button class="btn" onclick="Venda.addAoCarrinho()">${ed?'Guardar':'Agregar al carrito'}</button>
+      ${(ed||this.nItens()>0)?`<button class="btn sec" onclick="Venda.telaCarrinho()">Cancelar</button>`:''}`);
+    this.avisoQtd(); },
+  mudaQtd(d){ this._qtd=Math.max(1,this._qtd+d);
+    document.getElementById('qtdN').textContent=this._qtd; this.avisoQtd(); },
+  avisoQtd(){
+    const av=document.getElementById('avisoEstoque'); if(!av) return;
+    const d=this.dispon(this._prod.id, this._editIdx);
+    if(d<=0){ av.classList.remove('oculto');
+      av.innerHTML='Este producto está <b>agotado</b> en tu inventario. Puedes anotar la venta, pero revisa tu inventario después.'; return; }
+    if(this._qtd>d){ av.classList.remove('oculto');
+      av.innerHTML='Ojo: solo tienes <b>'+d+'</b> en inventario'
+        +(d!==this._prod.qtd?' (contando lo que ya está en el carrito)':'')
+        +'. Si vendes '+this._qtd+', se queda en cero (ajústalo después en Inventario).'; return; }
+    av.classList.add('oculto');
+  },
+  addAoCarrinho(){
+    const p=this._prod, q=this._qtd;
+    if(this._editIdx!==null){ this.carrinho.itens[this._editIdx].qtd=q; }
+    else {
+      /* o mesmo produto escolhido duas vezes SOMA numa linha, nao duplica */
+      const ex=this.carrinho.itens.find(i=>i.produtoId===p.id);
+      if(ex) ex.qtd+=q;
+      else this.carrinho.itens.push({produtoId:p.id,nome:p.nome,qtd:q,preco:p.preco,custo:p.custo});
+    }
+    this._editIdx=null; this.telaCarrinho();
+  },
+  removerItem(idx){
+    if(this._editVenda && this.carrinho.itens.length<=1){ toast('La venta necesita al menos un producto. Para cancelarla, usa Borrar'); return; }
+    this.carrinho.itens.splice(idx,1);
+    if(!this.carrinho.itens.length){ this.busca=''; this.pag=1; this.telaProduto();
+      toast(this._addVenda?'Elige lo que se está llevando':'El carrito quedó vacío'); return; }
+    this.telaCarrinho(); },
+  telaCarrinho(){
+    const c=this.carrinho;
+    /* somando numa conta de fiado ja aberta: o "carrinho" e o resumo daquela conta,
+       nunca a tela que leva a criar uma venda nova */
+    if(this._editVenda){ this._editIdx=null; this.telaEditar(); return; }
+    if(this._addVenda){
+      if(!c || !c.itens.length){ this.busca=''; this.pag=1; this.telaProduto(); return; }
+      this._editIdx=null; this.telaAddResumo(); return;
+    }
+    if(!c || !c.itens.length){ this.busca=''; this.pag=1; this.telaProduto(); return; }
+    this._editIdx=null;
+    const total=c.itens.reduce((s,i)=>s+i.preco*i.qtd,0);
+    const custo=c.itens.reduce((s,i)=>s+i.custo*i.qtd,0);
+    const linhas=c.itens.map((i,idx)=>
+      `<div class="cart-item">
+        <div style="min-width:0;flex:1;cursor:pointer" onclick="Venda.editarItem(${idx})">
+          <div class="n">${i.nome}</div>
+          <div class="s">${i.qtd} x ${rs(i.preco)} · toca para cambiar</div>
+        </div>
+        <span class="v">${rs(i.preco*i.qtd)}</span>
+        <button class="x" onclick="Venda.removerItem(${idx})" aria-label="quitar del carrito">&times;</button>
+      </div>`).join('');
+    Modal.abrir(`<div class="passo">paso 3 de 4 · lo que se llevó</div>
+      ${linhas}
+      <div class="cart-tot"><span class="l">Total</span><span class="v">${rs(total)}</span></div>
+      <div class="cart-lucro">tu ganancia: ${rs(total-custo)}</div>
+      <button class="btn sec" style="margin-top:14px" onclick="Venda.busca='';Venda.pag=1;Venda.telaProduto()">+ agregar otro producto</button>
+      <button class="btn" onclick="Venda.telaPgto()">Seguir al pago</button>`);
+  },
+  /* ===== NOME E PARCELAS (14/09/2026) =====
+     Nome: pedido em TODA venda, porque a lojista quer saber pra quem vendeu, mas
+     obrigatorio so no fiado (sem nome nao ha como cobrar depois).
+     Parcelas: cartao e fiado. E informativo, e existe porque a freguesa pensa em
+     "3x de 40", nao em "120 em aberto". No fiado a lojista continua podendo baixar
+     qualquer valor: a parcela e a conta que ela combina e mostra. */
+  ehParcelavel(f){ return f==='tarjeta' || f==='plazos'; },
+  telaPgto(){
+    const c=this.carrinho;
+    if(!c || !c.itens.length){ this.telaProduto(); return; }
+    const resumo=c.itens.length===1
+      ? c.itens[0].nome+' x'+c.itens[0].qtd
+      : c.itens.length+' productos · '+this.nItens()+' piezas';
+    if(!c.parcelas) c.parcelas=1;
+    if(!c.desc) c.desc={tipo:'rs',valor:0};
+    const par=this.ehParcelavel(c.pgto);
+    Modal.abrir(`<div class="passo">paso 4 de 4 · ¿cómo te pagó?</div>
+      <p class="sub" style="margin-top:2px">${resumo}</p>
+      <div id="descArea"></div>
+      <label>forma de pago</label>
+      <div class="pgto-grid">
+        ${PGTOS.map(f=>`<button id="pg-${f}" class="${c.pgto===f?'on':''}" onclick="Venda.pgto('${f}')">${f==='plazos'?'a plazos (me debe)':nomePgto(f)}</button>`).join('')}
+      </div>
+
+      <div id="parcCampo" class="${par?'':'oculto'}">
+        <label>¿en cuántos pagos?</label>
+        <div class="parc-grid" id="parcGrid">
+          ${PARCELAS_OPC.map(n=>`<button type="button" class="${c.parcelas===n?'on':''}"
+            onclick="Venda.setParcelas(${n})">${n===1?'contado':n+' pagos'}</button>`).join('')}
+        </div>
+        <div class="parc-info" id="parcInfo"></div>
+      </div>
+
+      <label>nombre de la clienta <span id="nomeOpc" class="opcional">(opcional)</span></label>
+      <input id="fiadoNome" placeholder="ej: Lupe de la oficina" value="${c.cliente||''}" autocomplete="off">
+
+      <button class="btn" onclick="Venda.confirmar()">Anotar venta &#10003;</button>
+      <button class="btn sec" onclick="Venda.telaCarrinho()">regresar al carrito</button>`);
+    this.descMontar(); this.pgtoPintar(); },
+  /* os numeros do carrinho com o desconto que esta digitado agora */
+  contaCarrinho(){
+    const c=this.carrinho, sub=somaItens(c.itens);
+    const custo=c.itens.reduce((s,i)=>s+i.custo*i.qtd,0);
+    const d=c.desc||{};
+    const desc=descEmReais(sub, d.tipo, d.valor||0);
+    return {sub, desc, total:Math.round((sub-desc)*100)/100, custo};
+  },
+  /* resumo da venda: subtotal, desconto e total. Campo vazio = sem desconto,
+     entao a venda comum passa reto, sem botao nenhum a mais pra tocar */
+  descMontar(){
+    const el=document.getElementById('descArea'); if(!el) return;
+    const d=this.carrinho.desc, pct=d.tipo==='pct';
+    const val=d.valor>0 ? (pct ? String(d.valor) : fmtMoeda(d.valor)) : '';
+    el.innerHTML=`<div class="resumo">
+      <div class="rl"><span>Subtotal</span><span class="v" id="rSub"></span></div>
+      <div class="rl"><span>Descuento</span>
+        <span class="desc-ctrl">
+          <span class="desc-tipo">
+            <button type="button" class="${pct?'':'on'}" onclick="Venda.descTipo('rs')">$</button>
+            <button type="button" class="${pct?'on':''}" onclick="Venda.descTipo('pct')">%</button>
+          </span>
+          <input id="descValor" inputmode="${pct?'decimal':'numeric'}" ${pct?'data-pct':'data-moeda'}
+            placeholder="${pct?'0%':'$0.00'}" value="${val}" autocomplete="off" oninput="Venda.descLer()">
+        </span></div>
+      <div class="desc-info" id="descInfo"></div>
+      <div class="rl tot"><span>Total</span><span class="v" id="rTot"></span></div>
+    </div>`;
+    this.descPintar();
+  },
+  /* trocar R$ por % zera o campo: 10 reais e 10% sao coisas diferentes */
+  descTipo(t){ const d=this.carrinho.desc; if(d.tipo===t) return;
+    d.tipo=t; d.valor=0; this.descMontar(); this.pintarParcela();
+    if(this._editVenda) this.editAviso();
+    setTimeout(()=>{ const i=document.getElementById('descValor'); if(i) i.focus(); },60); },
+  descLer(){ const i=document.getElementById('descValor'); if(!i) return;
+    this.carrinho.desc.valor=num(i.value); this.descPintar(); this.pintarParcela();
+    if(this._editVenda) this.editAviso(); },
+  descPintar(){
+    const k=this.contaCarrinho(), d=this.carrinho.desc;
+    const s=document.getElementById('rSub'), t=document.getElementById('rTot');
+    if(s) s.textContent=rs(k.sub);
+    if(t) t.textContent=rs(k.total);
+    const el=document.getElementById('descInfo'); if(!el) return;
+    if(!(d.valor>0)){ el.innerHTML=''; el.style.display='none'; return; }
+    el.style.display='';
+    const passou = d.tipo==='pct' ? d.valor>100 : d.valor>k.sub;
+    if(passou){ el.innerHTML=`<span class="ruim">El descuento es mayor que el subtotal</span>`; return; }
+    const lucro=k.total-k.custo;
+    const quanto = d.tipo==='pct' ? '−'+rs(k.desc)
+      : (k.sub>0 ? String(Math.round(k.desc/k.sub*1000)/10)+'% del subtotal' : '');
+    el.innerHTML = quanto + ' · ' + (lucro>=0 ? 'ganancia: '+rs(lucro)
+      : `<span class="ruim">abajo del costo: sales perdiendo ${rs(-lucro)}</span>`);
+  },
+  pgto(f){ const c=this.carrinho; c.pgto=f;
+    PGTOS.forEach(x=>document.getElementById('pg-'+x).classList.toggle('on',x===f));
+    if(!this.ehParcelavel(f)) c.parcelas=1;
+    this.pgtoPintar(); },
+  /* mostra/esconde as parcelas e troca o rotulo do nome conforme a forma escolhida */
+  pgtoPintar(){
+    const c=this.carrinho, f=c.pgto;
+    const cp=document.getElementById('parcCampo');
+    if(cp) cp.classList.toggle('oculto', !this.ehParcelavel(f));
+    const opc=document.getElementById('nomeOpc');
+    if(opc){ opc.textContent = f==='plazos' ? '(para cobrarle después)' : '(opcional)';
+             opc.classList.toggle('obrig', f==='plazos'); }
+    this.pintarParcela(); },
+  setParcelas(n){ this.carrinho.parcelas=n;
+    document.querySelectorAll('#parcGrid button').forEach((b,i)=>
+      b.classList.toggle('on', PARCELAS_OPC[i]===n));
+    this.pintarParcela(); },
+  pintarParcela(){
+    const el=document.getElementById('parcInfo'); if(!el) return;
+    const c=this.carrinho, n=c.parcelas||1;
+    const total=this.contaCarrinho().total;
+    el.innerHTML = n>1
+      ? `<b>${n} pagos de ${rs(valorParcela(total,n))}</b> · total ${rs(total)}`
+      : 'un solo pago';
+  },
+  confirmar(){
+    const c=this.carrinho;
+    if(!c || !c.itens.length){ toast('No hay nada en el carrito'); this.telaProduto(); return; }
+    if(!c.pgto){ toast('Elige cómo te pagó'); return; }
+    c.cliente=(document.getElementById('fiadoNome').value||'').trim();
+    if(c.pgto==='plazos' && !c.cliente){ toast('Anota el nombre de quien te queda a deber'); return; }
+    const d=c.desc||{};
+    if(d.valor>0 && (d.tipo==='pct' ? d.valor>100 : d.valor>somaItens(c.itens))){
+      toast('El descuento es mayor que el subtotal'); return; }
+    const {total, custo, desc}=this.contaCarrinho();
+    const parcelas=this.ehParcelavel(c.pgto)?(c.parcelas||1):1;
+    const v={id:D.id(),data:hoje(),criadaEm:agora(),itens:c.itens,pgto:c.pgto,
+      cliente:c.cliente||null,pago:c.pgto!=='plazos',total,custo,
+      /* parcelas e informativo: o numero de vezes combinado com a freguesa */
+      parcelas,
+      /* fiado nasce com historico de recebimento vazio; o parcial vira linha aqui */
+      pagamentos:c.pgto==='plazos'?[]:null};
+    if(desc>0){ v.desconto=desc; if(d.tipo==='pct') v.descPct=d.valor; }
+    D.dados.vendas.unshift(v);
+    c.itens.forEach(i=>{ const p=D.dados.produtos.find(x=>x.id===i.produtoId); if(p) p.qtd=Math.max(0,p.qtd-i.qtd); });
+    D.dados.config.vendasDesdeBackup++;
+    D.salvar(); this.carrinho=null; Modal.fechar(); Tela.render();
+    /* no fiado o dinheiro ainda nao entrou: nao anunciar lucro que ela nao recebeu */
+    toast(v.pgto==='plazos'
+      ? 'Anotado a plazos' + (v.cliente?' · '+v.cliente:'') + ' · te debe '+rs(total)
+      : '¡Venta anotada! Te quedaron '+rs(total-custo)+' de ganancia', v.pgto!=='plazos');
+  },
+
+  /* ============ FIADO: recebimento total ou PARCIAL ============
+     O modelo antigo era binario (v.pago true/false). Agora a venda fiada pode
+     carregar v.pagamentos=[{data,valor}]. Venda ANTIGA nao tem esse campo, e as
+     funcoes abaixo tratam a ausencia: pago:true vale como quitada, pago:false como
+     nada recebido. Nada e reescrito na carga, entao backup velho continua valido. */
+  jaPago(v){
+    if(Array.isArray(v.pagamentos)) return v.pagamentos.reduce((s,x)=>s+(Number(x.valor)||0),0);
+    return v.pago ? v.total : 0;   /* venda anterior ao campo */
+  },
+  saldo(v){ return Math.max(0, Math.round((v.total - this.jaPago(v))*100)/100); },
+  /* quantas parcelas o que ja foi pago cobre, e quanto vale uma parcela */
+  parcelasDe(v){ return v && v.parcelas ? v.parcelas : 1; },
+  valorDaParcela(v){ return valorParcela(baseParcela(v), this.parcelasDe(v)); },
+  parcelasPagas(v){
+    const n=this.parcelasDe(v); if(n<=1) return null;
+    const vp=this.valorDaParcela(v);
+    if(vp<=0) return null;
+    /* quanto do ACORDO ja entrou. Se o acordo foi feito sobre o saldo (parcelasBase),
+       o que ela tinha pago antes dele nao conta como parcela deste acordo. */
+    const antes = (typeof v.parcelasBase==='number' && v.parcelasBase>0)
+      ? Math.max(0, v.total - v.parcelasBase) : 0;
+    const noAcordo = Math.max(0, this.jaPago(v) - antes);
+    const pagas=Math.min(n, Math.floor((noAcordo+0.004)/vp));
+    return {n, vp, pagas};
+  },
+
+  /* ===== UM BOTAO SO PRA RECEBER (14/09/2026) =====
+     Regra do Vini: "ele exibe 2 botoes de pagar, mesmo colocando o valor parcial
+     ele exibe pagar total e pagar isso, nao ta amigavel, deve ter 1 botao so ali
+     quando for pagar, e ele desconta o valor que ta digitado".
+
+     Como ficou: o campo de valor manda, e sempre. Os atalhos de cima (tudo, uma
+     parcela, metade) NAO dao baixa: eles so PREENCHEM o campo. Quem confirma e um
+     unico botao, e o texto dele diz exatamente quanto vai ser descontado e quanto
+     sobra depois. Assim nao existe mais escolher entre dois botoes que fazem
+     coisas diferentes com o mesmo numero na tela. */
+  telaReceber(id){
+    const v=D.dados.vendas.find(x=>x.id===id); if(!v) return;
+    const pg=this.jaPago(v), falta=this.saldo(v);
+    if(falta<=0){ toast('Esta cuenta ya está pagada'); return; }
+    const hist=Array.isArray(v.pagamentos)&&v.pagamentos.length
+      ? `<details class="fi-det"><summary>ver lo que ya te pagó (${v.pagamentos.length})</summary>
+          ${v.pagamentos.map((x,i)=>
+          `<div class="fi-hl"><span>${String(x.data).split('-').reverse().join('/')} · <b>${rs(x.valor)}</b></span>
+            <button class="btn mini sec" onclick="Venda.desfazerPgto(${id},${i})">deshacer</button></div>`
+          ).join('')}</details>`
+      : '';
+    const pp=this.parcelasPagas(v);
+    /* linha das parcelas: so aparece quando a venda foi combinada parcelada */
+    const linhaParc = pp
+      ? `<div class="fi-parc">quedaron en <b>${pp.n} pagos de ${rs(pp.vp)}</b> · lleva ${pp.pagas} de ${pp.n}</div>`
+      : '';
+    /* atalhos: so preenchem o campo, nunca dao baixa sozinhos */
+    const meia=Math.round(falta/2*100)/100;
+    const atalhos=[['todo lo que debe', falta]];
+    if(pp && pp.vp < falta) atalhos.push(['un pago · '+rs(pp.vp), pp.vp]);
+    if(!pp && meia>0 && meia<falta) atalhos.push(['la mitad · '+rs(meia), meia]);
+    Modal.abrir(`<h3>Registrar pago${v.cliente?' de '+v.cliente:''}</h3>
+      <p class="sub">${v.itens.map(i=>i.nome+(i.qtd>1?' x'+i.qtd:'')).join(', ')}</p>
+      <div class="fi-linhas">
+        <div class="fi-linha"><span>total de la venta</span><span class="v">${rs(v.total)}</span></div>
+        <div class="fi-linha"><span>ya te pagó</span><span class="v">${rs(pg)}</span></div>
+        <div class="fi-falta"><div class="rot">todavía te debe</div><div class="big">${rs(falta)}</div></div>
+        ${linhaParc}
+      </div>
+      <label>¿cuánto te está pagando ahorita?</label>
+      <input id="fiValor" data-moeda inputmode="numeric" value="${fmtMoeda(falta)}"
+        oninput="Venda.previaReceber(${id})">
+      <div class="fi-atalhos">
+        ${atalhos.map(a=>`<button type="button" onclick="Venda.preencher(${id},${a[1]})">${a[0]}</button>`).join('')}
+      </div>
+      <div class="fi-previa" id="fiPrevia"></div>
+      <button class="btn" id="fiBtn" onclick="Venda.receber(${id})">Registrar pago</button>
+      <button class="btn discreto" onclick="Modal.fechar()">Cancelar</button>
+      ${hist}`);
+    this.previaReceber(id);
+    setTimeout(()=>{ const i=document.getElementById('fiValor'); if(i){ i.focus(); i.select(); } },60);
+  },
+  /* o atalho so escreve no campo; quem decide continua sendo o botao unico */
+  preencher(id, valor){
+    const i=document.getElementById('fiValor'); if(!i) return;
+    i.value=fmtMoeda(Math.round(valor*100)/100);
+    this.previaReceber(id);
+  },
+  /* o botao diz o que vai acontecer ANTES de ela tocar: quanto desconta e quanto sobra */
+  previaReceber(id){
+    const v=D.dados.vendas.find(x=>x.id===id); if(!v) return;
+    const el=document.getElementById('fiPrevia'), bt=document.getElementById('fiBtn');
+    if(!el||!bt) return;
+    const falta=this.saldo(v);
+    let val=Math.round(num(document.getElementById('fiValor').value)*100)/100;
+    if(val<=0){
+      el.className='fi-previa aviso-vazio'; el.textContent='Escribe cuánto te pagó ahorita.';
+      bt.disabled=true; bt.textContent='Registrar pago'; return;
+    }
+    if(val>falta){
+      el.className='fi-previa aviso-erro';
+      el.innerHTML=`Solo te debe <b>${rs(falta)}</b>. Baja la cantidad.`;
+      bt.disabled=true; bt.textContent='Registrar pago'; return;
+    }
+    bt.disabled=false;
+    const resta=Math.round((falta-val)*100)/100;
+    el.className='fi-previa'+(resta<=0?' quita':'');
+    /* o resultado em NUMERO GRANDE, nao em frase: a lojista confere o "depois fica"
+       de relance, do mesmo jeito que confere o "ela ainda deve" ali em cima */
+    el.innerHTML = resta<=0
+      ? `<div class="rot">con este pago</div>
+         <div class="big">queda pagado ✓</div>`
+      : `<div class="rot">con este pago todavía te debe</div>
+         <div class="big">${rs(resta)}</div>`;
+    bt.textContent = resta<=0 ? 'Registrar '+rs(val)+' (pago completo)' : 'Registrar pago de '+rs(val);
+  },
+  receber(id){
+    const v=D.dados.vendas.find(x=>x.id===id); if(!v) return;
+    const falta=this.saldo(v);
+    if(falta<=0){ toast('Esta cuenta ya está pagada'); Modal.fechar(); Tela.render(); return; }
+    let val = num(document.getElementById('fiValor').value);
+    val = Math.round(val*100)/100;
+    if(val<=0){ toast('Escribe cuánto te pagó'); return; }
+    if(val>falta){ toast('Solo te debe '+rs(falta)); return; }
+    if(!Array.isArray(v.pagamentos)){
+      /* venda antiga: converte o binario em historico sem perder o que ja constava */
+      v.pagamentos = (v.pago && v.total>0) ? [{data:v.data,valor:v.total}] : [];
+    }
+    v.pagamentos.push({data:hoje(),valor:val});
+    v.pago = this.saldo(v)<=0;
+    D.salvar(); Modal.fechar(); Tela.render();
+    /* o dinheiro entrou agora: e agora que o lucro dessa venda conta */
+    toast(v.pago
+      ? 'Pago completo ✓ · entraron '+rs(val)+' a tu bolsa'
+      : 'Te pagó '+rs(val)+' · todavía te debe '+rs(this.saldo(v)), true);
+  },
+  /* ===== ADICIONAR PRODUTO NUMA CONTA DE FIADO JA ABERTA (14/09/2026) =====
+
+     Regra do Vini: "no fiado, adicionar uma opcao para a cliente conseguir
+     adicionar mais produtos, mesmo depois de vendido, pois hoje ela tem que fazer
+     uma nova venda. O ideal e ela conseguir adicionar mais produtos e ajustar as
+     parcelas/valor."
+
+     E o caso real da lojista de bairro: a freguesa leva uma blusa fiado hoje, volta
+     quinta e leva um brinco, e as duas coisas sao UMA conta. Antes disso, o app
+     obrigava a abrir outra venda, e a conta da mesma pessoa aparecia partida em
+     duas linhas.
+
+     O que a rotina faz: reaproveita o mesmo carrinho da venda normal (nada de tela
+     nova pra manter), da baixa no estoque dos produtos novos, soma total e custo na
+     venda que ja existe, e reabre a escolha de parcelas com o valor ja atualizado.
+     O que ela NAO mexe: os pagamentos ja recebidos ficam como estao. A conta cresce,
+     o que ja foi pago continua pago, e o que falta sobe na mesma medida. */
+  addNaConta(id){
+    const v=D.dados.vendas.find(x=>x.id===id); if(!v) return;
+    if(v.pgto!=='plazos'){ toast('Solo se puede sumar a una cuenta a plazos'); return; }
+    if(!D.dados.produtos.length){ Modal.fechar(); Tela.ir('estoque'); toast('Primero agrega un producto'); return; }
+    this._editVenda=null; this._addVenda=id;
+    this.carrinho={itens:[],pgto:'plazos',cliente:v.cliente||'',parcelas:v.parcelas||1};
+    this.busca=''; this.pag=1; this._editIdx=null;
+    this.telaProduto();
+  },
+  /* fim do fluxo de somar na conta: mostra o antes e o depois, e deixa mexer nas parcelas */
+  telaAddResumo(){
+    const v=D.dados.vendas.find(x=>x.id===this._addVenda);
+    if(!v){ this._addVenda=null; this.carrinho=null; Modal.fechar(); return; }
+    const c=this.carrinho;
+    const novoTotal=c.itens.reduce((s,i)=>s+i.preco*i.qtd,0);
+    const totalFinal=Math.round((v.total+novoTotal)*100)/100;
+    const jaPg=this.jaPago(v);
+    const faltaFinal=Math.round((totalFinal-jaPg)*100)/100;
+    if(!c.parcelas) c.parcelas=v.parcelas||1;
+    Modal.abrir(`<h3>Sumar a la cuenta${v.cliente?' de '+v.cliente:''}</h3>
+      <p class="sub">Todo va en una sola cuenta y te lo paga junto.</p>
+      ${c.itens.map((i,idx)=>`<div class="cart-item">
+          <div style="min-width:0;flex:1;cursor:pointer" onclick="Venda.editarItem(${idx})">
+            <div class="n">${i.nome}</div>
+            <div class="s">${i.qtd} x ${rs(i.preco)} · toca para cambiar</div>
+          </div>
+          <span class="v">${rs(i.preco*i.qtd)}</span>
+          <button class="x" onclick="Venda.removerItem(${idx})" aria-label="quitar">&times;</button>
+        </div>`).join('')}
+      <button class="btn sec" onclick="Venda.busca='';Venda.pag=1;Venda.telaProduto()">+ agregar otro producto</button>
+      <div class="fi-linhas" style="margin-top:14px">
+        <div class="fi-linha"><span>la cuenta era</span><span class="v">${rs(v.total)}</span></div>
+        <div class="fi-linha"><span>se lleva ahora</span><span class="v">+ ${rs(novoTotal)}</span></div>
+        <div class="fi-linha"><span>ya te pagó</span><span class="v">${rs(jaPg)}</span></div>
+        <div class="fi-linha falta"><span>cuenta nueva, te debe</span><span class="v">${rs(faltaFinal)}</span></div>
+      </div>
+      <label>¿en cuántos pagos te va a pagar lo que falta?</label>
+      <div class="parc-grid" id="parcGrid">
+        ${PARCELAS_OPC.map(n=>`<button type="button" class="${c.parcelas===n?'on':''}"
+          onclick="Venda.setParcelasConta(${n})">${n===1?'contado':n+' pagos'}</button>`).join('')}
+      </div>
+      <div class="parc-info" id="parcInfo"></div>
+      <button class="btn" onclick="Venda.confirmarAddConta()">Sumar a la cuenta &#10003;</button>
+      <button class="btn discreto" onclick="Venda.cancelarAddConta()">Cancelar</button>`);
+    this.pintarParcelaConta(); },
+  setParcelasConta(n){ this.carrinho.parcelas=n;
+    document.querySelectorAll('#parcGrid button').forEach((b,i)=>
+      b.classList.toggle('on', PARCELAS_OPC[i]===n));
+    this.pintarParcelaConta(); },
+  /* aqui a parcela se calcula sobre o que FALTA, nao sobre o total: o que ela ja
+     pagou nao volta a ser parcelado */
+  pintarParcelaConta(){
+    const el=document.getElementById('parcInfo'); if(!el) return;
+    const v=D.dados.vendas.find(x=>x.id===this._addVenda); if(!v) return;
+    const c=this.carrinho, n=c.parcelas||1;
+    const novoTotal=c.itens.reduce((s,i)=>s+i.preco*i.qtd,0);
+    const falta=Math.round((v.total+novoTotal-this.jaPago(v))*100)/100;
+    el.innerHTML = n>1
+      ? `<b>${n} pagos de ${rs(valorParcela(falta,n))}</b> · faltan ${rs(falta)}`
+      : 'te paga los '+rs(falta)+' en un solo pago';
+  },
+  confirmarAddConta(){
+    const v=D.dados.vendas.find(x=>x.id===this._addVenda), c=this.carrinho;
+    if(!v||!c||!c.itens.length){ this.cancelarAddConta(); return; }
+    /* baixa do estoque so dos produtos que entram agora */
+    c.itens.forEach(i=>{ const p=D.dados.produtos.find(x=>x.id===i.produtoId); if(p) p.qtd=Math.max(0,p.qtd-i.qtd); });
+    /* o mesmo produto ja existente na venda SOMA na linha, em vez de duplicar */
+    c.itens.forEach(i=>{
+      const ex=v.itens.find(x=>x.produtoId===i.produtoId && x.preco===i.preco);
+      if(ex) ex.qtd+=i.qtd; else v.itens.push({produtoId:i.produtoId,nome:i.nome,qtd:i.qtd,preco:i.preco,custo:i.custo});
+    });
+    /* o desconto dado na venda original continua valendo, em reais; o que entra agora vai cheio */
+    v.total=Math.round((somaItens(v.itens)-descontoDe(v))*100)/100;
+    v.custo=Math.round(v.itens.reduce((s,i)=>s+i.custo*i.qtd,0)*100)/100;
+    v.parcelas=c.parcelas||1;
+    /* o acordo foi feito sobre o que FALTA, entao e esse o valor que parcela */
+    v.parcelasBase=Math.max(0, Math.round((v.total - this.jaPago(v))*100)/100);
+    /* a conta cresceu: se estava quitada, volta a ter saldo aberto */
+    v.pago=this.saldo(v)<=0;
+    /* registro de que a conta foi mexida depois de aberta, pra ela nao estranhar a data */
+    if(!Array.isArray(v.adicoes)) v.adicoes=[];
+    v.adicoes.push({data:hoje(),itens:c.itens.map(i=>({nome:i.nome,qtd:i.qtd,preco:i.preco}))});
+    D.dados.config.vendasDesdeBackup++;
+    D.salvar(); this.carrinho=null; this._addVenda=null; Modal.fechar(); Tela.render();
+    toast('Sumado a la cuenta · te debe '+rs(this.saldo(v)));
+  },
+  cancelarAddConta(){ this.carrinho=null; this._addVenda=null; Modal.fechar(); Tela.render(); },
+  _addVenda:null,
+
+  /* ===== EDITAR UMA VENDA JA REGISTRADA (30/09/2026) =====
+     Pedido de compradoras: troca, reembolso, desconto esquecido. Antes o unico
+     caminho era excluir e registrar de novo, perdendo a data e o fiado.
+     Reaproveita o carrinho da venda (mesma lista, mesma tela de quantidade, mesmo
+     resumo com desconto). So ao SALVAR mexe no estoque, e so pela diferenca: o
+     que saiu da venda volta pro estoque, o que entrou a mais sai. */
+  _editVenda:null, _editOrig:null,
+  qtdPorProduto(itens){ const m={}; itens.forEach(i=>{ m[i.produtoId]=(m[i.produtoId]||0)+i.qtd; }); return m; },
+  editar(id){
+    const v=D.dados.vendas.find(x=>x.id===id); if(!v) return;
+    this._addVenda=null; this._editVenda=id; this._editOrig=this.qtdPorProduto(v.itens);
+    this.carrinho={itens:v.itens.map(i=>({...i})), pgto:v.pgto, cliente:v.cliente||'',
+      desc:{tipo:v.descPct?'pct':'rs', valor:v.descPct||descontoDe(v)}, data:v.data};
+    this.busca=''; this.pag=1; this._editIdx=null;
+    this.telaEditar();
+  },
+  telaEditar(){
+    const v=D.dados.vendas.find(x=>x.id===this._editVenda);
+    if(!v){ this.cancelarEdicao(); return; }
+    const c=this.carrinho;
+    const linhas=c.itens.map((i,idx)=>
+      `<div class="cart-item">
+        <div style="min-width:0;flex:1;cursor:pointer" onclick="Venda.editarItem(${idx})">
+          <div class="n">${i.nome}</div>
+          <div class="s">${i.qtd} x ${rs(i.preco)} · toca para cambiar</div>
+        </div>
+        <span class="v">${rs(i.preco*i.qtd)}</span>
+        <button class="x" onclick="Venda.removerItem(${idx})" aria-label="quitar de la venta">&times;</button>
+      </div>`).join('');
+    Modal.abrir(`<h3>Editar venta</h3>
+      <p class="sub">${v.data.split('-').reverse().join('/')}${v.cliente?' · '+v.cliente:''} · ${nomePgto(v.pgto)}</p>
+      ${linhas}
+      <button class="btn sec" style="margin-top:10px" onclick="Venda.busca='';Venda.pag=1;Venda.telaProduto()">Agregar producto</button>
+      <div id="descArea"></div>
+      <label>${v.pgto==='plazos'?'¿cuándo fue esta venta a plazos?':'¿cuándo fue esta venta?'}</label>
+      <div class="dt-atalhos">
+        <button type="button" id="eDtHoje" onclick="Venda.editDataAtalho(0)">hoy</button>
+        <button type="button" id="eDtOntem" onclick="Venda.editDataAtalho(1)">ayer</button>
+      </div>
+      <input id="eData" type="date" value="${c.data||''}" max="${hoje()}"
+        oninput="Venda.editDataLer()" onchange="Venda.editDataLer()">
+      <div class="dt-previa" id="ePrevia" style="display:none"></div>
+      <div class="edit-aviso oculto" id="editAviso"></div>
+      <button class="btn" onclick="Venda.revisarEdicao()">Guardar cambios</button>
+      <button class="btn sec" onclick="Venda.sairEdicao()">Cancelar</button>`);
+    this.descMontar(); this.editAviso(); this.editDataPintar();
+  },
+  /* ===== A DATA DA VENDA SE CORRIGE NA EDICAO (16/10/2026) =====
+     Pedido do Vini: a venda nasce sempre com a data de hoje, e so na edicao ela
+     pode mudar (venda de ontem lancada hoje, fiado anotado dias depois). Vale para
+     venda e para fiado. Mesmo padrao da data da despesa: hoje/ontem resolvem o caso
+     comum sem abrir o calendario.
+     O que a data move: no efectivo, transferencia e tarjeta, o mes em que o valor entra nas
+     contas. No fiado, so onde a conta aparece: o que ela ja pagou continua no dia em
+     que entrou, e por isso a data do fiado nao pode passar do primeiro recebimento. */
+  editDataAtalho(diasAtras){
+    this.carrinho.data=diaAntes(hoje(), diasAtras);
+    const i=document.getElementById('eData'); if(i) i.value=this.carrinho.data;
+    this.editDataPintar();
+  },
+  editDataLer(){
+    const i=document.getElementById('eData'); if(!i) return;
+    this.carrinho.data=(i.value||'').trim(); this.editDataPintar();
+  },
+  editMudouData(){
+    const v=D.dados.vendas.find(x=>x.id===this._editVenda);
+    return !!(v && this.carrinho && this.carrinho.data!==v.data);
+  },
+  /* '' = data valida; senao, o motivo em portugues */
+  editDataErro(){
+    const v=D.dados.vendas.find(x=>x.id===this._editVenda), d=this.carrinho&&this.carrinho.data;
+    /* a data que ela nao mexeu nunca trava a edicao. Venda lancada depois das 21h
+       antes de 16/10/2026 tem a data de "amanha" gravada, e editar o produto dela
+       tem que continuar funcionando */
+    if(!v || d===v.data) return '';
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(d||'') || d<'2000-01-01')
+      return 'Elige el día de la venta.';
+    if(d>hoje()) return 'Esa fecha todavía no llega. Elige hoy o un día antes.';
+    const p1=this.primeiroPgto(v);
+    if(p1 && d>p1) return `Su primer pago fue el <b>${dataBR(p1)}</b>. La fecha de la venta no puede ser después.`;
+    return '';
+  },
+  primeiroPgto(v){
+    if(v.pgto!=='plazos') return null;
+    /* fiado antigo, sem historico: se esta quitado, o dinheiro entrou no dia da venda */
+    if(!Array.isArray(v.pagamentos)) return v.pago ? v.data : null;
+    const ds=v.pagamentos.map(x=>String(x.data||'')).filter(x=>/^\d{4}-\d{2}-\d{2}$/.test(x)).sort();
+    return ds[0]||null;
+  },
+  /* o que a troca de data significa; '' quando a data nao mudou. soImpacto: so a
+     consequencia, para a confirmacao, que ja mostra a data na linha de cima */
+  editDataTexto(soImpacto){
+    const v=D.dados.vendas.find(x=>x.id===this._editVenda);
+    if(!v || !this.editMudouData() || this.editDataErro()) return '';
+    const d=this.carrinho.data;
+    const impacto = v.pgto==='plazos'
+      ? (this.jaPago(v)>0 ? 'Lo que ya te pagó se queda en el día en que entró.' : '')
+      : (mesDe(d)!==mesDe(v.data) ? `La venta cuenta para <b>${nomeMes(mesDe(d))}</b>, ya no para ${nomeMes(mesDe(v.data))}.` : '');
+    if(soImpacto) return impacto;
+    return `${v.pgto==='plazos'?'La venta a plazos':'La venta'} pasa al <b>${dataBR(d)}</b>.`+(impacto?' '+impacto:'');
+  },
+  editDataPintar(){
+    const el=document.getElementById('ePrevia'); if(!el||!this.carrinho) return;
+    const d=this.carrinho.data;
+    const bh=document.getElementById('eDtHoje'), bo=document.getElementById('eDtOntem');
+    if(bh) bh.classList.toggle('on', d===hoje());
+    if(bo) bo.classList.toggle('on', d===diaAntes(hoje(),1));
+    const erro=this.editDataErro(), txt=erro||this.editDataTexto();
+    el.className='dt-previa'+(erro?' erro':'');
+    el.innerHTML=txt; el.style.display=txt?'':'none';
+  },
+  /* a venda muda de lugar na lista: as vendas ficam do dia mais novo pro mais velho */
+  reposicionar(v){
+    const L=D.dados.vendas, i=L.indexOf(v); if(i<0) return;
+    L.splice(i,1);
+    let j=L.findIndex(x=>String(x.data)<v.data || (String(x.data)===v.data && x.id<v.id));
+    if(j<0) j=L.length;
+    L.splice(j,0,v);
+  },
+  /* o que a alteracao significa no bolso dela e no estoque, antes de salvar */
+  editAviso(){
+    const el=document.getElementById('editAviso'); if(!el) return;
+    const L=this.editLinhas();
+    el.innerHTML=L.join('<br>'); el.classList.toggle('oculto', !L.length);
+  },
+  editLinhas(){
+    const v=D.dados.vendas.find(x=>x.id===this._editVenda); if(!v) return [];
+    const k=this.contaCarrinho(), L=[];
+    if(v.pgto==='plazos'){
+      const pg=this.jaPago(v);
+      if(pg>k.total+0.004) L.push(`Ya te pagó: ${rs(pg)}<br><b>Devuélvele a la clienta: ${rs(pg-k.total)}</b>`);
+      else if(Math.abs(k.total-v.total)>0.004) L.push(`<b>Te va a deber: ${rs(k.total-pg)}</b> (antes: ${rs(this.saldo(v))})`);
+    } else {
+      const dif=Math.round((v.total-k.total)*100)/100;
+      if(dif>0) L.push(`<b>Devuélvele a la clienta: ${rs(dif)}</b>`);
+      else if(dif<0) L.push(`<b>Cóbrale a la clienta: ${rs(-dif)}</b>`);
+    }
+    const agora_=this.qtdPorProduto(this.carrinho.itens), volta=[], sai=[];
+    const ids=new Set([...Object.keys(this._editOrig),...Object.keys(agora_)]);
+    ids.forEach(pid=>{ const d=(this._editOrig[pid]||0)-(agora_[pid]||0); if(!d) return;
+      const it=this.carrinho.itens.find(i=>String(i.produtoId)===pid) || v.itens.find(i=>String(i.produtoId)===pid);
+      (d>0?volta:sai).push(Math.abs(d)+' '+(it?it.nome:'producto')); });
+    if(volta.length) L.push('Regresa al inventario: '+volta.join(', '));
+    if(sai.length) L.push('Sale del inventario: '+sai.join(', '));
+    return L;
+  },
+  /* houve mudanca de fato? compara produtos, quantidades, precos e desconto */
+  editMudouItens(){
+    const v=D.dados.vendas.find(x=>x.id===this._editVenda); if(!v||!this.carrinho) return false;
+    const assin=itens=>itens.map(i=>i.produtoId+':'+i.qtd+':'+i.preco).sort().join('|');
+    return assin(v.itens)!==assin(this.carrinho.itens)
+      || Math.abs(this.contaCarrinho().desc-descontoDe(v))>0.004;
+  },
+  editMudou(){ return this.editMudouItens() || this.editMudouData(); },
+  /* SEGURANCA: nada e gravado sem ela ver o resumo e confirmar */
+  revisarEdicao(){
+    const v=D.dados.vendas.find(x=>x.id===this._editVenda), c=this.carrinho;
+    if(!v||!c){ this.cancelarEdicao(); return; }
+    if(!c.itens.length){ toast('La venta necesita al menos un producto. Para cancelarla, usa Borrar'); return; }
+    const d=c.desc||{};
+    if(d.valor>0 && (d.tipo==='pct' ? d.valor>100 : d.valor>somaItens(c.itens))){
+      toast('El descuento es mayor que el subtotal'); return; }
+    const errData=this.editDataErro();
+    if(errData){ toast(errData.replace(/<[^>]+>/g,'')); this.editDataPintar(); return; }
+    if(!this.editMudou()){ toast('No hay cambios que guardar'); this.cancelarEdicao(); return; }
+    /* so a data mudou: o resumo mostra a data e o valor, que fica igual */
+    const soData=!this.editMudouItens(), mData=this.editMudouData();
+    const k=this.contaCarrinho(), L=soData ? [] : this.editLinhas();
+    if(mData && this.editDataTexto(true)) L.push(this.editDataTexto(true));
+    Modal.abrir(`<h3>¿Guardar los cambios?</h3>
+      <p class="sub">Se va a actualizar la venta del ${v.data.split('-').reverse().join('/')}${v.cliente?' ('+v.cliente+')':''}.</p>
+      <div class="resumo">
+        ${mData?`<div class="rl"><span>Fecha</span><span class="v">${dataBR(v.data)} → ${dataBR(c.data)}</span></div>`:''}
+        ${soData?`<div class="rl"><span>Total</span><span class="v">${rs(v.total)}</span></div>`
+        :`<div class="rl"><span>Total anterior</span><span class="v">${rs(v.total)}</span></div>
+        <div class="rl tot"><span>Total nuevo</span><span class="v">${rs(k.total)}</span></div>`}
+      </div>
+      ${L.length?`<div class="edit-aviso">${L.join('<br>')}</div>`:''}
+      <button class="btn" onclick="Venda.salvarEdicao()">Sí, guardar</button>
+      <button class="btn sec" onclick="Venda.telaEditar()">Regresar a revisar</button>`);
+  },
+  /* cancelar com alteracao feita pergunta antes de descartar */
+  sairEdicao(){
+    if(!this.editMudou()){ this.cancelarEdicao(); return; }
+    Modal.abrir(`<h3>¿Descartar los cambios?</h3>
+      <p class="sub">Los cambios que hiciste en esta venta no se van a guardar.</p>
+      <button class="btn perigo" onclick="Venda.cancelarEdicao()">Descartar</button>
+      <button class="btn sec" onclick="Venda.telaEditar()">Seguir editando</button>`);
+  },
+  salvarEdicao(){
+    const v=D.dados.vendas.find(x=>x.id===this._editVenda), c=this.carrinho;
+    if(!v||!c){ this.cancelarEdicao(); return; }
+    if(this.editDataErro()){ this.telaEditar(); return; }
+    const dataAntes=v.data, mData=this.editMudouData();
+    /* so a data mudou: grava a data e mais nada. Estoque, valor e recebimentos ficam
+       exatamente como estavam */
+    if(!this.editMudouItens()){
+      if(!mData){ this.cancelarEdicao(); return; }
+      /* fiado antigo quitado: o pagamento fica no dia em que entrou, nao vai junto */
+      if(v.pgto==='plazos' && !Array.isArray(v.pagamentos))
+        v.pagamentos=(v.pago&&v.total>0)?[{data:dataAntes,valor:v.total}]:[];
+      v.data=c.data; this.reposicionar(v);
+      if(!Array.isArray(v.edicoes)) v.edicoes=[];
+      v.edicoes.push({data:agora(), antes:v.total, depois:v.total, dataAntes, dataDepois:v.data});
+      D.dados.config.vendasDesdeBackup++;
+      D.salvar(); this.cancelarEdicao();
+      toast('Venta movida al '+dataBR(v.data), true);
+      return;
+    }
+    if(!c.itens.length){ toast('La venta necesita al menos un producto. Para cancelarla, usa Borrar'); return; }
+    const d=c.desc||{};
+    if(d.valor>0 && (d.tipo==='pct' ? d.valor>100 : d.valor>somaItens(c.itens))){
+      toast('El descuento es mayor que el subtotal'); return; }
+    const k=this.contaCarrinho(), antes=v.total;
+    /* estoque: so a diferenca entre o que a venda tinha e o que ela tem agora */
+    const novo=this.qtdPorProduto(c.itens);
+    new Set([...Object.keys(this._editOrig),...Object.keys(novo)]).forEach(pid=>{
+      const p=D.dados.produtos.find(x=>String(x.id)===pid); if(!p) return;
+      p.qtd=Math.max(0, p.qtd + (this._editOrig[pid]||0) - (novo[pid]||0)); });
+    v.itens=c.itens.map(i=>({produtoId:i.produtoId,nome:i.nome,qtd:i.qtd,preco:i.preco,custo:i.custo}));
+    v.total=k.total;
+    v.custo=Math.round(c.itens.reduce((s,i)=>s+i.custo*i.qtd,0)*100)/100;
+    if(k.desc>0){ v.desconto=k.desc; if(d.tipo==='pct') v.descPct=d.valor; else delete v.descPct; }
+    else { delete v.desconto; delete v.descPct; }
+    if(v.pgto==='plazos'){
+      /* pagou mais do que a venda vale agora: o excesso foi devolvido, entao sai
+         do historico, a partir do recebimento mais recente */
+      if(!Array.isArray(v.pagamentos)) v.pagamentos=(v.pago&&antes>0)?[{data:v.data,valor:antes}]:[];
+      let sobra=Math.round((this.jaPago(v)-v.total)*100)/100;
+      for(let i=v.pagamentos.length-1; i>=0 && sobra>0; i--){
+        const tira=Math.min(sobra, v.pagamentos[i].valor);
+        v.pagamentos[i].valor=Math.round((v.pagamentos[i].valor-tira)*100)/100; sobra=Math.round((sobra-tira)*100)/100;
+        if(v.pagamentos[i].valor<=0) v.pagamentos.splice(i,1); }
+      if(typeof v.parcelasBase==='number') v.parcelasBase=Math.max(0, Math.round((v.parcelasBase+v.total-antes)*100)/100);
+      v.pago=this.saldo(v)<=0;
+    }
+    /* a data troca por ultimo: o fiado antigo acima converte o que ja estava pago
+       usando a data de ANTES, que e o dia em que aquele dinheiro entrou */
+    if(mData){ v.data=c.data; this.reposicionar(v); }
+    if(!Array.isArray(v.edicoes)) v.edicoes=[];
+    v.edicoes.push(mData ? {data:agora(), antes, depois:v.total, dataAntes, dataDepois:v.data}
+                         : {data:agora(), antes, depois:v.total});
+    D.dados.config.vendasDesdeBackup++;
+    D.salvar(); this.cancelarEdicao();
+    toast('Venta actualizada: '+rs(v.total)+(mData?' · '+dataBR(v.data):''), true);
+  },
+  cancelarEdicao(){ this.carrinho=null; this._editVenda=null; this._editOrig=null; Modal.fechar(); Tela.render(); },
+
+  desfazerPgto(id, idx){
+    const v=D.dados.vendas.find(x=>x.id===id); if(!v||!Array.isArray(v.pagamentos)) return;
+    const x=v.pagamentos[idx]; if(!x) return;
+    v.pagamentos.splice(idx,1);
+    v.pago = this.saldo(v)<=0;
+    D.salvar(); Tela.render();
+    toast('Pago borrado: '+rs(x.valor));
+    if(this.saldo(v)>0) this.telaReceber(id); else Modal.fechar();
+  },
+  /* o botao antigo "recebi" agora abre a tela de valor */
+  marcarPago(id){ this.telaReceber(id); },
+
+  excluir(id){ const v=D.dados.vendas.find(x=>x.id===id); if(!v) return;
+    const pg=this.jaPago(v);
+    Modal.abrir(`<h3>¿Borrar esta venta?</h3><p class="sub">${v.itens.map(i=>i.nome+' x'+i.qtd).join(', ')} · ${rs(v.total)}.
+      Los productos regresan al inventario y la venta sale de tus cuentas. <b>No se puede deshacer.</b>${(pg>0&&v.pgto==='plazos')?` <b>Ojo: de esta venta ya te pagaron ${rs(pg)}.</b>`:''}</p>
+      <p class="sub">Si es un cambio o te devolvieron parte, usa <b>Editar</b>.</p>
+      <button class="btn perigo" onclick="Venda.confirmaExcluir(${id})">Sí, borrar</button>
+      <button class="btn sec" onclick="Modal.fechar()">Cancelar</button>`); },
+  confirmaExcluir(id){ const v=D.dados.vendas.find(x=>x.id===id); if(!v) return;
+    v.itens.forEach(i=>{ const p=D.dados.produtos.find(x=>x.id===i.produtoId); if(p) p.qtd+=i.qtd; });
+    D.dados.vendas=D.dados.vendas.filter(x=>x.id!==id); D.salvar(); Modal.fechar(); Tela.render(); toast('Venta borrada'); },
+  recibo(id){ const v=D.dados.vendas.find(x=>x.id===id); const loja=D.dados.config.loja||'Mi negocio';
+    // DEFESA VoC: recibo NUNCA mostra custo nem ganancia
+    const L=['*'+loja+'*', dataBR(v.data)];
+    if(v.cliente) L.push('Clienta: '+v.cliente);
+    L.push('');
+    v.itens.forEach(i=>L.push(i.qtd+' x '+i.nome+': '+rs(i.preco*i.qtd)));
+    L.push('');
+    if(descontoDe(v)){ L.push('Subtotal: '+rs(somaItens(v.itens))); L.push('Descuento: -'+textoDesconto(v)); }
+    L.push('*Total: '+rs(v.total)+'*');
+    L.push('Forma de pago: '+nomePgto(v.pgto));
+    /* os pagos no recibo: e o numero que a clienta quer ver, e evita a discussao
+       de "cuanto era cada pago?" la na frente */
+    const par=textoParcelas(v);
+    if(par) L.push('En '+par);
+    if(v.pgto==='plazos'){ const pg=Venda.jaPago(v), falta=Venda.saldo(v);
+      if(falta>0){ if(pg>0) L.push('Ya pagaste: '+rs(pg)); L.push('*Te falta: '+rs(falta)+'*'); }
+      else L.push('*Pagado completo*'); }
+    L.push(''); L.push('¡Gracias por tu preferencia!');
+    window.open('https://wa.me/?text='+encodeURIComponent(L.join('\n')),'_blank'); }
+};
+/* ============ PRODUTO ============ */
+const Produto = {
+  form(id){ const p=id?D.dados.produtos.find(x=>x.id===id):null;
+    Modal.abrir(`<h3>${p?'Editar producto':'Nuevo producto'}</h3>
+      <label>nombre del producto</label><input id="pNome" value="${p?p.nome:''}" placeholder="ej: Labial mate rojo">
+      <div class="linha2">
+        <div><label>lo que TÚ pagaste (costo)</label><input id="pCusto" data-moeda inputmode="numeric" value="${p?fmtMoeda(p.custo):''}" placeholder="$0.00"></div>
+        <div><label>precio de venta</label><input id="pPreco" data-moeda inputmode="numeric" value="${p?fmtMoeda(p.preco):''}" placeholder="$0.00"></div>
+      </div>
+      <label>cuántas tienes (inventario)</label><input id="pQtd" inputmode="numeric" value="${p?p.qtd:''}" placeholder="0">
+      <div id="pLucroPrev" class="aviso verde oculto" style="margin-top:12px"></div>
+      <button class="btn" onclick="Produto.salvar(${p?p.id:0})">Guardar producto</button>
+      ${p?`<button class="btn perigo" onclick="Produto.excluir(${p.id})">Borrar producto</button>`:''}`);
+    ['pCusto','pPreco'].forEach(i=>document.getElementById(i).addEventListener('input',this.previa));
+    this.previa(); },
+  previa(){ const c=num(document.getElementById('pCusto').value), v=num(document.getElementById('pPreco').value);
+    const el=document.getElementById('pLucroPrev');
+    if(v>0&&c>=0){ el.classList.remove('oculto');
+      el.textContent = v>c ? `Te quedan ${rs(v-c)} de ganancia por pieza (el ${Math.round((v-c)/v*100)}% del precio)`
+        : 'Ojo: con ese precio no recuperas lo que pagaste'; } else el.classList.add('oculto'); },
+  salvar(id){ const nome=document.getElementById('pNome').value.trim();
+    const custo=num(document.getElementById('pCusto').value), preco=num(document.getElementById('pPreco').value);
+    const qtd=Math.max(0,Math.round(num(document.getElementById('pQtd').value)));
+    if(!nome){ toast('Ponle nombre al producto'); return; }
+    if(preco<=0){ toast('Pon el precio de venta'); return; }
+    if(id){ const p=D.dados.produtos.find(x=>x.id===id); Object.assign(p,{nome,custo,preco,qtd}); }
+    else D.dados.produtos.push({id:D.id(),nome,custo,preco,qtd});
+    D.salvar(); Modal.fechar(); Tela.render(); toast(id?'Producto actualizado ✓':'Producto agregado ✓'); },
+  excluir(id){ D.dados.produtos=D.dados.produtos.filter(p=>p.id!==id);
+    D.salvar(); Modal.fechar(); Tela.render(); toast('Producto borrado'); }
+};
+
+/* ============ DESPESA ============ */
+/* ===== A DESPESA TEM DATA, E ELA MANDA NO MES (21/09/2026) =====
+   Regra do Vini: "pode ser que ela queira lancar do mes passado". Antes a despesa
+   nascia sempre com hoje(), entao a compra de embalagem de setembro lancada em
+   outubro somava no mes errado e a conta de "sobrou de verdade" mentia nos dois
+   meses. O resumo ja filtra por mesDe(d.data): basta gravar a data que ela escolheu.
+
+   A tela e feita pra quem tem dificuldade com app: dois botoes grandes (hoje /
+   ontem) resolvem o caso comum sem abrir calendario, e uma linha embaixo diz em
+   bom portugues em que mes aquilo vai entrar. */
+const Despesa = {
+  form(){ Modal.abrir(`<h3>Nuevo gasto</h3><p class="sub">catálogos, bolsitas, envío, gasolina...</p>
+    <label>¿en qué fue?</label><input id="dDesc" placeholder="ej: bolsitas">
+    <label>¿cuánto fue?</label><input id="dValor" data-moeda inputmode="numeric" placeholder="$0.00">
+    <label>¿cuándo fue este gasto?</label>
+    <div class="dt-atalhos">
+      <button type="button" id="dtHoje" onclick="Despesa.setData(0)">hoy</button>
+      <button type="button" id="dtOntem" onclick="Despesa.setData(1)">ayer</button>
+    </div>
+    <input id="dData" type="date" value="${hoje()}" max="${hoje()}" onchange="Despesa.previa()">
+    <div class="dt-previa" id="dPrevia"></div>
+    <button class="btn" onclick="Despesa.salvar()">Anotar gasto</button>
+    <button class="btn discreto" onclick="Modal.fechar()">Cancelar</button>`);
+    this.previa(); },
+  /* atalho: n dias atras, sem a lojista precisar abrir o calendario do celular */
+  setData(diasAtras){
+    const d=new Date(); d.setDate(d.getDate()-diasAtras);
+    const iso=new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10);
+    const el=document.getElementById('dData'); if(el){ el.value=iso; this.previa(); }
+  },
+  /* diz, em portugues, em que mes esse lancamento vai cair */
+  previa(){
+    const el=document.getElementById('dPrevia'), inp=document.getElementById('dData');
+    if(!el||!inp) return;
+    const h=hoje();
+    const bh=document.getElementById('dtHoje'), bo=document.getElementById('dtOntem');
+    const o=new Date(); o.setDate(o.getDate()-1);
+    const ontem=new Date(o.getTime()-o.getTimezoneOffset()*60000).toISOString().slice(0,10);
+    if(bh) bh.classList.toggle('on', inp.value===h);
+    if(bo) bo.classList.toggle('on', inp.value===ontem);
+    if(!inp.value){ el.textContent='Elige el día del gasto.'; return; }
+    el.innerHTML = 'Va a contar en <b>'+nomeMes(mesDe(inp.value))+'</b>'
+      + (mesDe(inp.value)!==mesDe(h) ? ' (no en este mes).' : '.');
+  },
+  salvar(){ const desc=document.getElementById('dDesc').value.trim(), valor=num(document.getElementById('dValor').value);
+    const data=(document.getElementById('dData').value||'').trim();
+    if(!desc||valor<=0){ toast('Escribe en qué fue y cuánto'); return; }
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(data)){ toast('Elige el día del gasto'); return; }
+    D.dados.despesas.unshift({id:D.id(),data,desc,valor});
+    /* a lista do resumo e por mes: se ela lancou de outro mes, leva a tela junto,
+       senao o lancamento "some" e ela lanca de novo achando que nao salvou */
+    if(Tela.mesResumo && mesDe(data)!==Tela.mesResumo) Tela.mesResumo=mesDe(data);
+    D.salvar(); Modal.fechar(); Tela.render();
+    toast('Gasto anotado en '+nomeMes(mesDe(data))); },
+  excluir(id){ D.dados.despesas=D.dados.despesas.filter(d=>d.id!==id); D.salvar(); Tela.render(); }
+};
+
+/* ============ WIZARD (quick win < 10 min) ============ */
+const Wizard = {
+  passo1(){ Modal.abrir(`<div class="wizard-logo"><div class="m1">AppGanancia</div>
+      <div class="m2">Mis Ventas · tu app, para siempre</div></div>
+    <p class="sub" style="text-align:center">En 3 pasitos anotas tu primera venta<br>y ves tu ganancia en la pantalla. ¿Le damos?</p>
+    <label>¿cómo se llama tu negocio?</label><input id="wLoja" placeholder="ej: Lupita Catálogos">
+    <button class="btn" onclick="Wizard.passo2()">Empezar</button>`); },
+  passo2(){ const loja=document.getElementById('wLoja').value.trim();
+    D.dados.config.loja=loja||'Mi negocio'; D.salvar();
+    document.getElementById('hdrLoja').textContent=D.dados.config.loja;
+    Modal.abrir(`<div class="passo">ya casi · agrega tu primer producto</div>
+      <h3>Agrega un producto que vendas</h3>
+      <p class="sub">El que sea. Los demás los agregas después, con calma.</p>
+      <label>nombre del producto</label><input id="pNome" placeholder="ej: Labial mate rojo">
+      <div class="linha2">
+        <div><label>lo que tú pagaste</label><input id="pCusto" data-moeda inputmode="numeric" placeholder="$0.00"></div>
+        <div><label>precio de venta</label><input id="pPreco" data-moeda inputmode="numeric" placeholder="$0.00"></div>
+      </div>
+      <label>cuántas tienes</label><input id="pQtd" inputmode="numeric" placeholder="0">
+      <button class="btn" onclick="Wizard.fim()">Agregar y terminar</button>`); },
+  fim(){ const nome=document.getElementById('pNome').value.trim();
+    const custo=num(document.getElementById('pCusto').value), preco=num(document.getElementById('pPreco').value);
+    const qtd=Math.max(0,Math.round(num(document.getElementById('pQtd').value)))||1;
+    if(!nome||preco<=0){ toast('Pon el nombre y el precio'); return; }
+    D.dados.produtos.push({id:D.id(),nome,custo,preco,qtd});
+    D.dados.config.wizardOk=true; D.salvar(); Modal.fechar(); Tela.render();
+    toast('¡Listo! Cuando salga tu primera venta, toca Vender'); }
+};
+
+/* ============ TELAS ============ */
+const Tela = {
+  atual:'vender', mesResumo:mesDe(hoje()), filtroVendas:'todas',
+  buscaEstoque:'', filtroEstoque:'', pagEstoque:1, pagVendas:1,
+  ir(t){ this.atual=t; this.pagVendas=1; this.pagEstoque=1; document.querySelectorAll('#navBar button').forEach(b=>b.classList.toggle('on',b.dataset.tela===t)); this.render(); },
+  backupRapido(){ Backup.compartilhar(); },
+  irPagVendas(p){ this.pagVendas=p; this.render(); window.scrollTo({top:0,behavior:'smooth'}); },
+  irPagEstoque(p){ this.pagEstoque=p; this.render(); window.scrollTo({top:0,behavior:'smooth'}); },
+  avisoBackup(){ return Backup.precisa()
+    ? `<div class="aviso backup"><svg style="width:18px;height:18px;flex-shrink:0;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round" viewBox="0 0 24 24"><path d="M21 8l-9-5-9 5v8l9 5 9-5V8zM3.3 8.3L12 13l8.7-4.7M12 13v8"/></svg> <span><b>${D.dados.config.vendasDesdeBackup||D.dados.vendas.length} ventas sin respaldo.</b>
+       Toca "respaldo" arriba y mándate el archivo a tu WhatsApp. Son 5 segundos.</span></div>` : ''; },
+  render(){
+    document.getElementById('hdrLoja').textContent=D.dados.config.loja;
+    const app=document.getElementById('app');
+    const t=this.atual;
+    if(t==='vender') app.innerHTML=this.telaVender();
+    if(t==='vendas') app.innerHTML=this.telaVendas();
+    if(t==='estoque') app.innerHTML=this.telaEstoque();
+    if(t==='resumo') app.innerHTML=this.telaResumo();
+    if(t==='mais') app.innerHTML=this.telaMais();
+  },
+  telaVender(){
+    const ym=mesDe(hoje()), tt=Calc.totais(ym);
+    const hj=D.dados.vendas.filter(v=>v.data===hoje());
+    /* O lucro de hoje e o que ENTROU hoje: venda a vista de hoje mais fiado velho
+       recebido hoje. Fiado anotado hoje e sem pagamento nao conta (14/09/2026). */
+    const lucroHoje=D.dados.vendas.reduce((s,v)=>{
+      if(v.pgto!=='plazos') return s + (v.data===hoje() ? v.total-v.custo : 0);
+      if(!Array.isArray(v.pagamentos) || v.total<=0) return s;
+      const recHoje=v.pagamentos.reduce((a,x)=>a+(String(x.data)===hoje()?(Number(x.valor)||0):0),0);
+      return s + (v.total-v.custo)*(recHoje/v.total);
+    },0);
+    /* fiado aberto de todo o periodo: o dinheiro que esta na rua */
+    const aReceber=tt.fiadoPend;
+    /* quantas vendas de hoje de fato puseram dinheiro no caixa: contar as 4 do dia
+       ao lado de um valor que ignora 2 fiados em aberto faria a conta parecer errada */
+    const nCaixaHoje=D.dados.vendas.filter(v=>{
+      if(v.pgto!=='plazos') return v.data===hoje();
+      return Array.isArray(v.pagamentos) && v.pagamentos.some(x=>String(x.data)===hoje());
+    }).length;
+    return `${this.avisoBackup()}
+      <div class="card"><div class="kpis">
+        <div class="kpi"><div class="v pos">${rs(lucroHoje)}</div><div class="l">te quedó hoy (${nCaixaHoje} venta${nCaixaHoje===1?'':'s'})</div></div>
+        <div class="kpi"><div class="v">${rs(tt.lucro)}</div><div class="l">ganancia del mes</div></div>
+      </div>
+      ${aReceber>0?`<button class="kpi-link" onclick="Tela.filtroVendas='plazos';Tela.ir('vendas')">
+        <span>te deben <b>${rs(aReceber)}</b></span><span class="seta">›</span></button>`:''}
+      </div>
+      <button class="btn" style="padding:22px;font-size:19px" onclick="Venda.iniciar()">+ Anotar venta</button>
+      <div class="card" style="margin-top:12px"><h2>ventas de hoy</h2>
+        ${hj.length?hj.slice(0,5).map(v=>this.itemVenda(v)).join(''):'<div class="vazio">Todavía no hay ventas hoy.<br>Cuando salga una, la anotas en 3 toques.</div>'}
+      </div>`;
+  },
+  itemVenda(v){
+    /* fiado tem 3 estados: nada recebido, PARCIAL, e quitado */
+    const ehFiado = v.pgto==='plazos';
+    const falta = ehFiado ? Venda.saldo(v) : 0;
+    const pago = ehFiado ? Venda.jaPago(v) : 0;
+    const parcial = ehFiado && falta>0 && pago>0;
+    const badge = ehFiado
+      ? (falta<=0 ? '<span class="badge ok">ya pagó</span>'
+         : `<span class="badge fiado">debe ${rs(falta)}</span>`)
+      : `<span class="badge ok">${nomePgto(v.pgto)}</span>`;
+    /* O lucro que aparece e o que JA ENTROU no caixa. Num fiado em aberto isso e
+       zero, e a linha diz "a receber" em vez de anunciar lucro que nao chegou.
+       Antes de 14/09/2026 a lista mostrava o lucro cheio de um fiado nao pago. */
+    const parc = textoParcelas(v);
+    let dinheiro;
+    if(ehFiado && falta>0)
+      dinheiro = parcial
+        ? `te pagó ${rs(pago)} de ${rs(v.total)}`
+        : `no te ha pagado nada`;
+    else
+      dinheiro = `ganancia ${rs(v.total-v.custo)}`;
+    const detalhe = [
+      v.data.split('-').reverse().join('/'),
+      v.cliente || null,
+      descontoDe(v) ? 'descuento '+textoDesconto(v) : null,
+      parc || null,
+      dinheiro
+    ].filter(Boolean).join(' · ');
+    return `<div class="venda-bloco">
+      <div class="venda-topo">
+        <div class="info">
+          <div class="t">${v.itens.map(i=>i.nome+(i.qtd>1?' x'+i.qtd:'')).join(', ')}</div>
+          <div class="s">${detalhe}</div>
+        </div>
+        <div class="venda-valor"><div class="vv">${rs(v.total)}</div>${badge}</div>
+      </div>
+      <div class="venda-acoes">
+        ${falta>0?`<button class="va principal" onclick="Venda.telaReceber(${v.id})">cobrar</button>`:''}
+        ${ehFiado?`<button class="va" onclick="Venda.addNaConta(${v.id})">sumar</button>`:''}
+        <button class="va" onclick="Venda.editar(${v.id})">editar</button>
+        <button class="va" onclick="Venda.recibo(${v.id})">recibo</button>
+        <button class="va perigo" onclick="Venda.excluir(${v.id})">borrar</button>
+      </div></div>`;
+  },
+  telaVendas(){
+    let vs=[...D.dados.vendas];
+    if(this.filtroVendas==='plazos') vs=vs.filter(v=>v.pgto==='plazos'&&Venda.saldo(v)>0);
+    const f=(x,l)=>`<button class="${this.filtroVendas===x?'on':''}" onclick="Tela.filtroVendas='${x}';Tela.render()">${l}</button>`;
+    const fiadoTotal=D.dados.vendas.filter(v=>v.pgto==='plazos').reduce((s,v)=>s+Venda.saldo(v),0);
+    const pg=paginar(vs, this.pagVendas);
+    return `<div class="filtros">${f('todas','todas ('+D.dados.vendas.length+')')}${f('plazos','me deben'+(fiadoTotal?' ('+rs(fiadoTotal)+')':''))}</div>
+      <div class="card">${pg.itens.length?pg.itens.map(v=>this.itemVenda(v)).join(''):'<div class="vazio">Todavía no hay nada aquí.</div>'}</div>
+      ${barraPag(pg,'Tela.irPagVendas')}`;
+  },
+  telaEstoque(){
+    let ps=[...D.dados.produtos].sort((a,b)=>a.nome.localeCompare(b.nome));
+    const investido=ps.reduce((s,p)=>s+p.custo*p.qtd,0);
+    const total=ps.length;
+    if(this.buscaEstoque) ps=ps.filter(p=>p.nome.toLowerCase().includes(this.buscaEstoque.toLowerCase()));
+    if(this.filtroEstoque==='pocos') ps=ps.filter(p=>p.qtd>0&&p.qtd<=2);
+    if(this.filtroEstoque==='agotado') ps=ps.filter(p=>p.qtd<=0);
+    const pg=paginar(ps, this.pagEstoque);
+    return `<div class="card"><div class="kpis">
+        <div class="kpi"><div class="v">${ps.reduce((s,p)=>s+p.qtd,0)}</div><div class="l">piezas en inventario</div></div>
+        <div class="kpi"><div class="v ${investido>=10000?'grande':''}">${rs(investido)}</div><div class="l">lo que tienes invertido</div></div>
+      </div></div>
+      <button class="btn" onclick="Produto.form()">+ Agregar producto</button>
+      ${total>8?`<input placeholder="buscar producto..." value="${this.buscaEstoque||''}"
+        oninput="Tela.buscaEstoque=this.value;Tela.pagEstoque=1;Tela.render();setTimeout(()=>{const b=document.querySelector('#app input');if(b){b.focus();b.setSelectionRange(b.value.length,b.value.length);}},0)"
+        style="margin-top:12px">
+      <div class="filtros" style="margin-top:10px">
+        <button class="${!this.filtroEstoque?'on':''}" onclick="Tela.filtroEstoque='';Tela.pagEstoque=1;Tela.render()">todos (${total})</button>
+        <button class="${this.filtroEstoque==='pocos'?'on':''}" onclick="Tela.filtroEstoque='pocos';Tela.pagEstoque=1;Tela.render()">quedan pocos</button>
+        <button class="${this.filtroEstoque==='agotado'?'on':''}" onclick="Tela.filtroEstoque='agotado';Tela.pagEstoque=1;Tela.render()">agotados</button>
+      </div>`:''}
+      <div class="card" style="margin-top:12px">
+        ${pg.itens.length?pg.itens.map(p=>{
+          const b = p.qtd<=0?'<span class="badge zero">agotado</span>':p.qtd<=2?'<span class="badge baixo">quedan pocos</span>':'<span class="badge ok">'+p.qtd+' pzas</span>';
+          return `<div class="lista-item" onclick="Produto.form(${p.id})" style="cursor:pointer">
+            <div class="info"><div class="t">${p.nome}</div>
+            <div class="s">costo ${rs(p.custo)} · venta ${rs(p.preco)} · ganancia ${rs(p.preco-p.custo)} c/u</div></div>${b}</div>`;
+        }).join(''):`<div class="vazio">${total?'No encontré ese producto.':'Agrega tus productos para vender en 3 toques.'}</div>`}
+      </div>
+      ${barraPag(pg,'Tela.irPagEstoque')}`;
+  },
+  telaResumo(){
+    const ym=this.mesResumo, tt=Calc.totais(ym), top=Calc.topProdutos(ym);
+    const desp=D.dados.despesas.filter(d=>mesDe(d.data)===ym);
+    return `<div class="mes-nav">
+        <button onclick="Tela.mudaMes(-1)">‹</button><span class="m">${nomeMes(ym)}</span><button onclick="Tela.mudaMes(1)">›</button></div>
+      <div class="card"><div class="kpis">
+        <div class="kpi"><div class="v">${rs(tt.vendido)}</div><div class="l">te pagaron (${tt.n} pago${tt.n===1?'':'s'})</div></div>
+        <div class="kpi"><div class="v pos">${rs(tt.lucro)}</div><div class="l">ganancia de lo que entró</div></div>
+        <div class="kpi"><div class="v neg">${rs(tt.despesas)}</div><div class="l">gastos</div></div>
+        <div class="kpi"><div class="v ${tt.liquido>=0?'pos':'neg'}">${rs(tt.liquido)}</div><div class="l">te quedó de verdad</div></div>
+      </div>
+      <p class="nota-caixa">Solo cuenta el dinero que ya te pagaron. Lo que te deben entra en el mes en que la clienta te paga.</p>
+      ${tt.fiadoPend>0?`<button class="kpi-link" onclick="Tela.filtroVendas='plazos';Tela.ir('vendas')">
+        <span>te deben <b>${rs(tt.fiadoPend)}</b>${tt.fiadoDoMes>0&&tt.fiadoDoMes!==tt.fiadoPend?` · ${rs(tt.fiadoDoMes)} de este mes`:''}</span><span class="seta">›</span></button>`:''}
+      </div>
+      <div class="card"><h2>lo que más te dejó este mes</h2>
+        ${top.length?top.map((p,i)=>`<div class="lista-item"><div class="info"><div class="t">${i+1}. ${p.nome}</div>
+          <div class="s">${p.qtd} vendida${p.qtd===1?'':'s'}</div></div><b style="color:var(--verde)">${rs(p.lucro)}</b></div>`).join('')
+        :'<div class="vazio">No hubo ventas este mes.</div>'}
+      </div>
+      <div class="card"><h2>gastos del mes</h2>
+        <button class="btn sec" onclick="Despesa.form()">+ anotar gasto</button>
+        ${desp.map(d=>`<div class="lista-item"><div class="info"><div class="t">${d.desc}</div>
+          <div class="s">${d.data.split('-').reverse().join('/')}</div></div>
+          <div><b>${rs(d.valor)}</b> <button class="btn mini perigo" style="font-size:12px" onclick="Despesa.excluir(${d.id})">x</button></div></div>`).join('')}
+      </div>
+      <button class="btn sec" onclick="Backup.exportarCSV('${ym}')">Exportar ventas del mes (Excel/CSV)</button>`;
+  },
+  mudaMes(d){ const [a,m]=this.mesResumo.split('-').map(Number);
+    /* ano-mes pelo calendario local, sem toISOString (que e UTC) */
+    const dt=new Date(a,m-1+d,1); this.mesResumo=dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0'); this.render(); },
+  telaMais(){
+    const c=D.dados.config;
+    const ub=c.ultimoBackup?new Date(c.ultimoBackup).toLocaleDateString('es-MX'):'nunca';
+    return `<div class="card"><h2>respaldo</h2>
+        <p style="font-size:14px;line-height:1.55;color:var(--cinza)">La app guarda todo <b>en este celular</b>.
+        De vez en cuando, guarda un respaldo (es una hoja de cálculo) y mándatelo a tu WhatsApp o a tu Drive.
+        ¿Cambiaste de celular? Toca Restaurar y elige el archivo. Listo.</p>
+        <p style="font-size:13px;margin-top:8px;color:var(--cinza)">último respaldo: <b>${ub}</b> · ventas desde entonces: <b>${c.vendasDesdeBackup}</b></p>
+        <button class="btn" onclick="Backup.compartilhar()">Guardar respaldo ahora</button>
+        <button class="btn sec" onclick="document.getElementById('arqRestaura').click()">Restaurar un respaldo</button>
+        <input type="file" id="arqRestaura" accept=".csv,.json" class="oculto" onchange="if(this.files[0])Backup.restaurar(this.files[0]);this.value=''">
+      </div>
+      <div class="card"><h2>tu negocio</h2>
+        <label>nombre de tu negocio (sale en el recibo)</label>
+        <input id="cfgLoja" value="${c.loja}" onchange="D.dados.config.loja=this.value.trim();D.salvar();Tela.render()">
+      </div>
+      `;
+  }
+};
+
+
+
+
+/* ============ INICIALIZAÇÃO ============ */
+D.carregar();
+document.querySelectorAll('#navBar button').forEach(b=>b.addEventListener('click',()=>Tela.ir(b.dataset.tela)));
+Tela.render();
+if(!D.dados.config.wizardOk) Wizard.passo1();
+
+/* ============ AJUSTES (engrenagem): cor + instalar ============ */
+const Config = {
+  abrir(){ this.pintar(); document.getElementById('cfgFundo').classList.add('aberto'); },
+  fechar(){ document.getElementById('cfgFundo').classList.remove('aberto'); },
+  pintar(){
+    const atual = localStorage.getItem('appganancia_tema')||'vinho';
+    document.getElementById('cfgCores').innerHTML = Object.keys(TEMAS).map(k=>
+      `<button class="${k===atual?'on':''}" style="background:${TEMAS[k].a}" aria-label="${TEMAS[k].nome}"
+        onclick="aplicarTema('${k}');Config.pintar();if(typeof Tela!=='undefined'&&Tela.render)Tela.render();"></button>`).join('');
+    const inst = Instalar.instalado();
+    document.getElementById('cfgInstalarBloco').style.display = inst ? 'none' : '';
+  },
+  instalar(){ Instalar.instalar(); }
+};
+
+/* ====== ANIMACAO DO CAMINHO NO IPHONE ======
+   Roteiro fiel ao fluxo real do iOS 26, conferido em video do aparelho (27/08/2026).
+   Cada toque sao DUAS cenas ("dedo no alvo" e depois "tela ja aberta"), pra transicao
+   CSS terminar antes do dedo andar: senao a legenda manda tocar num item que ainda
+   esta subindo. Um so relogio percorre a lista, entao ciclo antigo nao atropela o novo. */
+const Anim = {
+  ciclo:null, passo:0, ligada:false,
+  el(id){ return document.getElementById(id); },
+
+  CENAS: [
+    /* 1. tres pontinhos na barra */
+    { ms:900,  n:2, leg:'Toca <b>Menú de página</b>',                dedo:'dPontos'  },
+    { ms:700,  n:2, leg:'Toca <b>Menú de página</b>',                dedo:'dPontos', bate:1 },
+    /* 2. menu aberto: Compartilhar */
+    { ms:900,  n:3, leg:'Toca <b>Compartir</b>',                     dedo:'dPontos',    menu:1 },
+    { ms:800,  n:3, leg:'Toca <b>Compartir</b>',                     dedo:'dMenuShare', menu:1, on:'dMenuShare' },
+    { ms:650,  n:3, leg:'Toca <b>Compartir</b>',                     dedo:'dMenuShare', menu:1, on:'dMenuShare', bate:1 },
+    /* 3. folha aberta: o "Ver mais" e o botao redondo da direita */
+    { ms:1100, n:4, leg:'Toca <b>Ver más</b>',                       folha:1 },
+    { ms:800,  n:4, leg:'Toca <b>Ver más</b>',                       folha:1, dedo:'dVerMais' },
+    { ms:650,  n:4, leg:'Toca <b>Ver más</b>',                       folha:1, dedo:'dVerMais', on:'dVerMais', bate:1 },
+    /* 4. a lista abre, e o item aparece no fim dela */
+    { ms:1000, n:5, leg:'Toca <b>Agregar a Inicio</b>',              folha:1, lista:1, menos:1, dedo:'dVerMais' },
+    { ms:850,  n:5, leg:'Toca <b>Agregar a Inicio</b>',              folha:1, lista:1, menos:1, dedo:'dAdd', on:'dAdd' },
+    { ms:650,  n:5, leg:'Toca <b>Agregar a Inicio</b>',              folha:1, lista:1, menos:1, dedo:'dAdd', on:'dAdd', bate:1 },
+    /* 5. a tela final, com o botao Adicionar em azul */
+    { ms:1000, n:6, leg:'Toca <b>Agregar</b>',                       final:1 },
+    { ms:800,  n:6, leg:'Toca <b>Agregar</b>',                       final:1, dedo:'dAddBtn', pisca:1 },
+    { ms:650,  n:6, leg:'Toca <b>Agregar</b>',                       final:1, dedo:'dAddBtn', pisca:1, bate:1 },
+    /* 6. pronto */
+    { ms:2400, n:6, leg:'¡Listo! El ícono queda en tu pantalla',     final:1 }
+  ],
+
+  pintar(c){
+    const menu = this.el('dMenu'), folha = this.el('dFolha');
+    menu.style.opacity    = c.menu ? '1' : '0';
+    menu.style.transform  = c.menu ? 'translateY(0)' : 'translateY(10px)';
+    folha.style.opacity   = c.folha ? '1' : '0';
+    folha.style.transform = c.folha ? 'translateY(0)' : 'translateY(100%)';
+    this.el('dLista').classList.toggle('aberta', !!c.lista);
+    this.el('dFinal').classList.toggle('on', !!c.final);
+    this.el('dMenuShare').classList.toggle('on', c.on === 'dMenuShare');
+    this.el('dVerMais').classList.toggle('on',   c.on === 'dVerMais');
+    this.el('dAdd').classList.toggle('on',       c.on === 'dAdd');
+    this.el('dAddBtn').classList.toggle('pisca', !!c.pisca);
+    /* depois de abrir, "Ver mais" vira "Ver menos" e a seta inverte, como no iOS */
+    this.el('dVerMaisTxt').textContent = c.menos ? 'Ver menos' : 'Ver más';
+    this.el('dSeta').innerHTML = c.menos ? '<path d="M6 9l6 6 6-6"/>' : '<path d="M6 15l6-6 6 6"/>';
+    this.el('dPasso').textContent = 'paso ' + c.n;
+    this.el('dLeg').innerHTML = c.leg;
+
+    const dedo = this.el('dDedo');
+    if(!c.dedo){ dedo.style.opacity = '0'; return; }
+    const alvo = this.el(c.dedo), base = dedo.parentElement.getBoundingClientRect();
+    const r = alvo.getBoundingClientRect();
+    dedo.style.left = (r.left - base.left + r.width/2) + 'px';
+    dedo.style.top  = (r.top  - base.top  + r.height/2) + 'px';
+    dedo.style.opacity = '1';
+    if(c.bate){ dedo.classList.remove('bate'); void dedo.offsetWidth; dedo.classList.add('bate'); }
+  },
+
+  proxima(){
+    if(!this.ligada) return;
+    const c = this.CENAS[this.passo];
+    this.pintar(c);
+    this.passo = (this.passo + 1) % this.CENAS.length;
+    this.ciclo = setTimeout(() => this.proxima(), c.ms);
+  },
+  ligar(){ if(this.ligada || !this.el('dDedo')) return; this.ligada = true; this.passo = 0; this.proxima(); },
+  desligar(){ this.ligada = false; clearTimeout(this.ciclo); }
+};
+
+/* ============ INSTALACAO (PWA) ============
+   O prompt nativo do Chrome ("Instalar aplicativo", 1 toque) SO e disparado se houver
+   service worker ativo COM handler de fetch. Ate 27/08/2026 este arquivo desregistrava o
+   SW quando a pagina abria no navegador comum, que e exatamente onde a compradora esta
+   ANTES de instalar: o `beforeinstallprompt` nunca chegava e o botao caia sempre no passo
+   a passo. Agora o SW e registrado sempre (ele ja e rede-primeiro, entao nao serve versao
+   velha) e o prompt de 1 toque volta a funcionar no Android. */
+const Instalar = {
+  prompt:null,
+  init(){
+    if('serviceWorker' in navigator) navigator.serviceWorker.register(
+      /* O sw.js mora SEMPRE em /app/, nunca dentro da pasta de acesso. Com
+         'sw.js' relativo, uma pagina em /app/tudo/ buscava /app/tudo/sw.js e
+         tomava 503: o service worker nao ativava e o app nao abria offline.
+         Achado no console em 31/08/2026, ja com a estrutura de pastas no ar. */
+      location.pathname.replace(/\/app\/.*$/, '/app/') + 'sw.js',
+      {scope: location.pathname.replace(/\/app\/.*$/, '/app/')}).catch(()=>{});
+    window.addEventListener('beforeinstallprompt', e=>{ e.preventDefault(); this.prompt=e; this.pintarFaixa(); });
+    window.addEventListener('appinstalled', ()=>{ this.prompt=null; this.pintarFaixa();
+      if(typeof Config!=='undefined') Config.pintar(); });
+    this.pintarFaixa();
+  },
+  instalado(){ return window.matchMedia('(display-mode: standalone)').matches || navigator.standalone===true; },
+  iOS(){ return /iphone|ipad|ipod/i.test(navigator.userAgent); },
+  /* a faixa some quando ja esta instalado, ou quando a pessoa dispensou */
+  pintarFaixa(){
+    const f = document.getElementById('faixaInstalar');
+    if(!f) return;
+    const esconder = this.instalado() || localStorage.getItem('appganancia_instalar_dispensado')==='1';
+    f.style.display = esconder ? 'none' : '';
+  },
+  dispensarFaixa(){ localStorage.setItem('appganancia_instalar_dispensado','1'); this.pintarFaixa(); },
+  async instalar(){
+    /* caminho bom: prompt nativo, 1 toque, sem passo a passo nenhum */
+    if(this.prompt){
+      this.prompt.prompt();
+      const r = await this.prompt.userChoice;
+      if(r.outcome==='accepted'){ this.prompt=null; this.pintarFaixa();
+        if(typeof Config!=='undefined') Config.pintar(); }
+      return;
+    }
+    /* iPhone nao tem API de instalacao: o passo a passo ilustrado e o teto */
+    this.abrirPassos();
+  },
+  abrirPassos(){
+    const seta = '<svg viewBox="0 0 24 24" class="ps-ico"><path d="M12 16V3M12 3L8 7M12 3l4 4"/><path d="M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/></svg>';
+    const pontos = '<svg viewBox="0 0 24 24" class="ps-ico"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg>';
+    /* iPhone: caminho conferido no aparelho do Vini em 27/08/2026. No Safari novo o
+       Compartilhar NAO fica solto na barra de baixo, fica dentro do menu de tres
+       pontinhos, e o "Adicionar a Tela de Inicio" so aparece depois de tocar em
+       "Ver mais". Sao 5 passos, e e o passo do "Ver mais" que trava a compradora:
+       ela chega na folha de compartilhar, nao acha o item e desiste. */
+    /* es-MX, conferido em 21/10/2026:
+       iPhone: support.apple.com/es-mx/guide/iphone/iph42ab2f3a7/ios ("Menú de página" >
+       Compartir > deslizar a lista > "Agregar a Inicio" > "Agregar"). O "Ver más" (botao
+       redondo da fileira de acoes) NAO esta na doc da Apple; o rotulo em espanhol vem do
+       ingles "View More" e precisa ser conferido num iPhone em espanhol.
+       Android: support.google.com/chrome/answer/9658361?hl=es-419 ("A la derecha de la
+       barra de direcciones, presiona Más" > "Instalar y crear acceso directo" > "Instalar").
+       O rotulo "Crear acceso directo" do submenu nao esta na pagina es-419: conferir. */
+    const passos = this.iOS()
+      ? ['Abre este link <b>en Safari</b>',
+         `Toca el botón ${pontos} <b>Menú de página</b>, junto a la dirección (tiene tres puntitos o tres rayitas, según tu iPhone)`,
+         `Toca ${seta} <b>Compartir</b>`,
+         'Toca <b>Ver más</b> (el botón redondo con flechita) o desliza la lista hacia abajo',
+         'Toca <b>Agregar a Inicio</b>',
+         'Toca <b>Agregar</b>, arriba']
+      : [`Toca el botón ${pontos} <b>Más</b>, a la derecha de la barra de direcciones`,
+         'Toca <b>Instalar y crear acceso directo</b>',
+         'Elige <b>Instalar</b><span class="ps-nota">No elijas "Crear acceso directo": así el ícono sale con el logo de Chrome y la app se abre con la barra del navegador.</span>'];
+    document.getElementById('psSub').innerHTML =
+      'Después la app se abre desde su ícono, igual que tus otras apps, y funciona hasta sin internet.';
+    document.getElementById('psLista').innerHTML = passos.map(p=>`<li>${p}</li>`).join('');
+    /* o desenho do caminho so faz sentido no iPhone: no Android o prompt nativo
+       instala em 1 toque e nao ha passo a passo pra ensinar */
+    const demo = document.querySelector('.demo');
+    if(demo) demo.style.display = this.iOS() ? '' : 'none';
+    document.getElementById('psFundo').classList.add('aberto');
+    if(this.iOS() && typeof Anim !== 'undefined') Anim.ligar();
+  },
+  fecharPassos(){
+    document.getElementById('psFundo').classList.remove('aberto');
+    if(typeof Anim !== 'undefined') Anim.desligar();   /* nao roda escondido */
+  }
+};
+Instalar.init();
+(function(){ const b = document.getElementById('dBtn');
+  if(b) b.onclick = () => { Anim.desligar(); Anim.ligar(); }; })();
+
+</script>
+
+<div class="cfg-fundo" id="cfgFundo" onclick="if(event.target===this)Config.fechar()">
+  <div class="cfg-box">
+    <h3>Ajustes</h3>
+    <div class="cfg-sub">Ponle tu estilo a la app.</div>
+    <h4>color de la app</h4>
+    <div class="cfg-cores" id="cfgCores"></div>
+    <div id="cfgInstalarBloco">
+      <h4>la app en tu celular</h4>
+      <p style="font-size:14px;line-height:1.5;color:var(--cinza)">Con su propio ícono en tu pantalla, abre sin navegador y funciona sin internet.</p>
+      <button class="cfg-btn" onclick="Config.instalar()">Agregar a la pantalla de inicio</button>
+    </div>
+    <button class="cfg-btn sec" onclick="Config.fechar()">Cerrar</button>
+  </div>
+</div>
+
+
+<div class="ps-fundo" id="psFundo" onclick="if(event.target===this)Instalar.fecharPassos()">
+  <div class="ps-box">
+    <h3>Pon la app en tu pantalla de inicio</h3>
+    <div class="ps-sub" id="psSub"></div>
+    <div class="demo">
+      <div class="demo-topo">
+        <span class="demo-rot">cómo se hace</span>
+        <span class="demo-passo" id="dPasso">paso 2</span>
+      </div>
+      <div class="fone">
+        <div class="fone-tela">
+          <div class="pag">
+            <div class="pag-top"><b>AppGanancia</b><i>pagas una vez, es tuya para siempre</i></div>
+            <div class="pag-card"><b>Mis Ventas</b><i>tus ventas, quién te debe y cuánto te quedó</i><div class="pag-btn"></div></div>
+            <div class="pag-card"><b>Mensajes listos</b><i>para cobrar y vender por WhatsApp</i></div>
+          </div>
+
+          <div class="menu" id="dMenu">
+            <div id="dMenuShare"><svg class="mi" viewBox="0 0 24 24"><path d="M12 16V3M12 3L8 7M12 3l4 4"/><path d="M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/></svg>Compartir</div>
+            <div><svg class="mi" viewBox="0 0 24 24"><path d="M6 4h12v16l-6-4-6 4z"/></svg>Agregar a Favoritos</div>
+            <div><svg class="mi" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Nueva pestaña</div>
+          </div>
+
+          <div class="folha" id="dFolha">
+            <div class="f-cab">
+              <div class="f-ico">A</div>
+              <div><b>Mis apps · AppGanancia</b><i>appganancia.com</i></div>
+            </div>
+            <div class="f-acoes">
+              <div><div class="c"><svg viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 00-2-2H6a2 2 0 00-2 2v8a2 2 0 002 2h2"/></svg></div><span>Copiar</span></div>
+              <div><div class="c"><svg viewBox="0 0 24 24"><path d="M6 4h12v16l-6-4-6 4z"/></svg></div><span>Favoritos</span></div>
+              <div><div class="c"><svg viewBox="0 0 24 24"><circle cx="8" cy="12" r="3"/><circle cx="16" cy="12" r="3"/></svg></div><span>Leer después</span></div>
+              <div id="dVerMais"><div class="c"><svg id="dSeta" viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></svg></div><span id="dVerMaisTxt">Ver más</span></div>
+            </div>
+            <div class="f-lista" id="dLista">
+              <div><svg class="li" viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/></svg>Agregar favorito a...</div>
+              <div><svg class="li" viewBox="0 0 24 24"><path d="M12 3l2.6 5.6 6 .8-4.4 4.2 1.1 6-5.3-2.9-5.3 2.9 1.1-6L3.4 9.4l6-.8z"/></svg>Agregar a Favoritos</div>
+              <div><svg class="li" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>Agregar a Nota rápida</div>
+              <div><svg class="li" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>Buscar en la página</div>
+              <div id="dAdd"><svg class="li" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Agregar a Inicio</div>
+            </div>
+          </div>
+
+          <div class="final" id="dFinal">
+            <div class="final-cab">
+              <span class="x">&times;</span>
+              <b>Agregar a Inicio</b>
+              <span class="add" id="dAddBtn">Agregar</span>
+            </div>
+            <div class="final-nome">
+              <div class="fi"></div>
+              <div><b>AppGanancia</b><i>appganancia.com/app/...</i></div>
+            </div>
+          </div>
+
+          <div class="barra">
+            <i></i><div class="b-url"></div>
+            <span class="b-pontos" id="dPontos"><span></span><span></span><span></span></span>
+          </div>
+
+          <div class="dedo" id="dDedo"></div>
+        </div>
+      </div>
+      <div class="demo-leg" id="dLeg"></div>
+      <div class="demo-ctrl"><button type="button" id="dBtn">repetir</button></div>
+    </div>
+    <ol id="psLista"></ol>
+    <button class="ps-btn" onclick="Instalar.fecharPassos()">Entendido</button>
+  </div>
+</div>
+
+<script>
+/* O botao de voltar tem que levar ao MENU DA COMPRADORA, nao ao hub pelado.
+   O hub manda `#de=<chave>` no link; aqui isso vira a pasta <chave>/ IRMA desta
+   pagina. Sem a marca (alguem abriu o app direto), fica o hub.html de sempre.
+   Achado pelo Vini em 30/08/2026: voltar caia no menu travado. */
+(function(){
+  try{
+    /* chaves LONGAS primeiro: alternancia em JS casa da esquerda pra direita,
+       entao (c|cd) casaria "c" dentro de "cd" e a compradora do bump voltaria
+       pro menu do front, sem o Divulga. O $ ancora o fim, pra nao casar prefixo. */
+    var m = (location.hash || '').match(/de=(sx01fzn|83aby3u)$/);
+    if(!m) return;
+
+    /* GRAVA o nivel tambem daqui (31/08/2026). A compradora instala de DENTRO do
+       app, e o icone nasce apontando pro hub pelado (start_url do manifest de
+       /app/). Sem esta gravacao, quem instalou pelo app e nunca voltou ao menu
+       nao teria nada lembrado, e o hub travaria tudo. Uniao, nunca substituicao. */
+    try{
+      var MAPA_MEM = {'sx01fzn':['controle'],'83aby3u':['controle','divulga']};
+      var itens = MAPA_MEM[m[1]] || [];
+      if(itens.length){
+        var K = 'appganancia_liberado';
+        var antes = JSON.parse(localStorage.getItem(K) || '[]');
+        if(!Array.isArray(antes)) antes = [];
+        var uniao = antes.slice();
+        itens.forEach(function(i){ if(uniao.indexOf(i) < 0) uniao.push(i); });
+        if(uniao.length !== antes.length) localStorage.setItem(K, JSON.stringify(uniao));
+      }
+    }catch(e){}
+
+    var a = document.getElementById('voltarMenu');
+    if(!a) return;
+    /* O destino sai da PASTA DESTA PAGINA, nunca de '../'.
+       BUG REAL, 31/08/2026 (Vini, no app instalado): os apps moram em
+       /app/index.html, entao '../tudo/' subia um nivel A MAIS e caia em
+       appganancia.com/tudo/, fora de /app/. Da 404 no Pages e 401 quando
+       o SW nao consegue servir, e a compradora era obrigada a fechar e reabrir
+       o app. Mesma classe de erro do fallback do service worker: caminho
+       relativo montado sem o prefixo da aplicacao. */
+    /* O menu da compradora e o index.html DA PASTA da chave.
+       Se esta pagina JA esta dentro da pasta certa (/app/tudo/index.html), o menu
+       e o proprio './', nao montar /app/tudo/tudo/, que nao existe.
+       Se esta na copia da raiz (/app/index.html, link antigo), sobe pra pasta. */
+    var aqui = location.pathname.replace(/[^\/]*$/, '');
+    var jaNaPasta = new RegExp('/' + m[1] + '/$').test(aqui);
+    a.setAttribute('href', jaNaPasta ? aqui : aqui + m[1] + '/');
+  }catch(e){}
+})();
+</script>
+
+
+
+
+<script>
+/* ===== A PAGINA DA RAIZ APONTA PRO MANIFEST DA PASTA (31/08/2026) =====
+
+   PROVADO NO APARELHO, nao suposto. O Vini abriu /app/tudo/diagnostico.html,
+   adicionou a tela de inicio, e o icone salvou a pasta /app/tudo/, ou seja o iOS
+   ignorou a URL da aba e usou a `start_url` do manifest. A start_url VENCE.
+
+   Consequencia pro caso da compradora: as paginas da RAIZ linkam
+   /app/manifest.webmanifest, cuja start_url e `/app/hub.html`, SEM chave. Salvando
+   de qualquer pagina da raiz (link antigo, historico do Safari, ou o icone velho
+   que ela reabriu), o icone nasce travado. Reescrever a URL da aba NAO resolve,
+   porque o iOS nao olha a URL: olha o manifest.
+
+   Conserto: se esta pagina sabe a chave, ela troca o <link rel=manifest> pelo
+   manifest DA PASTA, que e um arquivo http(s) real, nao blob (blob nao e
+   confiavel no iOS, e o manifest precisa ser same-origin da start_url).
+
+   A chave vem, em ordem: do caminho, do #de= que o menu manda, do ?libera=
+   antigo, e por fim do nivel que o service worker guarda (Cache Storage, que
+   atravessa o isolamento entre Safari e app instalado). */
+(function(){
+  var MAPA_K = {'sx01fzn':1,'83aby3u':1};
+
+  function aplicar(chave){
+    if(!chave || !MAPA_K[chave]) return;
+    var base = location.pathname.replace(/\/app\/.*$/, '/app/');
+    if(base.indexOf('/app/') < 0) base = '/app/';
+    var href = base + chave + '/manifest.webmanifest';
+    var el = document.querySelector('link[rel="manifest"]');
+    if(!el){ el = document.createElement('link'); el.rel = 'manifest'; document.head.appendChild(el); }
+    if(el.getAttribute('href') !== href) el.setAttribute('href', href);
+  }
+
+  try{
+    /* 1. caminho */
+    var m = location.pathname.match(/\/(sx01fzn|83aby3u)(?:\/|$)/);
+    if(m){ aplicar(m[1]); return; }   /* ja esta na pasta: o manifest local ja serve */
+
+    /* 2. #de= que o menu manda ao abrir o app */
+    var h = (location.hash||'').match(/de=(sx01fzn|83aby3u)$/);
+    if(h){ aplicar(h[1]); return; }
+
+    /* 3. ?libera= dos links antigos */
+    var q = (new URLSearchParams(location.search).get('libera')||'').replace(/^so-/,'');
+    if(MAPA_K[q]){ aplicar(q); return; }
+
+    /* 4. o nivel que o service worker guarda: atravessa Safari -> app instalado */
+    if('serviceWorker' in navigator){
+      navigator.serviceWorker.ready.then(function(reg){
+        if(!reg.active) return;
+        navigator.serviceWorker.addEventListener('message', function(ev){
+          var d = ev.data || {};
+          if(d.tipo !== 'nivel' || !Array.isArray(d.itens) || !d.itens.length) return;
+          var i = d.itens, c = i.indexOf('controle')>=0, dv = i.indexOf('divulga')>=0;
+          aplicar((c&&dv) ? '83aby3u' : c ? 'sx01fzn' : null);
+        });
+        reg.active.postMessage({tipo:'ler-nivel'});
+      }).catch(function(){});
+    }
+  }catch(e){}
+})();
+</script>
+</body>
+</html>
