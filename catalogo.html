@@ -492,7 +492,11 @@ function hoje(){ const d=new Date(); return new Date(d.getTime()-d.getTimezoneOf
 /* ===== DINERO EN PESOS MEXICANOS: as mesmas funcoes do Mis Ventas (index.html) =====
    $1,234.50 via Intl es-MX/MXN. num(): virgula e MILHAR, ponto e DECIMAL; virgula com
    1 ou 2 digitos no fim depois do ultimo ponto ainda e lida como decimal (tolerancia). */
-const MXN = new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN'});
+/* simbolo da moeda pelo fuso do aparelho (Vini, 24/10/2026: a oferta roda no mundo hispanico). Mexico e os paises
+   de peso ou dolar seguem com "$"; so o simbolo muda, o formato e a leitura dos numeros sao os mesmos. */
+const SIMB = (function(){ try{ const z=Intl.DateTimeFormat().resolvedOptions().timeZone||''; return ({'Europe/Madrid':'€','Africa/Ceuta':'€','Atlantic/Canary':'€','America/Lima':'S/ ','America/Guatemala':'Q','America/Asuncion':'₲','America/Costa_Rica':'₡','America/Tegucigalpa':'L ','America/La_Paz':'Bs '})[z]||'$'; }catch(e){ return '$'; } })();
+const MXN_ = new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN'});
+const MXN = { format: n => MXN_.format(n).replace('$', SIMB) };
 function rs(n){ return MXN.format((Math.round((Number(n)||0)*100)/100) || 0); }
 function num(v){
   let s=String(v==null?'':v).replace(/[^\d,.\-]/g,'');
@@ -500,7 +504,7 @@ function num(v){
     s=s.replace(/\./g,'').replace(/,(?=\d{1,2}$)/,'.');
   s=s.replace(/,/g,'');
   const n=parseFloat(s); return isNaN(n)?0:n; }
-function semPeso(v){ return String(v||'').replace(/^\s*(MX)?\$\s*/,'').trim(); }
+function semPeso(v){ return String(v||'').replace(/^\s*(MX)?\$\s*/,'').replace(SIMB.trim(),'').trim(); }
 /* porcentagem com ponto (10.5): o rotulo do chip e o que ela digita leem igual */
 function pct(n){ return String(Math.round(n*10)/10); }
 /* a mascara roda na CAPTURA, antes de qualquer listener de campo (bug real da 004,
@@ -1164,14 +1168,14 @@ const Etiqueta = {
       }
       if(de && this.modelo==='promo'){
         cx.fillStyle='#7a6f80'; cx.font='600 '+Math.round(h*0.085)+'px '+F;
-        const dt='$'+de, dw=cx.measureText(dt).width;
+        const dt=SIMB+de, dw=cx.measureText(dt).width;
         cx.fillText(dt, x+w/2, yy);
         cx.strokeStyle='#b3261e'; cx.lineWidth=Math.max(2,h*0.012);
         cx.beginPath(); cx.moveTo(x+w/2-dw/2-6, yy-h*0.028); cx.lineTo(x+w/2+dw/2+6, yy-h*0.028); cx.stroke();
         yy += h*0.10;
       }
       cx.fillStyle=cor; cx.font='800 '+Math.round(h*0.20)+'px '+F;
-      cx.fillText('$'+preco, x+w/2, yy+h*0.13);
+      cx.fillText(SIMB+preco, x+w/2, yy+h*0.13);
     };
 
     if(this.modelo==='folha'){

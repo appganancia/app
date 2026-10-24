@@ -482,7 +482,11 @@ function diaAntes(iso, n){ const d=new Date(iso+'T12:00:00Z'); d.setUTCDate(d.ge
    DECIMAL. Excecao: virgula seguida de 1 ou 2 digitos no fim, e depois do ultimo ponto
    ("12,5", "1.234,56"), e lida como decimal, pra um valor no formato antigo nao virar
    cem vezes maior. Testes em scratchpad/mx/teste_moeda.js. */
-const MXN = new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN'});
+/* simbolo da moeda pelo fuso do aparelho (Vini, 24/10/2026: a oferta roda no mundo hispanico). Mexico e os paises
+   de peso ou dolar seguem com "$"; so o simbolo muda, o formato e a leitura dos numeros sao os mesmos. */
+const SIMB = (function(){ try{ const z=Intl.DateTimeFormat().resolvedOptions().timeZone||''; return ({'Europe/Madrid':'€','Africa/Ceuta':'€','Atlantic/Canary':'€','America/Lima':'S/ ','America/Guatemala':'Q','America/Asuncion':'₲','America/Costa_Rica':'₡','America/Tegucigalpa':'L ','America/La_Paz':'Bs '})[z]||'$'; }catch(e){ return '$'; } })();
+const MXN_ = new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN'});
+const MXN = { format: n => MXN_.format(n).replace('$', SIMB) };
 function rs(n){ return MXN.format((Math.round((Number(n)||0)*100)/100) || 0); }
 function num(v){
   let s=String(v==null?'':v).replace(/[^\d,.\-]/g,'');
@@ -1059,11 +1063,11 @@ const Venda = {
       <div class="rl"><span>Descuento</span>
         <span class="desc-ctrl">
           <span class="desc-tipo">
-            <button type="button" class="${pct?'':'on'}" onclick="Venda.descTipo('rs')">$</button>
+            <button type="button" class="${pct?'':'on'}" onclick="Venda.descTipo('rs')">${SIMB.trim()}</button>
             <button type="button" class="${pct?'on':''}" onclick="Venda.descTipo('pct')">%</button>
           </span>
           <input id="descValor" inputmode="${pct?'decimal':'numeric'}" ${pct?'data-pct':'data-moeda'}
-            placeholder="${pct?'0%':'$0.00'}" value="${val}" autocomplete="off" oninput="Venda.descLer()">
+            placeholder="${pct?'0%':SIMB+'0.00'}" value="${val}" autocomplete="off" oninput="Venda.descLer()">
         </span></div>
       <div class="desc-info" id="descInfo"></div>
       <div class="rl tot"><span>Total</span><span class="v" id="rTot"></span></div>
@@ -1681,8 +1685,8 @@ const Produto = {
     Modal.abrir(`<h3>${p?'Editar producto':'Nuevo producto'}</h3>
       <label>nombre del producto</label><input id="pNome" value="${p?p.nome:''}" placeholder="ej: Labial mate rojo">
       <div class="linha2">
-        <div><label>lo que TÚ pagaste (costo)</label><input id="pCusto" data-moeda inputmode="numeric" value="${p?fmtMoeda(p.custo):''}" placeholder="$0.00"></div>
-        <div><label>precio de venta</label><input id="pPreco" data-moeda inputmode="numeric" value="${p?fmtMoeda(p.preco):''}" placeholder="$0.00"></div>
+        <div><label>lo que TÚ pagaste (costo)</label><input id="pCusto" data-moeda inputmode="numeric" value="${p?fmtMoeda(p.custo):''}" placeholder="${SIMB}0.00"></div>
+        <div><label>precio de venta</label><input id="pPreco" data-moeda inputmode="numeric" value="${p?fmtMoeda(p.preco):''}" placeholder="${SIMB}0.00"></div>
       </div>
       <label>cuántas tienes (inventario)</label><input id="pQtd" inputmode="numeric" value="${p?p.qtd:''}" placeholder="0">
       <div id="pLucroPrev" class="aviso verde oculto" style="margin-top:12px"></div>
@@ -1720,7 +1724,7 @@ const Produto = {
 const Despesa = {
   form(){ Modal.abrir(`<h3>Nuevo gasto</h3><p class="sub">catálogos, bolsitas, envío, gasolina...</p>
     <label>¿en qué fue?</label><input id="dDesc" placeholder="ej: bolsitas">
-    <label>¿cuánto fue?</label><input id="dValor" data-moeda inputmode="numeric" placeholder="$0.00">
+    <label>¿cuánto fue?</label><input id="dValor" data-moeda inputmode="numeric" placeholder="${SIMB}0.00">
     <label>¿cuándo fue este gasto?</label>
     <div class="dt-atalhos">
       <button type="button" id="dtHoje" onclick="Despesa.setData(0)">hoy</button>
@@ -1779,8 +1783,8 @@ const Wizard = {
       <p class="sub">El que sea. Los demás los agregas después, con calma.</p>
       <label>nombre del producto</label><input id="pNome" placeholder="ej: Labial mate rojo">
       <div class="linha2">
-        <div><label>lo que tú pagaste</label><input id="pCusto" data-moeda inputmode="numeric" placeholder="$0.00"></div>
-        <div><label>precio de venta</label><input id="pPreco" data-moeda inputmode="numeric" placeholder="$0.00"></div>
+        <div><label>lo que tú pagaste</label><input id="pCusto" data-moeda inputmode="numeric" placeholder="${SIMB}0.00"></div>
+        <div><label>precio de venta</label><input id="pPreco" data-moeda inputmode="numeric" placeholder="${SIMB}0.00"></div>
       </div>
       <label>cuántas tienes</label><input id="pQtd" inputmode="numeric" placeholder="0">
       <button class="btn" onclick="Wizard.fim()">Agregar y terminar</button>`); },

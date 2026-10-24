@@ -464,7 +464,9 @@ const CHECKOUT = {
 };
 /* o catalogo passa antes pela pagina de oferta (a mesma do upsell, sem a faixa de pago aprobado), igual a 004 */
 const OFERTA = { preco: 'https://appganancia.com/oferta-catalogo.html' };
-const PRECO = {
+/* fora do Mexico o preco em pesos sai (Vini, 24/10/2026): o checkout mostra a moeda de cada pais */
+const NO_MX = (function(){ try{ return /^America\/(Mexico_City|Cancun|Merida|Monterrey|Matamoros|Chihuahua|Ciudad_Juarez|Ojinaga|Mazatlan|Bahia_Banderas|Hermosillo|Tijuana|Ensenada)$|^Mexico\//.test(Intl.DateTimeFormat().resolvedOptions().timeZone||''); }catch(e){ return false; } })();
+const PRECO = !NO_MX ? {} : {
   controle:'$299',
   divulga: '$149',
   preco:   '$399'
@@ -504,7 +506,7 @@ function card(app){
       <div><h2>${app.nome}</h2><div class="desc">${app.desc}</div></div></div>
     <div class="pitch">${app.pitch}</div>
     ${bens}
-    ${(app.oferta || app.checkout) ? `<div class="preco-linha"><div class="p">${app.preco}<small>pago único</small></div>
+    ${(app.oferta || app.checkout) ? `<div class="preco-linha"><div class="p">${app.preco||'Pago único'}<small>${app.preco?'pago único':'en tu moneda'}</small></div>
       <a href="${comOrigem(app.oferta || app.checkout, app.id)}" target="_blank" rel="noopener">${app.oferta ? 'Ver cómo funciona' : 'Desbloquear'}</a></div>` : ''}</div>`;
 }
 

@@ -366,8 +366,12 @@ function temaAtual(){ return TEMAS[localStorage.getItem('appganancia_tema')||'vi
 const $=id=>document.getElementById(id);
 /* pesos mexicanos: $1,234.50. A mascara digita em centavos ("24900" vira "$249.00");
    semReais tira o "$" pra mensagem por o simbolo do jeito dela. */
-const MXN = new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN'});
-function semReais(v){ return String(v||'').replace(/^\s*(MX)?\$\s*/,'').trim(); }
+/* simbolo da moeda pelo fuso do aparelho (Vini, 24/10/2026: a oferta roda no mundo hispanico). Mexico e os paises
+   de peso ou dolar seguem com "$"; so o simbolo muda, o formato e a leitura dos numeros sao os mesmos. */
+const SIMB = (function(){ try{ const z=Intl.DateTimeFormat().resolvedOptions().timeZone||''; return ({'Europe/Madrid':'€','Africa/Ceuta':'€','Atlantic/Canary':'€','America/Lima':'S/ ','America/Guatemala':'Q','America/Asuncion':'₲','America/Costa_Rica':'₡','America/Tegucigalpa':'L ','America/La_Paz':'Bs '})[z]||'$'; }catch(e){ return '$'; } })();
+const MXN_ = new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN'});
+const MXN = { format: n => MXN_.format(n).replace('$', SIMB) };
+function semReais(v){ return String(v||'').replace(/^\s*(MX)?\$\s*/,'').replace(SIMB.trim(),'').trim(); }
 document.addEventListener('input',function(e){
   const el=e.target; if(!el.matches||!el.matches('[data-moeda]')) return;
   const d=el.value.replace(/\D/g,'').replace(/^0+(?=\d{3})/,'').slice(0,10);
@@ -476,17 +480,17 @@ function datosPago(){
 const GRUPOS=[
  {g:'Para vender', itens:[
   {id:'novidade', rotulo:'Llegó lo nuevo', campos:[['peca','¿qué te llegó?','set de cremas'],['preco','precio (opcional)','249.00']],
-   msgs:[ d=>`¡Ya llegó lo nuevo a ${loja()}! 😍\n\nAcaba de llegar: *${d.peca}*${d.preco?'\na solo *$'+d.preco+'*':''}\n\nSon poquitas piezas. Si lo quieres, mándame mensaje y te lo aparto 💬`,
-          d=>`¡Traigo cosas nuevas! ✨\n\n*${d.peca}* acaba de llegar a ${loja()}${d.preco?' a *$'+d.preco+'*':''}.\n\n¿Quieres ver las fotos? Escríbeme y te las mando antes que a nadie.` ]},
+   msgs:[ d=>`¡Ya llegó lo nuevo a ${loja()}! 😍\n\nAcaba de llegar: *${d.peca}*${d.preco?'\na solo *'+SIMB+d.preco+'*':''}\n\nSon poquitas piezas. Si lo quieres, mándame mensaje y te lo aparto 💬`,
+          d=>`¡Traigo cosas nuevas! ✨\n\n*${d.peca}* acaba de llegar a ${loja()}${d.preco?' a *'+SIMB+d.preco+'*':''}.\n\n¿Quieres ver las fotos? Escríbeme y te las mando antes que a nadie.` ]},
   {id:'oferta', rotulo:'Oferta del día', campos:[['peca','¿qué producto?','perfume de 50 ml'],['de','precio normal','399.00'],['por','precio de oferta','299.00']],
-   msgs:[ d=>`OFERTA DE HOY ⚡\n\n*${d.peca}*\nantes $${d.de}, hoy a *$${d.por}*\n\nSolo hoy y mientras haya. ¡Escríbeme y te lo aparto! 💬`,
-          d=>`¡Hoy hay precio especial en ${loja()}! 💥\n\n*${d.peca}* de $${d.de} a *$${d.por}*.\n\nAprovecha, que mañana regresa a su precio.` ]},
+   msgs:[ d=>`OFERTA DE HOY ⚡\n\n*${d.peca}*\nantes ${SIMB}${d.de}, hoy a *${SIMB}${d.por}*\n\nSolo hoy y mientras haya. ¡Escríbeme y te lo aparto! 💬`,
+          d=>`¡Hoy hay precio especial en ${loja()}! 💥\n\n*${d.peca}* de ${SIMB}${d.de} a *${SIMB}${d.por}*.\n\nAprovecha, que mañana regresa a su precio.` ]},
   {id:'ultimas', rotulo:'Últimas piezas', campos:[['peca','¿qué se te está acabando?','labial mate rojo'],['qtd','¿cuántas te quedan?','2']],
    msgs:[ d=>`⚠️ ¡ÚLTIMAS PIEZAS!\n\nNada más me quedan *${d.qtd}* de *${d.peca}* y no sé cuándo vuelva a llegar.\n\nSi le traías ganas, es ahorita. ¡Escríbeme! 💬`,
           d=>`¡Córrele! 🏃‍♀️\n\n*${d.peca}* ya se está acabando: solo quedan *${d.qtd}* en ${loja()}.\n\nMándame mensaje ya si quieres el tuyo.` ]},
   {id:'combo', rotulo:'Promo en paquete', campos:[['pecas','¿qué productos?','cremas corporales'],['qtd','¿cuántas se lleva?','2'],['valor','por cuánto','299.00']],
-   msgs:[ d=>`¡PROMO EN ${loja().toUpperCase()}! 🛍️\n\nLlévate *${d.qtd} ${d.pecas}* por solo *$${d.valor}*.\n\nEs por poco tiempo. ¡Escríbeme y arma tu paquete!`,
-          d=>`Mira nada más: *${d.qtd} ${d.pecas} por $${d.valor}* 😱\n\nPromo especial de ${loja()}. La que llegue primero escoge.` ]},
+   msgs:[ d=>`¡PROMO EN ${loja().toUpperCase()}! 🛍️\n\nLlévate *${d.qtd} ${d.pecas}* por solo *${SIMB}${d.valor}*.\n\nEs por poco tiempo. ¡Escríbeme y arma tu paquete!`,
+          d=>`Mira nada más: *${d.qtd} ${d.pecas} por ${SIMB}${d.valor}* 😱\n\nPromo especial de ${loja()}. La que llegue primero escoge.` ]},
   {id:'voltou', rotulo:'Volvió a llegar', campos:[['peca','¿qué volvió a llegar?','set de esmaltes']],
    msgs:[ d=>`¡Ya volvióoo! 🙌\n\nMe lo pidieron y aquí está otra vez: *${d.peca}* en ${loja()}.\n\nLa vez pasada se acabó rapidísimo. ¿Te lo aparto? ¡Escríbeme!`,
           d=>`Me lo pediste y regresó: *${d.peca}* ya está otra vez ✨\n\nEscríbeme antes de que se vuelva a acabar.` ]}]},
@@ -505,11 +509,11 @@ const GRUPOS=[
           d=>`¡Muchas felicidades, ${d.nome}! 🎂\n\n${loja()} te desea un año increíble, y te regala *${d.mimo}*. ¡Aprovéchalo!` ]}]},
  {g:'Para cobrar', itens:[
   {id:'cobro1', rotulo:'Recordatorio suave', campos:[['nome','su nombre','Ana'],['valor','cuánto te debe','249.00']],
-   msgs:[ d=>`Hola ${d.nome}, ¿cómo estás? 😊\n\nNada más paso a recordarte lo de tu pedido: *$${d.valor}*.\n\nMe pagas cuando puedas, ¿va?${datosPago()}`,
-          d=>`¡Hola ${d.nome}! ¿Todo bien? 💛\n\nTe recuerdo con cariño: quedaron pendientes *$${d.valor}* de tu compra.\n\nSin prisa, ¿sale?${datosPago()}` ]},
+   msgs:[ d=>`Hola ${d.nome}, ¿cómo estás? 😊\n\nNada más paso a recordarte lo de tu pedido: *${SIMB}${d.valor}*.\n\nMe pagas cuando puedas, ¿va?${datosPago()}`,
+          d=>`¡Hola ${d.nome}! ¿Todo bien? 💛\n\nTe recuerdo con cariño: quedaron pendientes *${SIMB}${d.valor}* de tu compra.\n\nSin prisa, ¿sale?${datosPago()}` ]},
   {id:'cobro2', rotulo:'Recordatorio directo (con educación)', campos:[['nome','su nombre','Ana'],['valor','cuánto te debe','249.00'],['data','¿cuándo fue la compra?','a principios de mes']],
-   msgs:[ d=>`¡Hola ${d.nome}! 😊\n\nYa me toca pagar mi pedido y me quedó pendiente lo que te llevaste ${d.data}: *$${d.valor}*.\n\n¿Me lo puedes pagar esta semana? Me ayudas muchísimo.${datosPago()}`,
-          d=>`${d.nome}, ¿cómo estás? Estoy acomodando los pagos de ${loja()} y el tuyo quedó pendiente: *$${d.valor}* (${d.data}).\n\n¿Me lo puedes pagar algún día de esta semana?${datosPago()}` ]},
+   msgs:[ d=>`¡Hola ${d.nome}! 😊\n\nYa me toca pagar mi pedido y me quedó pendiente lo que te llevaste ${d.data}: *${SIMB}${d.valor}*.\n\n¿Me lo puedes pagar esta semana? Me ayudas muchísimo.${datosPago()}`,
+          d=>`${d.nome}, ¿cómo estás? Estoy acomodando los pagos de ${loja()} y el tuyo quedó pendiente: *${SIMB}${d.valor}* (${d.data}).\n\n¿Me lo puedes pagar algún día de esta semana?${datosPago()}` ]},
   {id:'recebido', rotulo:'Confirmar que te pagó', campos:[['nome','su nombre','Ana']],
    msgs:[ d=>`¡Recibido, ${d.nome}! 💛\n\nMuchas gracias. En cuanto llegue algo de tu estilo, te aviso antes que a nadie.`,
           d=>`¡Ya me llegó, ${d.nome}, gracias! 😊\n\nDa gusto tener clientas como tú. ¡${loja()} te lo agradece!` ]}]}
@@ -527,7 +531,7 @@ function escolhe(id){
   todas().forEach(s=>{const b=$('sit-'+s.id); if(b) b.classList.toggle('on',s.id===id);});
   const MONEY=['preco','de','por','valor'];
   $('campos').innerHTML='<h2>cuéntame los detalles</h2>'+atual.campos.map(c=>
-    `<label>${c[1]}</label><input id="campo-${c[0]}" ${MONEY.includes(c[0])?'data-moeda inputmode="numeric"':''} placeholder="ej: ${MONEY.includes(c[0])?'$'+c[2]:c[2]}" oninput="atualiza()">`).join('');
+    `<label>${c[1]}</label><input id="campo-${c[0]}" ${MONEY.includes(c[0])?'data-moeda inputmode="numeric"':''} placeholder="ej: ${MONEY.includes(c[0])?SIMB+c[2]:c[2]}" oninput="atualiza()">`).join('');
   atualiza();
 }
 function dadosAtuais(){ const d={}; const MONEY=['preco','de','por','valor'];
@@ -696,7 +700,7 @@ function gerarArte(){
     let yCursor = topoBlocoPreco;
     if(temDe){
       cx.font='600 46px '+F; cx.fillStyle='rgba(255,255,255,.85)';
-      const deTxt='$'+de, dw=cx.measureText(deTxt).width;
+      const deTxt=SIMB+de, dw=cx.measureText(deTxt).width;
       const yDe = yCursor + 46;
       cx.fillText(deTxt, MEIO, yDe);
       cx.strokeStyle='rgba(255,255,255,.9)'; cx.lineWidth=4;
@@ -706,7 +710,7 @@ function gerarArte(){
     // pilula do preco
     if(temPreco){
       cx.font='800 82px '+F;
-      const pTxt='$'+preco, pw=cx.measureText(pTxt).width;
+      const pTxt=SIMB+preco, pw=cx.measureText(pTxt).width;
       cx.fillStyle='#fff';
       cx.beginPath(); cx.roundRect(MEIO-pw/2-46, yCursor, pw+92, hPilula, 58); cx.fill();
       cx.fillStyle=cor; cx.fillText(pTxt, MEIO, yCursor + hPilula/2 + 29);
