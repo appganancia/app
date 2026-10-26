@@ -4,7 +4,7 @@
    (3) carregar o NÍVEL DE ACESSO num lugar que atravessa o isolamento do iOS.
    ESTRATÉGIA: rede primeiro, cache como reserva. Assim a compradora sempre
    recebe a versão nova quando tem internet, e continua funcionando sem ela. */
-const CACHE = 'appganancia-v2';  /* v2 (22/10/2026): entrou o catálogo e a pasta m7081wh */
+const CACHE = 'appganancia-v3';  /* v3 (26/10/2026): checkout da Cakto nos cadeados, preços novos */
 const ARQS = [
   'hub.html', 'index.html', 'divulga.html', 'catalogo.html',
   'manifest.webmanifest', 'icone-192.png', 'icone-512.png',

@@ -454,22 +454,22 @@ const comChave = (url) => {
   return naPasta + '#de=' + m[1];
 };
 
-/* checkout dos degraus: HOTMART (22/10/2026; funil/checkouts.json, a Hotmart e a fonte da verdade, nao
-   este arquivo). Preco como o checkout do Mexico mostra, IVA de 16% incluido. O catalogo (upsell) passa
-   antes pela pagina de oferta (OFERTA.preco), igual a 004; os outros dois vao direto ao checkout. */
+/* checkout dos degraus: CAKTO (26/10/2026; produtos em dolar, um link para todos os paises; a Cakto e a fonte da
+   verdade, nao este arquivo). Preco como o total do checkout do Mexico, com IVA de 16% e a tarifa de servico.
+   O catalogo (upsell) passa antes pela pagina de oferta (OFERTA.preco), igual a 004; os outros dois vao direto. */
 const CHECKOUT = {
-  controle:'https://pay.hotmart.com/D108140431V',   /* Mis Ventas (front), $299 */
-  divulga: 'https://pay.hotmart.com/Q108140459Y',   /* Mensajes listos (bump), $149 */
-  preco:   'https://pay.hotmart.com/Y108141969P'    /* Mi Catálogo (upsell), $399; libera los 3 apps */
+  controle:'https://pay.cakto.com.br/fecwm9c',   /* Mis Ventas (front), US$ 6,60 */
+  divulga: 'https://pay.cakto.com.br/hucvzyq',   /* Mensajes listos (bump), US$ 4,35 */
+  preco:   'https://pay.cakto.com.br/izf22iu'    /* Mi Catálogo (upsell), US$ 9,90; libera los 3 apps */
 };
 /* o catalogo passa antes pela pagina de oferta (a mesma do upsell, sem a faixa de pago aprobado), igual a 004 */
 const OFERTA = { preco: 'https://appganancia.com/oferta-catalogo.html' };
 /* fora do Mexico o preco em pesos sai (Vini, 24/10/2026): o checkout mostra a moeda de cada pais */
 const NO_MX = (function(){ try{ return /^America\/(Mexico_City|Cancun|Merida|Monterrey|Matamoros|Chihuahua|Ciudad_Juarez|Ojinaga|Mazatlan|Bahia_Banderas|Hermosillo|Tijuana|Ensenada)$|^Mexico\//.test(Intl.DateTimeFormat().resolvedOptions().timeZone||''); }catch(e){ return false; } })();
 const PRECO = !NO_MX ? {} : {
-  controle:'$299',
-  divulga: '$149',
-  preco:   '$399'
+  controle:'$175',
+  divulga: '$123',
+  preco:   '$251'
 };
 
 /* ===== ORIGEM DA COMPRA (06/10/2026) =====
