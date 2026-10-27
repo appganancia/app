@@ -2,7 +2,7 @@
 <html lang="es-MX">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#8e2757">
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16.png">
@@ -14,6 +14,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <title>Mi Catálogo · AppGanancia</title>
+<!-- ativacao pelo e-mail da compra: roda ANTES de tudo (ver ativacao.js) -->
+<script>/* rede de seguranca da ativacao: decide "legado" ou "pendente" ANTES de a pagina gravar o tema,
+   mesmo que o ativacao.js nao carregue (sem isto, a primeira abertura com rede ruim virava legado) */
+try{var K='appganancia_ativacao';if(!localStorage.getItem(K)){var u=0;for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&k.indexOf('appganancia_')===0){u=1;break}}localStorage.setItem(K,JSON.stringify(u?{estado:'legado',desde:Date.now()}:{estado:'pendente'}))}}catch(e){}</script>
+<script src="../ativacao.js"></script>
 <script>
 /* ===== AS DUAS CONSTANTES DESTE ARQUIVO (22/10/2026) =====
    NOME_APP: o nome do app na interface. "Mi Catálogo" e PROVISORIO: trocar so aqui
@@ -27,7 +32,7 @@ document.title = NOME_APP + ' · AppGanancia';
 <style>
 :root{
   --vinho:#8e2757; --vinho-escuro:#6d1d43; --rose:#f6e7ee; --rose-2:#fdf4f8;
-  --tinta:#2b2230; --cinza:#7a6f80; --linha:#eadfe6; --branco:#fff;
+  --tinta:#2b2230; --cinza:#675c6d; --linha:#eadfe6; --branco:#fff;
   --verde:#1e7d4f; --verde-bg:#e6f4ec; --ambar:#a05e03; --ambar-bg:#fdf2df;
   --verm:#b3261e; --verm-bg:#fbeae9;
 }
@@ -42,7 +47,7 @@ main{padding:14px;max-width:560px;margin:0 auto}
 .card{background:var(--branco);border:1px solid var(--linha);border-radius:14px;padding:14px;margin-bottom:12px}
 .card h2{font-size:14px;color:var(--cinza);font-weight:600;margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px}
 label{font-size:13px;color:var(--cinza);font-weight:600;display:block;margin-top:12px}
-input,select{width:100%;padding:13px;border:1.5px solid var(--linha);border-radius:12px;font-size:16px;font-family:inherit;background:#fff;margin-top:4px}
+input,select{width:100%;padding:13px;border:1.5px solid #8f8496;border-radius:12px;font-size:16px;font-family:inherit;background:#fff;margin-top:4px}
 input:focus,select:focus{outline:none;border-color:var(--vinho)}
 .linha2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .chips{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
@@ -274,6 +279,15 @@ canvas{width:100%;border-radius:12px;border:1px solid var(--linha);margin-top:12
 .demo-ctrl button{background:none;border:1px solid var(--linha);border-radius:99px;
   padding:5px 13px;font-size:11.5px;color:var(--cinza);cursor:pointer;font-family:inherit;font-weight:600}
 @media (prefers-reduced-motion: reduce){.dedo,.menu,.folha,.f-lista,.final{transition:none}}
+/* acessibilidade (26/10/2026): toque sem atraso de duplo toque agora que o zoom
+   esta liberado, e placeholder legivel (o padrao do navegador fica perto de 2,3:1) */
+html{touch-action:manipulation}
+::placeholder{color:#7a6f80;opacity:1}
+/* alvos de toque (26/10/2026): voltar, fechar faixa e engrenagem tinham de 20 a 31 px;
+   a margem negativa aumenta a area do toque sem mudar o desenho */
+#voltarMenu{padding:11px;margin:-11px}
+.fi-x,.fn-x{min-width:44px;min-height:44px}
+.btn-cfg{padding:10px;margin:-6px}
 </style>
 </head>
 <body>
@@ -336,13 +350,13 @@ canvas{width:100%;border-radius:12px;border:1px solid var(--linha);margin-top:12
             <div class="dica" style="margin-top:6px">¿No tienes logo? No pasa nada: va la inicial de tu negocio.</div>
           </div>
         </div>
-        <label>nombre de tu negocio</label>
+        <label for="catLoja">nombre de tu negocio</label>
         <input id="catLoja" maxlength="30" placeholder="ej: Lupita Catálogos" oninput="Catalogo.salvarPerfil();Catalogo.desenhar()">
-        <label>tu @ de Instagram (opcional)</label>
+        <label for="catInsta">tu @ de Instagram (opcional)</label>
         <input id="catInsta" maxlength="30" placeholder="ej: @lupitacatalogos" oninput="Catalogo.salvarPerfil();Catalogo.desenhar()">
-        <label>título</label>
+        <label for="catTitulo">título</label>
         <input id="catTitulo" maxlength="40" placeholder="ej: Lo nuevo de la semana" oninput="Catalogo.salvarCfg();Catalogo.desenhar()">
-        <label>mensaje abajo (opcional)</label>
+        <label for="catRodape">mensaje abajo (opcional)</label>
         <input id="catRodape" maxlength="60" placeholder="ej: entrego en tu colonia · acepto transferencia" oninput="Catalogo.salvarCfg();Catalogo.desenhar()">
         <label>color del catálogo</label>
         <div class="chips" id="catCorChips">
@@ -369,14 +383,14 @@ canvas{width:100%;border-radius:12px;border:1px solid var(--linha);margin-top:12
   <section id="sec-uma" class="oculto">
     <div class="card">
       <h2>cuánto te cuesta esta pieza</h2>
-      <label>nombre de la pieza (sale en la etiqueta)</label>
+      <label for="pecaNome">nombre de la pieza (sale en la etiqueta)</label>
       <input id="pecaNome" placeholder="ej: Blusa manga corta M">
-      <label>cuánto PAGASTE por ella (c/u)</label>
+      <label for="custo">cuánto PAGASTE por ella (c/u)</label>
       <input id="custo" data-moeda inputmode="numeric" placeholder="$0.00">
       <div class="linha2">
-        <div><label>envío repartido por pieza</label><input id="frete" data-moeda inputmode="numeric" placeholder="$0.00">
+        <div><label for="frete">envío repartido por pieza</label><input id="frete" data-moeda inputmode="numeric" placeholder="$0.00">
           <div class="dica">envío del pedido ÷ número de piezas</div></div>
-        <div><label>bolsita / extras</label><input id="extras" data-moeda inputmode="numeric" placeholder="$0.00"></div>
+        <div><label for="extras">bolsita / extras</label><input id="extras" data-moeda inputmode="numeric" placeholder="$0.00"></div>
       </div>
       <label>comisión de cómo te pagan (%)</label>
       <div class="chips" id="chipsTaxa">
@@ -409,7 +423,7 @@ canvas{width:100%;border-radius:12px;border:1px solid var(--linha);margin-top:12
 
     <div class="card">
       <h2>¿y si lo vendo a otro precio?</h2>
-      <label>probar un precio</label>
+      <label for="testePreco">probar un precio</label>
       <input id="testePreco" data-moeda inputmode="numeric" placeholder="ej: $249.00">
       <div class="aviso ruim" id="avisoTeste"></div>
       <table class="tabela" id="tabelaCenarios"></table>
@@ -423,13 +437,13 @@ canvas{width:100%;border-radius:12px;border:1px solid var(--linha);margin-top:12
     <div class="card">
       <h2>vale para todas las piezas del pedido</h2>
       <div class="linha2">
-        <div><label>envío del pedido (total)</label><input id="loteFrete" data-moeda inputmode="numeric" placeholder="$0.00">
+        <div><label for="loteFrete">envío del pedido (total)</label><input id="loteFrete" data-moeda inputmode="numeric" placeholder="$0.00">
           <div class="dica">se reparte entre las piezas de abajo</div></div>
-        <div><label>bolsita por pieza</label><input id="loteEmb" data-moeda inputmode="numeric" placeholder="$0.00"></div>
+        <div><label for="loteEmb">bolsita por pieza</label><input id="loteEmb" data-moeda inputmode="numeric" placeholder="$0.00"></div>
       </div>
       <div class="linha2">
-        <div><label>comisión de cobro (%)</label><input id="loteTaxa" data-pct inputmode="decimal" placeholder="0"></div>
-        <div><label>ganancia sobre el costo (%)</label><input id="loteMargem" data-pct inputmode="decimal" placeholder="80"></div>
+        <div><label for="loteTaxa">comisión de cobro (%)</label><input id="loteTaxa" data-pct inputmode="decimal" placeholder="0"></div>
+        <div><label for="loteMargem">ganancia sobre el costo (%)</label><input id="loteMargem" data-pct inputmode="decimal" placeholder="80"></div>
       </div>
     </div>
 
@@ -473,7 +487,7 @@ document.querySelectorAll('[data-nome-app]').forEach(e=>{ e.textContent=NOME_APP
 const TEMAS={
   vinho:   {a:'#8e2757',b:'#6d1d43',c:'#f6e7ee',d:'#fdf4f8',nome:'Vino'},
   violeta: {a:'#6b3fa0',b:'#532e80',c:'#efe8f7',d:'#f9f5fd',nome:'Violeta'},
-  esmeralda:{a:'#1c7a5c',b:'#145c45',c:'#e4f2ec',d:'#f3faf7',nome:'Esmeralda'},
+  esmeralda:{a:'#176b50',b:'#145c45',c:'#e4f2ec',d:'#f3faf7',nome:'Esmeralda'},
   petroleo:{a:'#22677a',b:'#194f5e',c:'#e3eff3',d:'#f2f8fa',nome:'Petróleo'},
   grafite: {a:'#3f3a45',b:'#2b2730',c:'#ece9ef',d:'#f7f5f9',nome:'Grafito'}
 };
@@ -1009,14 +1023,14 @@ const Precos = {
       this.itens.slice(0,40).map(i=>
         `<tr><td>${escapa(i.nome)}<div style="font-size:11.5px;color:var(--cinza)">costo ${rs(i.custo)} · ganancia ${rs(i.preco-i.custo)}</div></td>
          <td class="d">${rs(i.preco)}</td>
-         <td style="text-align:right"><button class="btn-x" style="width:34px;height:34px;font-size:15px" aria-label="borrar" onclick="Precos.excluir(${i.id})">×</button></td></tr>`).join('') +
+         <td style="text-align:right"><button class="btn-x" style="width:34px;height:34px;font-size:15px" aria-label="borrar" onclick="Precos.excluir(${i.id})" aria-label="borrar este precio">×</button></td></tr>`).join('') +
       '</table>' + (this.itens.length>40?`<div class="mini">mostrando 40 de ${this.itens.length}</div>`:'');
   }
 };
 function escapa(s){ return String(s).replace(/[<>&"]/g, m=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[m])); }
-function toastP(m){ const t=document.createElement('div');
+function toastP(m){ const t=document.createElement('div'); t.setAttribute('role','status');
   t.style.cssText='position:fixed;left:50%;transform:translateX(-50%);bottom:30px;background:var(--tinta);color:#fff;padding:12px 18px;border-radius:12px;font-size:14.5px;z-index:70;max-width:92vw;text-align:center';
-  t.textContent=m; document.body.appendChild(t); setTimeout(()=>t.remove(),2400); }
+  t.textContent=m; document.body.appendChild(t); setTimeout(()=>t.remove(),4500); }
 
 /* ================= POR PEDIDO =================
    Na 004 era "Em lote". No Mexico o que ela recebe da marca e o PEDIDO ("meter el
@@ -1120,15 +1134,15 @@ const Etiqueta = {
   camposDoModelo(){
     const lista = Precos.itens.slice(0,40);
     const opcoes = lista.length
-      ? `<label>pieza guardada</label><select id="etqPeca" onchange="Etiqueta.preencher()">
+      ? `<label for="etqPeca">pieza guardada</label><select id="etqPeca" onchange="Etiqueta.preencher()">
           <option value="">escoge de la lista</option>
           ${lista.map((i,ix)=>`<option value="${ix}">${escapa(i.nome)} · ${rs(i.preco)}</option>`).join('')}
          </select>` : '';
     const extra = this.modelo==='promo'
-      ? `<div class="linha2"><div><label>precio de antes</label><input id="etqDe" data-moeda inputmode="numeric" placeholder="$0.00"></div>
-         <div><label>precio de oferta</label><input id="etqPreco" data-moeda inputmode="numeric" placeholder="$0.00"></div></div>`
-      : `<label>precio</label><input id="etqPreco" data-moeda inputmode="numeric" placeholder="$0.00">`;
-    const nome = this.modelo==='preco' ? '' : `<label>nombre de la pieza</label><input id="etqNome" placeholder="ej: Blusa manga corta">`;
+      ? `<div class="linha2"><div><label for="etqDe">precio de antes</label><input id="etqDe" data-moeda inputmode="numeric" placeholder="$0.00"></div>
+         <div><label for="etqPreco">precio de oferta</label><input id="etqPreco" data-moeda inputmode="numeric" placeholder="$0.00"></div></div>`
+      : `<label for="etqPreco">precio</label><input id="etqPreco" data-moeda inputmode="numeric" placeholder="$0.00">`;
+    const nome = this.modelo==='preco' ? '' : `<label for="etqNome">nombre de la pieza</label><input id="etqNome" placeholder="ej: Blusa manga corta">`;
     $('etqCampos').innerHTML = opcoes + nome + extra;
   },
   preencher(){
@@ -1411,7 +1425,7 @@ Instalar.init();
 </script>
 
 <div class="cfg-fundo" id="cfgFundo" onclick="if(event.target===this)Config.fechar()">
-  <div class="cfg-box">
+  <div class="cfg-box" role="dialog" aria-modal="true" aria-label="ajustes">
     <h3>Ajustes</h3>
     <div class="cfg-sub">Ponle tu estilo a la app.</div>
     <h4>color de la app</h4>
@@ -1427,7 +1441,7 @@ Instalar.init();
 
 
 <div class="ps-fundo" id="psFundo" onclick="if(event.target===this)Instalar.fecharPassos()">
-  <div class="ps-box">
+  <div class="ps-box" role="dialog" aria-modal="true" aria-label="cómo instalar">
     <h3>Pon la app en tu pantalla de inicio</h3>
     <div class="ps-sub" id="psSub"></div>
     <div class="demo">
@@ -1435,7 +1449,7 @@ Instalar.init();
         <span class="demo-rot">cómo se hace</span>
         <span class="demo-passo" id="dPasso">paso 2</span>
       </div>
-      <div class="fone">
+      <div class="fone" aria-hidden="true">
         <div class="fone-tela">
           <div class="pag">
             <div class="pag-top"><b>AppGanancia</b><i>pagas una vez, es tuya para siempre</i></div>
@@ -1588,6 +1602,13 @@ document.querySelectorAll('[data-nome-app]').forEach(function(e){ e.textContent 
     }
   }catch(e){}
 })();
+</script>
+<script>
+/* Esc fecha as folhas de ajustes e de instalacao (acessibilidade, 26/10/2026) */
+document.addEventListener('keydown',e=>{ if(e.key!=='Escape') return;
+  const ps=document.getElementById('psFundo'), cf=document.getElementById('cfgFundo');
+  if(ps&&ps.classList.contains('aberto')&&typeof Instalar!=='undefined'&&Instalar.fecharPassos) Instalar.fecharPassos();
+  else if(cf&&cf.classList.contains('aberto')&&typeof Config!=='undefined') Config.fechar(); });
 </script>
 </body>
 </html>

@@ -4,9 +4,9 @@
    (3) carregar o NÍVEL DE ACESSO num lugar que atravessa o isolamento do iOS.
    ESTRATÉGIA: rede primeiro, cache como reserva. Assim a compradora sempre
    recebe a versão nova quando tem internet, e continua funcionando sem ela. */
-const CACHE = 'appganancia-v3';  /* v3 (26/10/2026): checkout da Cakto nos cadeados, preços novos */
+const CACHE = 'appganancia-v5';  /* v5 (26/10/2026): ativacao pelo correo, rede com tempo limite, pasta m7081wh offline */
 const ARQS = [
-  'hub.html', 'index.html', 'divulga.html', 'catalogo.html',
+  'hub.html', 'index.html', 'divulga.html', 'catalogo.html', 'ativacao.js',
   'manifest.webmanifest', 'icone-192.png', 'icone-512.png',
   'favicon-32.png', 'favicon-96.png', 'favicon-180.png', 'logo-branca.png',
   /* Cada pasta serve o menu E os apps: é isso que mantém a chave no caminho de
@@ -84,7 +84,9 @@ self.addEventListener('activate', e => {
      Sem isso, cada publicação nova apagaria o acesso da compradora. */
   e.waitUntil((async () => {
     const ks = await caches.keys();
-    const velhos = ks.filter(k => k !== CACHE);
+    /* `appganancia-ativacao` e da pagina (ativacao.js): o estado da ativacao que
+       atravessa do Safari pro icone. Nao e versao velha e nunca e apagado. */
+    const velhos = ks.filter(k => k !== CACHE && k !== 'appganancia-ativacao');
     for (const k of velhos) {
       try {
         const c = await caches.open(k);
@@ -107,17 +109,34 @@ self.addEventListener('fetch', e => {
   if (url.origin !== location.origin) return;
   if (url.pathname === CHAVE_NIVEL) return;   /* dado interno, não é recurso */
 
-  // rede primeiro (sempre a versão mais nova), cache só se a rede falhar
-  e.respondWith(
-    fetch(new Request(req.url, {cache: 'no-store', credentials: 'same-origin'}))
-      .then(resp => {
-        if (resp && resp.ok) {
-          const copia = resp.clone();
-          caches.open(CACHE).then(c => c.put(req, copia)).catch(() => {});
-        }
-        return resp;
-      })
-      .catch(async () => {
+  /* Rede primeiro (sempre a versão mais nova), cache se a rede falhar.
+
+     TEMPO LIMITE (26/10/2026): com sinal fraco a rede não cai, só demora, e o app
+     ficava em branco por muitos segundos antes de usar o cache (parece "só um
+     site"). Agora, se a rede não responde em 3 s e há cópia, abre a cópia; a
+     resposta da rede, quando chegar, ainda atualiza o cache pra próxima vez. */
+  const daRede = fetch(new Request(req.url, {cache: 'no-store', credentials: 'same-origin'}))
+    .then(resp => {
+      if (resp && resp.ok) {
+        const copia = resp.clone();
+        caches.open(CACHE).then(c => c.put(req, copia)).catch(() => {});
+      }
+      return resp;
+    });
+  e.respondWith((async () => {
+    try {
+      const lento = new Promise(r => setTimeout(() => r('lento'), 3000));
+      const primeiro = await Promise.race([daRede, lento]);
+      if (primeiro !== 'lento') return primeiro;
+      const copia = await caches.match(req, {ignoreSearch: true});
+      if (copia) { e.waitUntil(daRede.catch(() => {})); return copia; }
+      return await daRede;
+    } catch (err) {
+      return reserva();
+    }
+  })());
+
+  async function reserva() {
         const exata = await caches.match(req, {ignoreSearch: true});
         if (exata) return exata;
 
@@ -131,7 +150,7 @@ self.addEventListener('fetch', e => {
            caminho sem o prefixo da aplicação, e `caches.match(a) ||
            caches.match(b)` que nunca cai no segundo, porque uma Promise é sempre
            truthy. */
-        const m = url.pathname.match(/\/(sx01fzn|83aby3u)(?:\/|$)/);
+        const m = url.pathname.match(/\/(sx01fzn|83aby3u|m7081wh)(?:\/|$)/);
         if (m) {
           const pasta = url.pathname.slice(0, m.index + m[0].length).replace(/\/?$/, '/');
           for (const alvo of [pasta, pasta + 'index.html']) {
@@ -145,6 +164,5 @@ self.addEventListener('fetch', e => {
         return (await caches.match(new URL('hub.html', self.registration.scope).pathname,
                                    {ignoreSearch: true}))
                || Response.error();
-      })
-  );
+  }
 });
